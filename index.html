@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cryptofolio</title>
+  <link rel="stylesheet" href="./src/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <div id="app">
+    <button id="addCrypto">Add new crypto</button>
+
+    <!-- Table of holdings -->
+    <h2>My assets</h2>
+    <table class="table" id="assetsTable">
+      <thead>
+        <tr>
+          <th>Asset</th>
+          <th>Average buy price</th>
+          <th>Amount</th>
+          <th>Total invested ($)</th>
+        </tr>
+      </thead>
+
+      <tbody id="assetsTableBody">
+      </tbody>
+    </table>
+
+    <!-- Search Popup modal -->
+    <div id="seach-modal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="search-modal-close">&times;</span>
+        <div class="inner-modal-content" id="inner-search-modal-content">
+          <form id="searchForm">
+            <input id="crypto-search-input" type="text" placeholder="Search..">
+            <button><i class="fa fa-search"></i></button>
+          </form>
+          <div id="cryptoList">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Popup modal -->
+    <div id="transaction-modal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="transaction-modal-close">&times;</span>
+        <div class="inner-modal-content" id="inner-transaction-modal-content">
+          <h2 id="transactionModalTitle"></h2>
+          <form id="transactionForm">
+            <input id="transactionDate" type="date">
+            <input id="transactionAmount" type="number" step="any" placeholder="Amount bought">
+            <input id="transactionCost" type="number" step="any" placeholder="Total cost ($)">
+            <button id="addTransactionBtn">Add transaction</button>
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+
+    <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>
