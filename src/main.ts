@@ -1,39 +1,5 @@
-class CryptoCurrency {
-  private transactions: Transaction[];
-  // defining private/public inits the values, so no need to manually do this.id = id
-  constructor(public id: string, public symbol: string, public name: string) {
-    this.transactions = new Array<Transaction>();
-  }
-
-  addTransaction(transaction: Transaction) {
-    this.transactions.push(transaction);
-  }
-
-  // use uuid here?
-  removeTransaction(transaction: Transaction) {
-    this.transactions.splice(this.transactions.indexOf(transaction), 1);
-  }
-
-  get totalAmount(): number {
-    return this.transactions.reduce((sum, current) => sum + current.amount, 0);
-  }
-
-  get totalCost(): number {
-    return this.transactions.reduce((sum, current) => sum + current.cost, 0);
-  }
-
-  get averageBuyPrice(): number {
-    return this.totalCost / this.totalAmount;
-  }
-}
-
-class Transaction {
-  constructor(private date: Date, public amount: number, public cost: number) {}
-
-  get averageBuyPrice(): number {
-    return this.cost / this.amount;
-  }
-}
+import { CryptoCurrency } from "./cryptocurrency";
+import { Transaction } from "./Transaction";
 
 const cryptocurrencies = new Array<CryptoCurrency>();
 const addCryptoBtn = document.querySelector<HTMLButtonElement>("#addCrypto");
@@ -137,68 +103,64 @@ function startTransaction(coin: any) {
   transactionModal.style.display = "block";
   closeSearchModal();
 
-  const addTransactionBtn = document.getElementById("addTransactionBtn");
+  const addTransactionBtn = document.getElementById("addTransactionBtn")!;
   const transactionTitle = document.getElementById("transactionModalTitle")!;
   transactionTitle.textContent = `New transaction for ${coin.name}`;
 
-  addTransactionBtn?.addEventListener(
-    "click",
-    (e) => {
-      e.preventDefault();
-      // Create the cryptocurrency object
-      // Add the transaction
-      let resultCrypto = cryptocurrencies.find((c) => c.id === coin.id);
+  addTransactionBtn.onclick = (e) => {
+    e.preventDefault();
+    // Create the cryptocurrency object
+    // Add the transaction
+    let resultCrypto = cryptocurrencies.find((c) => c.id === coin.id);
 
-      // If crypto was already present, add new transaction
-      if (resultCrypto) {
-        console.log("am i here");
-        resultCrypto.addTransaction(
-          new Transaction(
-            new Date(
-              (<HTMLInputElement>(
-                document.getElementById("transactionDate")
-              )).value
-            ),
-            Number(
-              (<HTMLInputElement>document.getElementById("transactionAmount"))
-                .value
-            ),
-            Number(
-              (<HTMLInputElement>document.getElementById("transactionCost"))
-                .value
-            )
+    // If crypto was already present, add new transaction
+    if (resultCrypto) {
+      resultCrypto.addTransaction(
+        new Transaction(
+          new Date(
+            (<HTMLInputElement>document.getElementById("transactionDate")).value
+          ),
+          Number(
+            (<HTMLInputElement>document.getElementById("transactionAmount"))
+              .value
+          ),
+          Number(
+            (<HTMLInputElement>document.getElementById("transactionCost")).value
           )
-        );
-      } else {
-        // If crypto was not yet present, create it and add new transaction
-        let newCrypto = new CryptoCurrency(coin.id, coin.symbol, coin.name);
-        cryptocurrencies.push(newCrypto);
+        )
+      );
+    } else {
+      // If crypto was not yet present, create it and add new transaction
+      let newCrypto = new CryptoCurrency(coin.id, coin.symbol, coin.name);
+      cryptocurrencies.push(newCrypto);
 
-        newCrypto.addTransaction(
-          new Transaction(
-            new Date(
-              (<HTMLInputElement>(
-                document.getElementById("transactionDate")
-              )).value
-            ),
-            Number(
-              (<HTMLInputElement>document.getElementById("transactionAmount"))
-                .value
-            ),
-            Number(
-              (<HTMLInputElement>document.getElementById("transactionCost"))
-                .value
-            )
+      newCrypto.addTransaction(
+        new Transaction(
+          new Date(
+            (<HTMLInputElement>document.getElementById("transactionDate")).value
+          ),
+          Number(
+            (<HTMLInputElement>document.getElementById("transactionAmount"))
+              .value
+          ),
+          Number(
+            (<HTMLInputElement>document.getElementById("transactionCost")).value
           )
-        );
-      }
+        )
+      );
+    }
 
-      // Close the transaction modal when done
-      closeTransactionModal();
-      populateAssetsTable();
-    },
-    { once: true }
-  );
+    // Close the transaction modal when done
+    closeTransactionModal();
+    populateAssetsTable();
+  };
+  // addTransactionBtn?.addEventListener(
+  //   "click",
+  //   (e) => {
+
+  //   },
+  //   { once: true }
+  // );
 }
 
 function populateAssetsTable() {
