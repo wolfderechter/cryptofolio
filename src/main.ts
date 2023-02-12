@@ -1,8 +1,9 @@
-import { CryptoCurrency } from "./cryptocurrency";
+import { Coin, CryptoCurrency } from "./cryptocurrency";
+import { saveData, loadData } from "./data/localstorage";
 import { Transaction } from "./Transaction";
 
-const cryptocurrencies: CryptoCurrency[] = [];
-loadData();
+const COINGECKO_API = "https://api.coingecko.com/api/v3/";
+export const cryptocurrencies: CryptoCurrency[] = [];
 const addCryptoBtn = document.querySelector<HTMLButtonElement>("#addCrypto");
 const searchModal = document.getElementById("seach-modal")!;
 const transactionModal = document.getElementById("transaction-modal")!;
@@ -13,6 +14,7 @@ const transactionModalCloseBtn = document.getElementById(
 const searchForm = document.querySelector<HTMLFormElement>("#searchForm");
 const transactionForm =
   document.querySelector<HTMLFormElement>("#transactionForm");
+loadData();
 
 // adding a crypto opens the modal with a search bar
 addCryptoBtn?.addEventListener("click", (e) => {
@@ -79,7 +81,12 @@ function searchCrypto() {
       // When selecting a certain coin, clear the popup and continue with the coin selected
       coinDiv.onclick = function (e) {
         e.preventDefault();
-        startTransaction(data[c]);
+        closeSearchModal();
+        startTransaction({
+          id: data[c].id,
+          symbol: data[c].symbol,
+          name: data[c].name,
+        });
       };
       cryptoListDiv.appendChild(coinDiv);
     }
@@ -88,9 +95,8 @@ function searchCrypto() {
 
 async function getData(input: string) {
   try {
-    const res = await fetch(
-      `https://api.coingecko.com/api/v3/search?query=${input}`
-    );
+    const query = `search?query=${input}`;
+    const res = await fetch(COINGECKO_API + query);
     const jsonResult = await res.json();
 
     return jsonResult["coins"];
@@ -99,14 +105,13 @@ async function getData(input: string) {
   }
 }
 
-function startTransaction(coin: any) {
+function startTransaction(coin: Coin) {
   // Switch the modal popup to the transaction popup
   transactionModal.style.display = "block";
-  closeSearchModal();
 
   const addTransactionBtn = document.getElementById("addTransactionBtn")!;
   const transactionTitle = document.getElementById("transactionModalTitle")!;
-  transactionTitle.textContent = `New transaction for ${coin.name}`;
+  transactionTitle.textContent = coin.name;
 
   addTransactionBtn.onclick = (e) => {
     e.preventDefault();
@@ -150,7 +155,7 @@ function startTransaction(coin: any) {
         )
       );
     }
-    // Save
+    // Persist the data
     saveData();
 
     // Close the transaction modal when done
@@ -164,37 +169,34 @@ function populateAssetsTable() {
   tableBody.innerHTML = "";
 
   cryptocurrencies.forEach((asset) => {
+    // startTransaction({ id: asset.id, symbol: asset.symbol, name: asset.name });
     let tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${asset.symbol}</td>
       <td>${asset.averageBuyPrice}</td>
       <td>${asset.totalAmount}</td>
       <td>${asset.totalCost}</td>
+      <td>
+          <button id="assetsTableAdd" class="fa fa-plus"></button>
+          <button id="assetsTableManage" class="fa fa-pencil-square-o"></button>
+      </td>
     `;
+    const addButton = tr.querySelector<HTMLButtonElement>("#assetsTableAdd");
+    if (addButton) {
+      addButton.onclick = () =>
+        startTransaction({
+          id: asset.id,
+          symbol: asset.symbol,
+          name: asset.name,
+        });
+    }
+
+    // _ = tr.click(startTransaction({
+    //   id: asset.id,
+    //   symbol: asset.symbol,
+    //   name: asset.name,
+    // });
     tableBody?.appendChild(tr);
   });
 }
 populateAssetsTable();
-
-function saveData() {
-  localStorage.setItem("assets", JSON.stringify(cryptocurrencies));
-}
-
-function loadData() {
-  const cryptos = localStorage.getItem("assets");
-  if (cryptos == null) return;
-
-  // Recreate the objects from JSON
-  console.log(JSON.parse(cryptos));
-  JSON.parse(cryptos).forEach((crypto: any) => {
-    let newCrypto = new CryptoCurrency(crypto.id, crypto.symbol, crypto.name);
-
-    crypto.transactions.forEach((transaction: any) => {
-      newCrypto.addTransaction(
-        new Transaction(transaction.date, transaction.amount, transaction.cost)
-      );
-    });
-
-    cryptocurrencies.push(newCrypto);
-  });
-}

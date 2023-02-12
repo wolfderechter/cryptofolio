@@ -28,3 +28,9 @@ export class CryptoCurrency {
     return this.totalCost / this.totalAmount;
   }
 }
+
+export interface Coin {
+  id: string;
+  name: string;
+  symbol: string;
+}
