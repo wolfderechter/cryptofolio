@@ -111,6 +111,13 @@ function startTransaction(coin: Coin) {
 
   const addTransactionBtn = document.getElementById("addTransactionBtn")!;
   const transactionTitle = document.getElementById("transactionModalTitle")!;
+
+  // Set the date input to today by default
+  const transactionDate = <HTMLInputElement>(
+    document.getElementById("transactionDate")
+  );
+  transactionDate.valueAsDate = new Date();
+
   transactionTitle.textContent = coin.name;
 
   addTransactionBtn.onclick = (e) => {
@@ -123,9 +130,7 @@ function startTransaction(coin: Coin) {
     if (resultCrypto) {
       resultCrypto.addTransaction(
         new Transaction(
-          new Date(
-            (<HTMLInputElement>document.getElementById("transactionDate")).value
-          ),
+          new Date(transactionDate.value),
           Number(
             (<HTMLInputElement>document.getElementById("transactionAmount"))
               .value
