@@ -1,7 +1,8 @@
 import { CryptoCurrency } from "./cryptocurrency";
 import { Transaction } from "./Transaction";
 
-const cryptocurrencies = new Array<CryptoCurrency>();
+const cryptocurrencies: CryptoCurrency[] = [];
+loadData();
 const addCryptoBtn = document.querySelector<HTMLButtonElement>("#addCrypto");
 const searchModal = document.getElementById("seach-modal")!;
 const transactionModal = document.getElementById("transaction-modal")!;
@@ -149,18 +150,13 @@ function startTransaction(coin: any) {
         )
       );
     }
+    // Save
+    saveData();
 
     // Close the transaction modal when done
     closeTransactionModal();
     populateAssetsTable();
   };
-  // addTransactionBtn?.addEventListener(
-  //   "click",
-  //   (e) => {
-
-  //   },
-  //   { once: true }
-  // );
 }
 
 function populateAssetsTable() {
@@ -171,7 +167,7 @@ function populateAssetsTable() {
     let tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${asset.symbol}</td>
-      <td>${asset.averageBuyPrice.toFixed(2)}</td>
+      <td>${asset.averageBuyPrice}</td>
       <td>${asset.totalAmount}</td>
       <td>${asset.totalCost}</td>
     `;
@@ -179,3 +175,26 @@ function populateAssetsTable() {
   });
 }
 populateAssetsTable();
+
+function saveData() {
+  localStorage.setItem("assets", JSON.stringify(cryptocurrencies));
+}
+
+function loadData() {
+  const cryptos = localStorage.getItem("assets");
+  if (cryptos == null) return;
+
+  // Recreate the objects from JSON
+  console.log(JSON.parse(cryptos));
+  JSON.parse(cryptos).forEach((crypto: any) => {
+    let newCrypto = new CryptoCurrency(crypto.id, crypto.symbol, crypto.name);
+
+    crypto.transactions.forEach((transaction: any) => {
+      newCrypto.addTransaction(
+        new Transaction(transaction.date, transaction.amount, transaction.cost)
+      );
+    });
+
+    cryptocurrencies.push(newCrypto);
+  });
+}
