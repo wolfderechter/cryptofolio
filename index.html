@@ -31,6 +31,20 @@
       </tbody>
     </table>
 
+    <div class="charts">
+      <div class="chart pieChart">
+        <h2>Total invested</h2>
+        <canvas id="pieChart1"></canvas>
+      </div>
+
+      <div class="chart pieChart">
+        <h2>Current value</h2>
+        <canvas id="pieChart2"></canvas>
+      </div>
+    </div>
+
+
+
     <!-- Search Popup modal -->
     <div id="seach-modal" class="modal">
       <div class="modal-content">
@@ -65,6 +79,8 @@
 
 
     <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="/src/charts/PieChart.ts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 
 </html>

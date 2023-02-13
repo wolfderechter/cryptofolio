@@ -202,6 +202,20 @@ input {
   margin: 10px;
 }
 
+.table {
+  display: inline;
+}
+
 .table * {
   padding: 10px;
+}
+
+.chart {
+  width: 400px;
+  height: 400px;
+  block-size: fit-content;
+}
+
+.charts {
+  display: flex;
 }
