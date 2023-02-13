@@ -1,8 +1,9 @@
+import { renderCharts } from "./charts/PieChart";
 import { Coin, CryptoCurrency } from "./cryptocurrency";
+import { getCoins } from "./data/Coingecko";
 import { saveData, loadData } from "./data/localstorage";
 import { Transaction } from "./Transaction";
 
-const COINGECKO_API = "https://api.coingecko.com/api/v3/";
 export const cryptocurrencies: CryptoCurrency[] = [];
 const addCryptoBtn = document.querySelector<HTMLButtonElement>("#addCrypto");
 const searchModal = document.getElementById("seach-modal")!;
@@ -68,7 +69,7 @@ function searchCrypto() {
 
   // Do a search request to coingecko, passing the searchterm
   // take the coins section returned and display it
-  getData(input.value).then((data) => {
+  getCoins(input.value).then((data) => {
     for (let c in data) {
       let coinDiv = document.createElement("div");
       let thumbnail = document.createElement("img");
@@ -91,18 +92,6 @@ function searchCrypto() {
       cryptoListDiv.appendChild(coinDiv);
     }
   });
-}
-
-async function getData(input: string) {
-  try {
-    const query = `search?query=${input}`;
-    const res = await fetch(COINGECKO_API + query);
-    const jsonResult = await res.json();
-
-    return jsonResult["coins"];
-  } catch (error) {
-    console.log(error);
-  }
 }
 
 function startTransaction(coin: Coin) {
@@ -166,6 +155,7 @@ function startTransaction(coin: Coin) {
     // Close the transaction modal when done
     closeTransactionModal();
     populateAssetsTable();
+    renderCharts();
   };
 }
 
@@ -205,3 +195,4 @@ function populateAssetsTable() {
   });
 }
 populateAssetsTable();
+renderCharts();
