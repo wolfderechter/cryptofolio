@@ -16,6 +16,20 @@ export class CryptoCurrency {
     this.transactions.splice(this.transactions.indexOf(transaction), 1);
   }
 
+  /* 
+    Loop through the transactions, if the date of the transaction is smaller than or equal to the given date
+    we include the transaction amount in the total sum
+    
+    if the date of transaction is after the given date we don't include the transaction amount
+   */
+  calculateCoinAmountOnDate(date: Date) {
+    return this.transactions.reduce((sum, current) => {
+      if (current.date <= date) return sum + current.amount;
+
+      return sum;
+    }, 0);
+  }
+
   get totalAmount(): number {
     return this.transactions.reduce((sum, current) => sum + current.amount, 0);
   }

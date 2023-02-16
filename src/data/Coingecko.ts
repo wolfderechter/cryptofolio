@@ -8,11 +8,11 @@ export async function getCoins(input: string) {
 
     return jsonResult["coins"];
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }
 
-export async function getCoinPrices(coins: string[]): Promise<string[]> {
+export async function getCoinsPrices(coins: string[]): Promise<string[]> {
   try {
     let query = `simple/price?ids=`;
     for (let i = 0; i < coins.length; i++) {
@@ -27,13 +27,43 @@ export async function getCoinPrices(coins: string[]): Promise<string[]> {
     // Add the currency in which it should be returned (usd)
     query += "&vs_currencies=usd";
 
-    console.log(COINGECKO_API + query);
     const res = await fetch(COINGECKO_API + query);
     const jsonResult = await res.json();
 
     return jsonResult;
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    return [];
+  }
+}
+
+/* 
+    Get historical market data include price, market cap, and 24h volume (granularity auto)
+
+    Data granularity is automatic (cannot be adjusted)
+    1 day from current time = 5 minute interval data
+    1 - 90 days from current time = hourly data
+    above 90 days from current time = daily data (00:00 UTC)
+
+    example: 'https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=10'
+
+    
+ */
+export async function getCoinChart(
+  coin: string,
+  days: number
+): Promise<string[]> {
+  try {
+    let query =
+      COINGECKO_API + `coins/${coin}/market_chart?vs_currency=usd&days=${days}`;
+
+    const res = await fetch(query);
+    const jsonResult = await res.json();
+
+    // api supports 'prices' 'market_caps' and 'total_volumes' but we only need prices currently
+    return jsonResult["prices"];
+  } catch (error) {
+    console.error(error);
     return [];
   }
 }

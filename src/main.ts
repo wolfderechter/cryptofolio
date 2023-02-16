@@ -1,4 +1,4 @@
-import { renderCharts } from "./charts/PieChart";
+import { renderCharts } from "./charts/main";
 import { Coin, CryptoCurrency } from "./cryptocurrency";
 import { getCoins } from "./data/Coingecko";
 import { saveData, loadData } from "./data/localstorage";

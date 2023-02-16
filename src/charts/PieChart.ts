@@ -1,6 +1,6 @@
 import { cryptocurrencies } from "../main";
 import { Chart } from "chart.js/auto";
-import { getCoinPrices } from "../data/Coingecko";
+import { getCoinsPrices } from "../data/Coingecko";
 
 let canvas1 = <HTMLCanvasElement>document.getElementById("pieChart1");
 let pieChart1: Chart<"pie", number[], string>;
@@ -17,7 +17,7 @@ let data2: number[] = [];
     First pie chart that displays the initial values 
 
 */
-function preparePieChart1() {
+export function preparePieChart1() {
   // Reset the existing chart
   pieChart1?.destroy();
   labels1 = [];
@@ -51,13 +51,13 @@ function preparePieChart1() {
 
 */
 let coinPrices: string[] = [];
-async function preparePieChart2() {
+export async function preparePieChart2() {
   // Reset the existing chart
   pieChart2?.destroy();
   labels2 = [];
   data2 = [];
 
-  coinPrices = await getCoinPrices(cryptocurrencies.map((c) => c.id));
+  coinPrices = await getCoinsPrices(cryptocurrencies.map((c) => c.id));
   cryptocurrencies.forEach((crypto) => {
     labels2.push(crypto.symbol);
     data2.push(parseFloat(coinPrices[crypto.id].usd) * crypto.totalAmount);
@@ -79,8 +79,3 @@ async function preparePieChart2() {
   });
 }
 // preparePieChart2();
-
-export function renderCharts() {
-  preparePieChart1();
-  preparePieChart2();
-}
