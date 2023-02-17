@@ -5,19 +5,25 @@ import "chartjs-adapter-date-fns";
 // import { enUS } from "date-fns/locale";
 
 let canvas1 = <HTMLCanvasElement>document.getElementById("lineChart1");
-let lineChart1;
+let lineChart1: Chart<"line", { x: Date; y: number }[], unknown>;
 let data1: { x: Date; y: number }[] = Array(100).fill({ x: null, y: 0 });
 let allData: Map<string, any[]> = new Map();
 let coinChart: string[] = [];
 let dates: Date[] = [];
-
 /* 
     The portfolio line chart consist of the value of the portfolio during the last x amount of days
 
     Each day it should show the portfolio value at that time by combining all the amount of crypto held * price of that crypto during that day
 */
 export async function prepareLineChart1() {
+  // Reset the chart
+  lineChart1?.destroy();
+  data1 = [];
+  data1 = Array(100).fill({ x: null, y: 0 });
+
   let datesOnce = true;
+  allData.set("Net invested", []);
+  console.log(cryptocurrencies);
   for (const crypto of cryptocurrencies) {
     /*
       By default prepare the chart for the last 100 days
@@ -42,13 +48,28 @@ export async function prepareLineChart1() {
 
     for (let index = 0; index < coinChart.length; index++) {
       // calculate how much of a coin I have on a certain date
-      let coinAmount = crypto.calculateCoinAmountOnDate(dates[index]);
-      let coinTotal = coinAmount * prices[index];
+      let amount = crypto.calculateAmountOnDate(dates[index]);
+      let coinTotal = amount * prices[index];
 
       data1[index] = { x: dates[index], y: data1[index]?.y + coinTotal };
       // save per coin the total each day in the allData array
       if (!allData.has(crypto.id)) allData.set(crypto.id, []);
       allData.get(crypto.id)?.push(coinTotal);
+
+      /* 
+        1. calculate the total cost per coin by a certain date
+        2. if a cost is already present for that day, add it up. 
+           Else push a new cost
+      */
+      let cost = crypto.calculateCostOnDate(dates[index]);
+      let totalCost = allData.get("Net invested");
+      if (totalCost && totalCost[index]) {
+        totalCost[index] += cost;
+        allData.set("Net invested", totalCost);
+        console.log("totalCost[index], cost", totalCost[index], cost);
+      } else {
+        allData.get("Net invested")?.push(cost);
+      }
     }
   }
 
@@ -59,6 +80,7 @@ export async function prepareLineChart1() {
         {
           data: data1,
           label: "Total Value",
+          pointRadius: 0,
         },
       ],
     },
@@ -108,7 +130,7 @@ export async function prepareLineChart1() {
     // Generate a random color
     let color =
       "#" + (((1 << 24) * Math.random()) | 0).toString(16).padStart(6, "0");
-    console.log(color);
+
     let index = 0;
     const newDataSet = {
       data: value.map((d) => {
@@ -118,6 +140,7 @@ export async function prepareLineChart1() {
       backgroundColor: color,
       borderColor: color,
       hidden: true, //disable by default to keep it clean
+      pointRadius: 0,
     };
 
     lineChart1.data.datasets.push(newDataSet);

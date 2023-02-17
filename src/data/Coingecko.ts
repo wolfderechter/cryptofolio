@@ -56,7 +56,9 @@ export async function getCoinChart(
   try {
     let query =
       COINGECKO_API +
-      `coins/${coin}/market_chart?vs_currency=usd&days=${days}&interval=daily`;
+      `coins/${coin}/market_chart?vs_currency=usd&days=${
+        days - 1
+      }&interval=daily`;
     console.log(query);
     const res = await fetch(query);
     const jsonResult = await res.json();

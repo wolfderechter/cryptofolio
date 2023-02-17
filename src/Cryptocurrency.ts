@@ -22,9 +22,16 @@ export class CryptoCurrency {
     
     if the date of transaction is after the given date we don't include the transaction amount
    */
-  calculateCoinAmountOnDate(date: Date) {
+  calculateAmountOnDate(date: Date) {
     return this.transactions.reduce((sum, current) => {
       if (current.date <= date) return sum + current.amount;
+
+      return sum;
+    }, 0);
+  }
+  calculateCostOnDate(date: Date) {
+    return this.transactions.reduce((sum, current) => {
+      if (current.date <= date) return sum + current.cost;
 
       return sum;
     }, 0);
