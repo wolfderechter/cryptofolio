@@ -214,8 +214,16 @@ input {
   width: 400px;
   height: 400px;
   block-size: fit-content;
+  margin: 25px;
 }
 
 .charts {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.mainChart {
+  width: 100%;
+  margin: 0 auto;
 }

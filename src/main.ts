@@ -1,8 +1,8 @@
-import { renderCharts } from "./charts/main";
 import { Coin, CryptoCurrency } from "./cryptocurrency";
-import { getCoins } from "./data/Coingecko";
 import { saveData, loadData } from "./data/localstorage";
+import { getCoins } from "./data/Coingecko";
 import { Transaction } from "./Transaction";
+import { renderCharts } from "./charts/Init";
 
 export const cryptocurrencies: CryptoCurrency[] = [];
 const addCryptoBtn = document.querySelector<HTMLButtonElement>("#addCrypto");
@@ -168,7 +168,7 @@ function populateAssetsTable() {
     let tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${asset.symbol}</td>
-      <td>${asset.averageBuyPrice}</td>
+      <td>${asset.averageBuyPrice.toFixed(2)}</td>
       <td>${asset.totalAmount}</td>
       <td>${asset.totalCost}</td>
       <td>

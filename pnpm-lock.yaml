@@ -2,11 +2,15 @@ lockfileVersion: 5.4
 
 specifiers:
   chart.js: ^4.2.1
+  chartjs-adapter-date-fns: ^3.0.0
+  date-fns: ^2.29.3
   typescript: ^4.9.3
   vite: ^4.1.0
 
 dependencies:
   chart.js: 4.2.1
+  chartjs-adapter-date-fns: 3.0.0_rid3rx6orfiwps7kg2r43n6mvu
+  date-fns: 2.29.3
 
 devDependencies:
   typescript: 4.9.5
@@ -221,6 +225,21 @@ packages:
     engines: {pnpm: ^7.0.0}
     dependencies:
       '@kurkle/color': 0.3.2
+    dev: false
+
+  /chartjs-adapter-date-fns/3.0.0_rid3rx6orfiwps7kg2r43n6mvu:
+    resolution: {integrity: sha512-Rs3iEB3Q5pJ973J93OBTpnP7qoGwvq3nUnoMdtxO+9aoJof7UFcRbWcIDteXuYd1fgAvct/32T9qaLyLuZVwCg==}
+    peerDependencies:
+      chart.js: '>=2.8.0'
+      date-fns: '>=2.0.0'
+    dependencies:
+      chart.js: 4.2.1
+      date-fns: 2.29.3
+    dev: false
+
+  /date-fns/2.29.3:
+    resolution: {integrity: sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==}
+    engines: {node: '>=0.11'}
     dev: false
 
   /esbuild/0.16.17:
