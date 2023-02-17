@@ -167,10 +167,10 @@ function populateAssetsTable() {
     // startTransaction({ id: asset.id, symbol: asset.symbol, name: asset.name });
     let tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${asset.symbol}</td>
-      <td>${asset.averageBuyPrice.toFixed(2)}</td>
-      <td>${asset.totalAmount}</td>
-      <td>${asset.totalCost}</td>
+      <td>${asset.name}</td>
+      <td>$${asset.averageBuyPrice.toFixed(2)}</td>
+      <td>${asset.totalAmount} ${asset.symbol}</td>
+      <td>$${asset.totalCost}</td>
       <td>
           <button id="assetsTableAdd" class="fa fa-plus"></button>
           <button id="assetsTableManage" class="fa fa-pencil-square-o"></button>
