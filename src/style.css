@@ -5,7 +5,8 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* background-color: #242424; */
+  background-color: #1c1e1f;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -202,6 +203,27 @@ input {
   margin: 10px;
 }
 
+.assetsTable {
+  background-color: #202224;
+  border-radius: 20px;
+  padding: 10px 20px;
+
+  width: fit-content;
+
+  position: relative;
+}
+
+#addCrypto {
+  position: absolute;
+  top: 25px;
+  right: 30px;
+}
+
+#assetsTableTitle {
+  text-align: left;
+  margin-left: 10px;
+}
+
 .table {
   display: inline;
 }
@@ -210,20 +232,33 @@ input {
   padding: 10px;
 }
 
-.chart {
-  width: 400px;
-  height: 400px;
-  block-size: fit-content;
-  margin: 25px;
+.summary {
+  background-color: #202224;
+  border-radius: 20px;
+
+  width: 19%;
+  justify-content: center;
+  align-content: center;
 }
 
-.charts {
+.chart {
+  width: 49%;
+  height: 400px;
+  block-size: fit-content;
+
+  background-color: #202224;
+  border-radius: 20px;
+}
+
+.row {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
 }
 
 .mainChart {
-  width: 100%;
-  margin: 0 auto;
+  width: 95%;
+  margin: 2% auto;
+  padding: 10px 20px;
+
 }

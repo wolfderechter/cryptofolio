@@ -81,6 +81,7 @@ export async function prepareLineChart1() {
           data: data1,
           label: "Total Value",
           pointRadius: 0,
+          fill: true,
         },
       ],
     },
@@ -123,7 +124,17 @@ export async function prepareLineChart1() {
           },
         },
       },
+      interaction: {
+        axis: "x",
+        mode: "nearest",
+        intersect: false,
+      },
     },
+    //   customCanvasBackgroundColor: {
+    //     color: "#202224",
+    //   },
+    // },
+    // plugins: [plugin],
   });
 
   for (let [key, value] of allData) {
@@ -147,3 +158,20 @@ export async function prepareLineChart1() {
     lineChart1.update();
   }
 }
+
+// Note: changes to the plugin code is not reflected to the chart, because the plugin is loaded at chart construction time and editor changes only trigger an chart.update().
+// const plugin = {
+//   id: "customCanvasBackgroundColor",
+//   beforeDraw: (
+//     chart: { width?: any; height?: any; ctx?: any },
+//     args: any,
+//     options: { color: string }
+//   ) => {
+//     const { ctx } = chart;
+//     ctx.save();
+//     ctx.globalCompositeOperation = "destination-over";
+//     ctx.fillStyle = options.color || "#99ffff";
+//     ctx.fillRect(0, 0, chart.width, chart.height);
+//     ctx.restore();
+//   },
+// };

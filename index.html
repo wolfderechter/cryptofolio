@@ -12,31 +12,42 @@
 
 <body>
   <div id="app">
-    <button id="addCrypto">Add new crypto</button>
 
     <!-- Table of holdings -->
-    <h2>My assets</h2>
-    <table class="table" id="assetsTable">
-      <thead>
-        <tr>
-          <th>Asset</th>
-          <th>Average buy price</th>
-          <th>Amount</th>
-          <th>Total invested</th>
-          <th></th>
-        </tr>
-      </thead>
+    <div class="row">
+      <div class="assetsTable">
+        <h2 id="assetsTableTitle">My assets</h2>
+        <button id="addCrypto">Add new crypto</button>
+        <table class="table" id="assetsTable">
+          <thead>
+            <tr>
+              <th>Asset</th>
+              <th>Average buy price</th>
+              <th>Amount</th>
+              <th>Total invested</th>
+              <th>Options</th>
+            </tr>
+          </thead>
+          <tbody id="assetsTableBody">
+          </tbody>
+        </table>
+      </div>
 
-      <tbody id="assetsTableBody">
-      </tbody>
-    </table>
+      <div class="summary">
+        <h3>Total value</h3>
+        <p>$100</p>
+        <h3>Total gain</h3>
+        <p>+10%</p>
+      </div>
+    </div>
+
 
     <div class="chart mainChart lineChart">
       <h2>Total value over time</h2>
       <canvas id="lineChart1"></canvas>
     </div>
 
-    <div class="charts">
+    <div class="row">
       <div class="chart pieChart">
         <h2>Total invested</h2>
         <canvas id="pieChart1"></canvas>
