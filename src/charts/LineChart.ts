@@ -85,7 +85,7 @@ export async function prepareLineChart1() {
           label: "Total Value",
           pointRadius: 0,
           fill: true,
-          order: 10,
+          order: 1,
           backgroundColor: totalValueGradient,
           borderColor: colors.purple.default,
           borderWidth: 1,
@@ -145,7 +145,6 @@ export async function prepareLineChart1() {
     // plugins: [plugin],
   });
 
-  let orderInd = 5;
   for (let [key, value] of allData) {
     // Generate a random color
     let color =
@@ -161,7 +160,7 @@ export async function prepareLineChart1() {
       borderColor: color,
       hidden: true, //disable by default to keep it clean
       pointRadius: 0,
-      order: orderInd++,
+      order: 0,
       borderWidth: 1,
     };
 
