@@ -4,7 +4,7 @@ import { getCoinChart } from "../data/Coingecko";
 import "chartjs-adapter-date-fns";
 // import { enUS } from "date-fns/locale";
 
-let canvas1 = <HTMLCanvasElement>document.getElementById("lineChart1");
+let canvas1 = <HTMLCanvasElement>document.getElementById("lineChart1")!;
 let lineChart1: Chart<"line", { x: Date; y: number }[], unknown>;
 let data1: { x: Date; y: number }[] = Array(100).fill({ x: null, y: 0 });
 let allData: Map<string, any[]> = new Map();
@@ -66,8 +66,8 @@ export async function prepareLineChart1() {
            Else push a new cost
       */
       let cost = crypto.calculateCostOnDate(dates[index]);
-      let totalCost = allData.get("Net invested");
-      if (totalCost && totalCost[index]) {
+      let totalCost = allData.get("Net invested")!;
+      if (totalCost && totalCost[index] != undefined) {
         totalCost[index] += cost;
         allData.set("Net invested", totalCost);
       } else {
@@ -85,6 +85,11 @@ export async function prepareLineChart1() {
           label: "Total Value",
           pointRadius: 0,
           fill: true,
+          order: 10,
+          backgroundColor: totalValueGradient,
+          borderColor: colors.purple.default,
+          borderWidth: 1,
+
         },
       ],
     },
@@ -140,6 +145,7 @@ export async function prepareLineChart1() {
     // plugins: [plugin],
   });
 
+  let orderInd = 5;
   for (let [key, value] of allData) {
     // Generate a random color
     let color =
@@ -155,6 +161,8 @@ export async function prepareLineChart1() {
       borderColor: color,
       hidden: true, //disable by default to keep it clean
       pointRadius: 0,
+      order: orderInd++,
+      borderWidth: 1,
     };
 
     lineChart1.data.datasets.push(newDataSet);
@@ -166,23 +174,34 @@ export async function prepareLineChart1() {
   const netInvestedArray = allData.get("Net invested");
   const netInvested = netInvestedArray?.at(netInvestedArray.length - 1);
   const percentage = ((totalValue - netInvested) / netInvested) * 100;
-  summaryTotalValue.textContent = `$${totalValue.toFixed(2)}`;
-  summaryTotalPercentage.textContent = `${percentage.toFixed(2)}%`;
+  summaryTotalValue.textContent = `$${totalValue ? totalValue.toFixed(2) : ''}`;
+  summaryTotalPercentage.textContent = `${percentage ? percentage.toFixed(2) : ''}%`;
+  if(totalValue) summaryTotalValue.style.opacity = '0.5';
+  if(totalValue) summaryTotalPercentage.style.opacity = '0.5';
+  console.log(lineChart1.data.datasets);
 }
 
-// Note: changes to the plugin code is not reflected to the chart, because the plugin is loaded at chart construction time and editor changes only trigger an chart.update().
-// const plugin = {
-//   id: "customCanvasBackgroundColor",
-//   beforeDraw: (
-//     chart: { width?: any; height?: any; ctx?: any },
-//     args: any,
-//     options: { color: string }
-//   ) => {
-//     const { ctx } = chart;
-//     ctx.save();
-//     ctx.globalCompositeOperation = "destination-over";
-//     ctx.fillStyle = options.color || "#99ffff";
-//     ctx.fillRect(0, 0, chart.width, chart.height);
-//     ctx.restore();
-//   },
-// };
+/*
+
+Colors
+
+*/
+
+const colors = {
+  purple: {
+    default: "rgba(149, 76, 233, 1)",
+    half: "rgba(149, 76, 233, 0.5)",
+    quarter: "rgba(149, 76, 233, 0.25)",
+    zero: "rgba(149, 76, 233, 0.05)"
+  },
+  indigo: {
+    default: "rgba(80, 102, 120, 1)",
+    quarter: "rgba(80, 102, 120, 0.25)"
+  }
+};
+
+const totalValueGradient = canvas1.getContext("2d")?.createLinearGradient(0, 25, 0, 300)!;
+totalValueGradient.addColorStop(0, colors.purple.half);
+totalValueGradient.addColorStop(0.5, colors.purple.quarter);
+totalValueGradient.addColorStop(0., colors.purple.quarter);
+totalValueGradient.addColorStop(1, colors.purple.zero);
