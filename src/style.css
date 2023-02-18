@@ -205,11 +205,9 @@ input {
   border-radius: 20px;
   padding: 10px 20px;
 
-  width: fit-content;
+  width: max-content;
 
   position: relative;
-
-  margin-right: 10px;
 }
 
 #addCrypto {
@@ -230,10 +228,10 @@ input {
 }
 
 .table * {
-  padding: 5px;
+  padding: 15px;
 }
 
-.summary {
+/* .summary {
   background-color: #202224;
   border-radius: 20px;
 
@@ -244,15 +242,31 @@ input {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+} */
+
+.summary {
+  position: absolute;
+  top: 50px;
+  left: 300px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #888;
+  border-radius: 8px;
+  padding: 10px;
 }
 
 .summary h3 {
   font-weight: 600;
   font-size: 18px;
+  margin: 0;
 }
 
 .summary span {
   opacity: 0.1;
+}
+
+.summary * {
+  padding: 0 10px;
 }
 
 .chart {
