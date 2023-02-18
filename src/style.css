@@ -104,7 +104,6 @@ button:focus-visible {
   }
 }
 
-
 /* The Modal (background) */
 .modal {
   display: none;
@@ -165,7 +164,6 @@ input {
   background-color: #1a1a1a;
   transition: border-color 0.25s;
   border-radius: 8px;
-
 }
 
 #inner-modal-content {
@@ -179,7 +177,6 @@ input {
   overflow: auto;
   width: 400px;
   height: 550px;
-
 }
 
 #cryptoList div {
@@ -217,13 +214,15 @@ input {
 
 #addCrypto {
   position: absolute;
-  top: 25px;
+  top: 50px;
   right: 30px;
 }
 
 #assetsTableTitle {
   text-align: left;
   margin-left: 10px;
+  font-size: 35px;
+  font-weight: 600;
 }
 
 .table {
@@ -231,7 +230,7 @@ input {
 }
 
 .table * {
-  padding: 10px;
+  padding: 5px;
 }
 
 .summary {
@@ -245,6 +244,15 @@ input {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+}
+
+.summary h3 {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.summary span {
+  opacity: 0.1;
 }
 
 .chart {
@@ -266,5 +274,4 @@ input {
   width: 95%;
   margin: 2% auto;
   padding: 10px 20px;
-
 }

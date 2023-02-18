@@ -1,6 +1,6 @@
 import { Coin, CryptoCurrency } from "./cryptocurrency";
 import { saveData, loadData } from "./data/localstorage";
-import { getCoins } from "./data/Coingecko";
+import { getCoins, getCoinsPrices } from "./data/Coingecko";
 import { Transaction } from "./Transaction";
 import { renderCharts } from "./charts/Init";
 
@@ -159,18 +159,24 @@ function startTransaction(coin: Coin) {
   };
 }
 
-function populateAssetsTable() {
+async function populateAssetsTable() {
   const tableBody = document.getElementById("assetsTableBody")!;
   tableBody.innerHTML = "";
 
+  const coinPrices = await getCoinsPrices(cryptocurrencies.map((c) => c.id));
+  
   cryptocurrencies.forEach((asset) => {
-    // startTransaction({ id: asset.id, symbol: asset.symbol, name: asset.name });
+    const cryptoValue = parseFloat(coinPrices[asset.id].usd) * asset.totalAmount;
+    const percentage = ((cryptoValue - asset.totalCost) / asset.totalCost) * 100;
+  
     let tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${asset.name}</td>
       <td>$${asset.averageBuyPrice.toFixed(2)}</td>
       <td>${asset.totalAmount} ${asset.symbol}</td>
       <td>$${asset.totalCost}</td>
+      <td>$${cryptoValue.toFixed(2)}</td>
+      <td>${percentage.toFixed(2)}%</td>
       <td>
           <button id="assetsTableAdd" class="fa fa-plus"></button>
           <button id="assetsTableManage" class="fa fa-pencil-square-o"></button>

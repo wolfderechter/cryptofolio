@@ -177,7 +177,6 @@ export async function prepareLineChart1() {
   summaryTotalPercentage.textContent = `${percentage ? percentage.toFixed(2) : ''}%`;
   if(totalValue) summaryTotalValue.style.opacity = '0.5';
   if(totalValue) summaryTotalPercentage.style.opacity = '0.5';
-  console.log(lineChart1.data.datasets);
 }
 
 /*
