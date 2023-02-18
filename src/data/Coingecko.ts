@@ -59,7 +59,6 @@ export async function getCoinChart(
       `coins/${coin}/market_chart?vs_currency=usd&days=${
         days - 1
       }&interval=daily`;
-    console.log(query);
     const res = await fetch(query);
     const jsonResult = await res.json();
 

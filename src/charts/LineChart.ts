@@ -10,6 +10,11 @@ let data1: { x: Date; y: number }[] = Array(100).fill({ x: null, y: 0 });
 let allData: Map<string, any[]> = new Map();
 let coinChart: string[] = [];
 let dates: Date[] = [];
+
+const summaryTotalValue = document.getElementById("summaryTotalValue")!;
+const summaryTotalPercentage = document.getElementById(
+  "summaryTotalPercentage"
+)!;
 /* 
     The portfolio line chart consist of the value of the portfolio during the last x amount of days
 
@@ -23,7 +28,6 @@ export async function prepareLineChart1() {
 
   let datesOnce = true;
   allData.set("Net invested", []);
-  console.log(cryptocurrencies);
   for (const crypto of cryptocurrencies) {
     /*
       By default prepare the chart for the last 100 days
@@ -66,7 +70,6 @@ export async function prepareLineChart1() {
       if (totalCost && totalCost[index]) {
         totalCost[index] += cost;
         allData.set("Net invested", totalCost);
-        console.log("totalCost[index], cost", totalCost[index], cost);
       } else {
         allData.get("Net invested")?.push(cost);
       }
@@ -157,6 +160,14 @@ export async function prepareLineChart1() {
     lineChart1.data.datasets.push(newDataSet);
     lineChart1.update();
   }
+
+  // Calculate total value and total percentage & fill in the Summary
+  const totalValue = data1[data1.length - 1].y;
+  const netInvestedArray = allData.get("Net invested");
+  const netInvested = netInvestedArray?.at(netInvestedArray.length - 1);
+  const percentage = ((totalValue - netInvested) / netInvested) * 100;
+  summaryTotalValue.textContent = `$${totalValue.toFixed(2)}`;
+  summaryTotalPercentage.textContent = `${percentage.toFixed(2)}%`;
 }
 
 // Note: changes to the plugin code is not reflected to the chart, because the plugin is loaded at chart construction time and editor changes only trigger an chart.update().

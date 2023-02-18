@@ -211,6 +211,8 @@ input {
   width: fit-content;
 
   position: relative;
+
+  margin-right: 10px;
 }
 
 #addCrypto {
@@ -236,9 +238,13 @@ input {
   background-color: #202224;
   border-radius: 20px;
 
-  width: 19%;
+  width: max-content;
   justify-content: center;
   align-content: center;
+
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 .chart {
