@@ -1,7 +1,7 @@
 import { Coin, CryptoCurrency } from "./cryptocurrency";
 import { saveData, loadData } from "./data/localstorage";
 import { getCoins, getCoinsPrices } from "./data/Coingecko";
-import { Transaction } from "./Transaction";
+import { Transaction, transactionType } from "./Transaction";
 import { renderCharts } from "./charts/Init";
 
 export const cryptocurrencies: CryptoCurrency[] = [];
@@ -119,6 +119,7 @@ function startTransaction(coin: Coin) {
     if (resultCrypto) {
       resultCrypto.addTransaction(
         new Transaction(
+          transactionType.Buy,
           new Date(transactionDate.value),
           Number(
             (<HTMLInputElement>document.getElementById("transactionAmount"))
@@ -136,6 +137,7 @@ function startTransaction(coin: Coin) {
 
       newCrypto.addTransaction(
         new Transaction(
+          transactionType.Buy,
           new Date(
             (<HTMLInputElement>document.getElementById("transactionDate")).value
           ),
@@ -164,15 +166,17 @@ async function populateAssetsTable() {
   tableBody.innerHTML = "";
 
   const coinPrices = await getCoinsPrices(cryptocurrencies.map((c) => c.id));
-  
+
   cryptocurrencies.forEach((asset) => {
-    const cryptoValue = parseFloat(coinPrices[asset.id].usd) * asset.totalAmount;
-    const percentage = ((cryptoValue - asset.totalCost) / asset.totalCost) * 100;
-  
+    const cryptoValue =
+      parseFloat(coinPrices[asset.id].usd) * asset.totalAmount;
+    const percentage =
+      ((cryptoValue - asset.totalCost) / asset.totalCost) * 100;
+
     let tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${asset.name}</td>
-      <td>$${asset.averageBuyPrice.toFixed(2)}</td>
+      <td>$${asset.averagePrice.toFixed(2)}</td>
       <td>${asset.totalAmount} ${asset.symbol}</td>
       <td>$${asset.totalCost}</td>
       <td>$${cryptoValue.toFixed(2)}</td>

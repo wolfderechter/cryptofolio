@@ -12,7 +12,9 @@ export class CryptoCurrency {
     this.symbol = symbol;
     this.name = name;
     this.transactions = new Array<Transaction>();
-    this.color = color ? color : "#" + (((1 << 24) * Math.random()) | 0).toString(16).padStart(6, "0");
+    this.color = color
+      ? color
+      : "#" + (((1 << 24) * Math.random()) | 0).toString(16).padStart(6, "0");
   }
 
   addTransaction(transaction: Transaction) {
@@ -53,7 +55,7 @@ export class CryptoCurrency {
     return this.transactions.reduce((sum, current) => sum + current.cost, 0);
   }
 
-  get averageBuyPrice(): number {
+  get averagePrice(): number {
     return this.totalCost / this.totalAmount;
   }
 }

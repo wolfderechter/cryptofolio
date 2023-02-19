@@ -17,6 +17,7 @@ export function loadData() {
     crypto.transactions.forEach((transaction: any) => {
       newCrypto.addTransaction(
         new Transaction(
+          transaction.type,
           new Date(transaction.date),
           transaction.amount,
           transaction.cost
