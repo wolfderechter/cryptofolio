@@ -177,9 +177,9 @@ async function populateAssetsTable() {
       <td>$${asset.totalCost}</td>
       <td>$${cryptoValue.toFixed(2)}</td>
       <td>${percentage.toFixed(2)}%</td>
-      <td>
-          <button id="assetsTableAdd" class="fa fa-plus"></button>
-          <button id="assetsTableManage" class="fa fa-pencil-square-o"></button>
+      <td class="assetsTableBtns">
+          <button id="assetsTableAdd" class="fa fa-plus assetsTableBtn"></button>
+          <button id="assetsTableManage" class="fa fa-pencil-square-o assetsTableBtn"></button>
       </td>
     `;
     const addButton = tr.querySelector<HTMLButtonElement>("#assetsTableAdd");

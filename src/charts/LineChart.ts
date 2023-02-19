@@ -10,6 +10,7 @@ let data1: { x: Date; y: number }[] = Array(100).fill({ x: null, y: 0 });
 let allData: Map<string, any[]> = new Map();
 let coinChart: string[] = [];
 let dates: Date[] = [];
+let netInvested: number[] = [];
 
 export let datasetColors: {id: string, color: string}[] = [];
 
@@ -27,9 +28,10 @@ export async function prepareLineChart1() {
   lineChart1?.destroy();
   data1 = [];
   data1 = Array(100).fill({ x: null, y: 0 });
+  netInvested = [];
 
   let datesOnce = true;
-  allData.set("Net invested", []);
+
   for (const crypto of cryptocurrencies) {
     /*
       By default prepare the chart for the last 100 days
@@ -67,13 +69,14 @@ export async function prepareLineChart1() {
         2. if a cost is already present for that day, add it up. 
            Else push a new cost
       */
+
       let cost = crypto.calculateCostOnDate(dates[index]);
-      let totalCost = allData.get("Net invested")!;
-      if (totalCost && totalCost[index] != undefined) {
-        totalCost[index] += cost;
-        allData.set("Net invested", totalCost);
-      } else {
-        allData.get("Net invested")?.push(cost);
+      // If a netInvested already exists on date index, add the cost to the value 
+      if(netInvested[index]){
+        netInvested[index] += cost;
+      }
+      else{ // else push the cost to the netInvested array
+        netInvested.push(cost);
       }
     }
   }
@@ -87,11 +90,10 @@ export async function prepareLineChart1() {
           label: "Total value",
           pointRadius: 0,
           fill: true,
-          order: 1,
+          order: 2,
           backgroundColor: totalValueGradient,
           borderColor: colors.purple.default,
           borderWidth: 1,
-
         },
       ],
     },
@@ -148,9 +150,6 @@ export async function prepareLineChart1() {
   });
 
   for (let [key, value] of allData) {
-    // Generate a random color
-    // let color =
-    //   "#" + (((1 << 24) * Math.random()) | 0).toString(16).padStart(6, "0");
     let color = cryptocurrencies.find(c => c.id === key)?.color;
 
     let index = 0;
@@ -168,26 +167,36 @@ export async function prepareLineChart1() {
     };
 
     lineChart1.data.datasets.push(newDataSet);
-    lineChart1.update();
   }
+
+  // Add the netinvested dataset to the linechart
+  let index = 0;
+  let netInvestedColor = "#c3f73a"
+  const netInvestDataSet = {
+    data: netInvested.map((net) => {
+      return { x: dates[index++], y: net };
+    }),
+    label: "Net invested",
+    backgroundColor: netInvestedColor,
+    borderColor: netInvestedColor,
+    hidden: true, //disable by default to keep it clean
+    pointRadius: 0,
+    order: 1,
+    borderWidth: 1,
+  };
+
+  lineChart1.data.datasets.push(netInvestDataSet);
+  lineChart1.update();
 
   // Calculate total value and total percentage & fill in the Summary
   const totalValue = data1[data1.length - 1].y;
-  const netInvestedArray = allData.get("Net invested");
-  const netInvested = netInvestedArray?.at(netInvestedArray.length - 1);
-  const percentage = ((totalValue - netInvested) / netInvested) * 100;
+
+  const netInvestedTotal = netInvested[netInvested.length -1];
+  const percentage = ((totalValue - netInvestedTotal) / netInvestedTotal) * 100;
   summaryTotalValue.textContent = `$${totalValue ? totalValue.toFixed(2) : ''}`;
   summaryTotalPercentage.textContent = `${percentage ? percentage.toFixed(2) : ''}%`;
   if(totalValue) summaryTotalValue.style.opacity = '0.5';
   if(totalValue) summaryTotalPercentage.style.opacity = '0.5';
-
-
-  // Export datasets colors used
-  // lineChart1.data.datasets.forEach(ds => {
-  //   if(ds.label == "Net invested" || ds.label == "Total value") return;
-  //   datasetColors.push({id: ds.label!, color: String(ds.borderColor)});
-  // })
-
 }
 
 /*

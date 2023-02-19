@@ -203,11 +203,14 @@ input {
 .assetsTable {
   background-color: #202224;
   border-radius: 20px;
-  padding: 10px 20px;
-
-  width: max-content;
-
+  padding: 0px 20px;
+  width: 100%;
+  /* width: max-content; */
   position: relative;
+
+  /* Max height so the table doesn't take up the whole page */
+  max-height: 400px;
+  overflow: auto;
 }
 
 #addCrypto {
@@ -228,9 +231,15 @@ input {
 }
 
 .table * {
-  padding: 15px;
+  padding: 0 10px;
 }
 
+.assetsTableBtns {
+  display: inline;
+}
+.assetsTableBtn {
+  padding: 5px;
+}
 /* .summary {
   background-color: #202224;
   border-radius: 20px;
