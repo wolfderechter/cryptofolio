@@ -245,14 +245,13 @@ input {
 } */
 
 .summary {
-  position: absolute;
-  top: 50px;
-  left: 300px;
   display: flex;
   align-items: center;
-  border: 1px solid #888;
-  border-radius: 8px;
   padding: 10px;
+  background-color: #202224;
+  border-radius: 20px;
+  width: 100%;
+  justify-content: center;
 }
 
 .summary h3 {
@@ -282,10 +281,10 @@ input {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  margin: 10px auto;
 }
 
 .mainChart {
   width: 95%;
-  margin: 2% auto;
   padding: 10px 20px;
 }

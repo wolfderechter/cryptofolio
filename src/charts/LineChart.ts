@@ -11,6 +11,8 @@ let allData: Map<string, any[]> = new Map();
 let coinChart: string[] = [];
 let dates: Date[] = [];
 
+export let datasetColors: {id: string, color: string}[] = [];
+
 const summaryTotalValue = document.getElementById("summaryTotalValue")!;
 const summaryTotalPercentage = document.getElementById(
   "summaryTotalPercentage"
@@ -82,7 +84,7 @@ export async function prepareLineChart1() {
       datasets: [
         {
           data: data1,
-          label: "Total Value",
+          label: "Total value",
           pointRadius: 0,
           fill: true,
           order: 1,
@@ -147,8 +149,9 @@ export async function prepareLineChart1() {
 
   for (let [key, value] of allData) {
     // Generate a random color
-    let color =
-      "#" + (((1 << 24) * Math.random()) | 0).toString(16).padStart(6, "0");
+    // let color =
+    //   "#" + (((1 << 24) * Math.random()) | 0).toString(16).padStart(6, "0");
+    let color = cryptocurrencies.find(c => c.id === key)?.color;
 
     let index = 0;
     const newDataSet = {
@@ -177,6 +180,14 @@ export async function prepareLineChart1() {
   summaryTotalPercentage.textContent = `${percentage ? percentage.toFixed(2) : ''}%`;
   if(totalValue) summaryTotalValue.style.opacity = '0.5';
   if(totalValue) summaryTotalPercentage.style.opacity = '0.5';
+
+
+  // Export datasets colors used
+  // lineChart1.data.datasets.forEach(ds => {
+  //   if(ds.label == "Net invested" || ds.label == "Total value") return;
+  //   datasetColors.push({id: ds.label!, color: String(ds.borderColor)});
+  // })
+
 }
 
 /*

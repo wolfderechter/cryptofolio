@@ -2,9 +2,11 @@ import { Transaction } from "./Transaction";
 
 export class CryptoCurrency {
   private transactions: Transaction[];
+  public color: string;
   // defining private/public inits the values, so no need to manually do this.id = id
   constructor(public id: string, public symbol: string, public name: string) {
     this.transactions = new Array<Transaction>();
+    this.color = "#" + (((1 << 24) * Math.random()) | 0).toString(16).padStart(6, "0");
   }
 
   addTransaction(transaction: Transaction) {
