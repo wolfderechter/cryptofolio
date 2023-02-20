@@ -237,9 +237,11 @@ input {
 .assetsTableBtns {
   display: inline;
 }
+
 .assetsTableBtn {
   padding: 5px;
 }
+
 /* .summary {
   background-color: #202224;
   border-radius: 20px;
@@ -296,4 +298,25 @@ input {
 .mainChart {
   width: 95%;
   padding: 10px 20px;
+}
+
+
+/* Hide the input */
+#exportDataBtn {
+  cursor: pointer;
+}
+
+#importDataBtn {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+#fileInputLabel {
+  all: unset;
+  cursor: pointer;
+  line-height: 24px;
 }

@@ -12,7 +12,7 @@ let coinChart: string[] = [];
 let dates: Date[] = [];
 let netInvested: number[] = [];
 
-export let datasetColors: {id: string, color: string}[] = [];
+export let datasetColors: { id: string; color: string }[] = [];
 
 const summaryTotalValue = document.getElementById("summaryTotalValue")!;
 const summaryTotalPercentage = document.getElementById(
@@ -25,7 +25,7 @@ const summaryTotalPercentage = document.getElementById(
 */
 export async function prepareLineChart1() {
   // Reset the chart
-  lineChart1?.destroy();
+  if (lineChart1 != null) lineChart1.destroy();
   data1 = [];
   data1 = Array(100).fill({ x: null, y: 0 });
   netInvested = [];
@@ -71,11 +71,11 @@ export async function prepareLineChart1() {
       */
 
       let cost = crypto.calculateCostOnDate(dates[index]);
-      // If a netInvested already exists on date index, add the cost to the value 
-      if(netInvested[index]){
+      // If a netInvested already exists on date index, add the cost to the value
+      if (netInvested[index]) {
         netInvested[index] += cost;
-      }
-      else{ // else push the cost to the netInvested array
+      } else {
+        // else push the cost to the netInvested array
         netInvested.push(cost);
       }
     }
@@ -150,7 +150,7 @@ export async function prepareLineChart1() {
   });
 
   for (let [key, value] of allData) {
-    let color = cryptocurrencies.find(c => c.id === key)?.color;
+    let color = cryptocurrencies.find((c) => c.id === key)?.color;
 
     let index = 0;
     const newDataSet = {
@@ -171,7 +171,7 @@ export async function prepareLineChart1() {
 
   // Add the netinvested dataset to the linechart
   let index = 0;
-  let netInvestedColor = "#c3f73a"
+  let netInvestedColor = "#c3f73a";
   const netInvestDataSet = {
     data: netInvested.map((net) => {
       return { x: dates[index++], y: net };
@@ -191,12 +191,14 @@ export async function prepareLineChart1() {
   // Calculate total value and total percentage & fill in the Summary
   const totalValue = data1[data1.length - 1].y;
 
-  const netInvestedTotal = netInvested[netInvested.length -1];
+  const netInvestedTotal = netInvested[netInvested.length - 1];
   const percentage = ((totalValue - netInvestedTotal) / netInvestedTotal) * 100;
-  summaryTotalValue.textContent = `$${totalValue ? totalValue.toFixed(2) : ''}`;
-  summaryTotalPercentage.textContent = `${percentage ? percentage.toFixed(2) : ''}%`;
-  if(totalValue) summaryTotalValue.style.opacity = '0.5';
-  if(totalValue) summaryTotalPercentage.style.opacity = '0.5';
+  summaryTotalValue.textContent = `$${totalValue ? totalValue.toFixed(2) : ""}`;
+  summaryTotalPercentage.textContent = `${
+    percentage ? percentage.toFixed(2) : ""
+  }%`;
+  if (totalValue) summaryTotalValue.style.opacity = "0.5";
+  if (totalValue) summaryTotalPercentage.style.opacity = "0.5";
 }
 
 /*
@@ -210,16 +212,18 @@ const colors = {
     default: "rgba(149, 76, 233, 1)",
     half: "rgba(149, 76, 233, 0.5)",
     quarter: "rgba(149, 76, 233, 0.25)",
-    zero: "rgba(149, 76, 233, 0.05)"
+    zero: "rgba(149, 76, 233, 0.05)",
   },
   indigo: {
     default: "rgba(80, 102, 120, 1)",
-    quarter: "rgba(80, 102, 120, 0.25)"
-  }
+    quarter: "rgba(80, 102, 120, 0.25)",
+  },
 };
 
-const totalValueGradient = canvas1.getContext("2d")?.createLinearGradient(0, 25, 0, 300)!;
+const totalValueGradient = canvas1
+  .getContext("2d")
+  ?.createLinearGradient(0, 25, 0, 300)!;
 totalValueGradient.addColorStop(0, colors.purple.half);
 totalValueGradient.addColorStop(0.5, colors.purple.quarter);
-totalValueGradient.addColorStop(0., colors.purple.quarter);
+totalValueGradient.addColorStop(0, colors.purple.quarter);
 totalValueGradient.addColorStop(1, colors.purple.zero);

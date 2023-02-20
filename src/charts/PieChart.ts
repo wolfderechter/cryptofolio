@@ -21,7 +21,7 @@ let colors: string[] = [];
 */
 export function preparePieChart1() {
   // Reset the existing chart
-  pieChart1?.destroy();
+  if (pieChart1 != null) pieChart1.destroy();
   labels1 = [];
   data1 = [];
   colors = [];
@@ -77,7 +77,7 @@ export function preparePieChart1() {
 let coinPrices: string[] = [];
 export async function preparePieChart2() {
   // Reset the existing chart
-  pieChart2?.destroy();
+  if (pieChart2 != null) pieChart2.destroy();
   labels2 = [];
   data2 = [];
   colors = [];

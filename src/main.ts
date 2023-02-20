@@ -1,5 +1,10 @@
 import { Coin, CryptoCurrency } from "./cryptocurrency";
-import { saveData, loadData } from "./data/localstorage";
+import {
+  saveData,
+  loadData,
+  exportData,
+  importData,
+} from "./data/localstorage";
 import { getCoins, getCoinsPrices } from "./data/Coingecko";
 import { Transaction, transactionType } from "./Transaction";
 import { renderCharts } from "./charts/Init";
@@ -15,7 +20,9 @@ const transactionModalCloseBtn = document.getElementById(
 const searchForm = document.querySelector<HTMLFormElement>("#searchForm");
 const transactionForm =
   document.querySelector<HTMLFormElement>("#transactionForm");
-loadData();
+
+let input = document.getElementById("importDataBtn");
+if (input) input.addEventListener("change", importData);
 
 // adding a crypto opens the modal with a search bar
 addCryptoBtn?.addEventListener("click", (e) => {
@@ -163,9 +170,16 @@ function startTransaction(coin: Coin) {
 
 async function populateAssetsTable() {
   const tableBody = document.getElementById("assetsTableBody")!;
-  tableBody.innerHTML = "";
+  // Removing it with a while loop is better than innerHTML = ""
+  while (tableBody.children.length > 0) {
+    if (tableBody.firstChild) {
+      tableBody.removeChild(tableBody.firstChild);
+    }
+  }
 
   const coinPrices = await getCoinsPrices(cryptocurrencies.map((c) => c.id));
+
+  if (cryptocurrencies.length === 0) return;
 
   cryptocurrencies.forEach((asset) => {
     const cryptoValue =
@@ -196,13 +210,15 @@ async function populateAssetsTable() {
         });
     }
 
-    // _ = tr.click(startTransaction({
-    //   id: asset.id,
-    //   symbol: asset.symbol,
-    //   name: asset.name,
-    // });
     tableBody?.appendChild(tr);
   });
 }
-populateAssetsTable();
-renderCharts();
+
+export function init() {
+  populateAssetsTable();
+  renderCharts();
+}
+loadData();
+init();
+
+exportData(); // Setup the exportDataBtn so it's ready upon click
