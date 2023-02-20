@@ -122,19 +122,18 @@ button:focus-visible {
   /* Full height */
   overflow: auto;
   /* Enable scroll if needed */
-  background-color: rgb(0, 0, 0);
-  /* Fallback color */
+
   background-color: rgba(0, 0, 0, 0.4);
-  /* Black w/ opacity */
+  backdrop-filter: blur(5px);
 }
 
 /* Modal Content */
 .modal-content {
-  background-color: #fefefe;
-  color: #242424;
+  color: #fefefe;
+  background-color: #202224;
   margin: auto;
   padding: 20px;
-  border: 1px solid #888;
+  border: 1px solid #202224;
   width: 400px;
   height: 600px;
   border-radius: 8px;
@@ -211,6 +210,7 @@ input {
   /* Max height so the table doesn't take up the whole page */
   max-height: 400px;
   overflow: auto;
+  padding-bottom: 10px;
 }
 
 #addCrypto {
@@ -242,27 +242,15 @@ input {
   padding: 5px;
 }
 
-/* .summary {
-  background-color: #202224;
-  border-radius: 20px;
-
-  width: max-content;
-  justify-content: center;
-  align-content: center;
-
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-} */
-
 .summary {
   display: flex;
   align-items: center;
-  padding: 10px;
+  padding: 10px 25px;
   background-color: #202224;
   border-radius: 20px;
-  width: 100%;
+  /* width: 100%; */
   justify-content: center;
+  flex-grow: 1;
 }
 
 .summary h3 {
@@ -275,8 +263,8 @@ input {
   opacity: 0.1;
 }
 
-.summary * {
-  padding: 0 10px;
+.summary>* {
+  margin: 0 10px;
 }
 
 .chart {
@@ -293,6 +281,7 @@ input {
   flex-wrap: wrap;
   justify-content: space-between;
   margin: 10px auto;
+  gap: 10px;
 }
 
 .mainChart {
@@ -319,4 +308,40 @@ input {
   all: unset;
   cursor: pointer;
   line-height: 24px;
+}
+
+
+/* Ethereum Staking */
+#ethereumStaking {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background-color: #202224;
+  border-radius: 20px;
+  white-space: nowrap;
+
+  padding-left: 1.5rem;
+  padding-right: 50px;
+  text-align: left;
+}
+
+
+#ethereumStakingTitle {
+  font-weight: 500;
+  font-size: 18px;
+}
+
+#ethereumStakedAmount {
+  font-weight: 600;
+  font-size: 19px;
+  opacity: 0.5;
+}
+
+.ethereumStakingTotalRewards {
+  font-weight: 400;
+  font-size: 15px;
+}
+
+#ethereumStakingTotalRewards {
+  opacity: 0.5;
 }

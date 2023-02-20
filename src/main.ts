@@ -165,6 +165,7 @@ function startTransaction(coin: Coin) {
     closeTransactionModal();
     populateAssetsTable();
     renderCharts();
+    calculateStakingRewards();
   };
 }
 
@@ -222,3 +223,48 @@ loadData();
 init();
 
 exportData(); // Setup the exportDataBtn so it's ready upon click
+
+/* 
+  Staking rewards for ethereum can be defined as the gain in USD since buying the LSD rETH/...
+
+  => Can be caluclated by comparing the current value of the LSD coin to the value of the coin at the time of buying
+
+*/
+const STAKED_ETH_COINS = ["rocket-pool-eth", "wrapped-steth"];
+async function calculateStakingRewards() {
+  let totalRewards = 0;
+  let totalStaked = 0;
+  let stakedETH = false;
+  const ethereumStaking = document.getElementById("ethereumStaking")!;
+  const ethereumStakedAmount = document.getElementById("ethereumStakedAmount");
+  const ethereumStakingTotalRewards = document.getElementById(
+    "ethereumStakingTotalRewards"
+  );
+  for (const cc of cryptocurrencies) {
+    if (STAKED_ETH_COINS.includes(cc.id)) {
+      stakedETH = true;
+      let coinPrice = await getCoinsPrices([cc.id]);
+      let currentValue = coinPrice[cc.id].usd;
+
+      // Add the current dollar value staked to the total
+      totalStaked += cc.totalAmount * currentValue;
+
+      // Calculate the difference in current dollar value minus the total cost spent in dollar
+      let reward = cc.totalAmount * currentValue - cc.totalCost;
+      if (reward > 0) totalRewards += reward;
+    }
+
+    // Hide the staked ethereum card if no staked eth is found
+    if (!stakedETH) {
+      ethereumStaking.style.display = "none";
+    } else {
+      ethereumStaking.style.display = "flex";
+    }
+
+    if (ethereumStakedAmount && ethereumStakingTotalRewards) {
+      ethereumStakedAmount.textContent = `${totalStaked.toFixed(2)}`;
+      ethereumStakingTotalRewards.textContent = `${totalRewards.toFixed(2)}`;
+    }
+  }
+}
+calculateStakingRewards();
