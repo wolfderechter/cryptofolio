@@ -51,9 +51,7 @@ export function preparePieChart1() {
             label: function (context) {
               let label = context.dataset.label || "";
 
-              if (label) {
-                label += ": ";
-              }
+              label += " ";
               if (context.parsed !== null) {
                 label += new Intl.NumberFormat("en-US", {
                   style: "currency",
@@ -61,6 +59,18 @@ export function preparePieChart1() {
                 }).format(context.parsed);
               }
               return label;
+            },
+            footer: function (context) {
+              if (context[0] !== null) {
+                let totalSum = context[0].dataset.data.reduce((sum, current) => sum + current, 0);
+                let percentageValue = (context[0].parsed / totalSum) * 100;
+
+                // Percentages smaller than 1 will display 2 decimals, others will show no decimals
+                if (percentageValue < 1) return `${percentageValue.toFixed(2)}%`;
+
+                return `${percentageValue.toFixed(0)}%`;
+              }
+              return "";
             },
           },
         },
@@ -108,9 +118,7 @@ export async function preparePieChart2() {
             label: function (context) {
               let label = context.dataset.label || "";
 
-              if (label) {
-                label += ": ";
-              }
+              label += " ";
               if (context.parsed !== null) {
                 label += new Intl.NumberFormat("en-US", {
                   style: "currency",
@@ -118,6 +126,18 @@ export async function preparePieChart2() {
                 }).format(context.parsed);
               }
               return label;
+            },
+            footer: function (context) {
+              if (context[0] !== null) {
+                let totalSum = context[0].dataset.data.reduce((sum, current) => sum + current, 0);
+                let percentageValue = (context[0].parsed / totalSum) * 100;
+
+                // Percentages smaller than 1 will display 2 decimals, others will show no decimals
+                if (percentageValue < 1) return `${percentageValue.toFixed(2)}%`;
+
+                return `${percentageValue.toFixed(0)}%`;
+              }
+              return "";
             },
           },
         },
