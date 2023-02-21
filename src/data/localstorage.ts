@@ -13,8 +13,7 @@ export async function loadData(input?: string) {
     cryptos = JSON.parse(input);
   } else {
     let cryptosString;
-    if ((cryptosString = localStorage.getItem("assets")))
-      cryptos = JSON.parse(cryptosString);
+    if ((cryptosString = localStorage.getItem("assets"))) cryptos = JSON.parse(cryptosString);
   }
   if (cryptos == null) return;
 
@@ -25,14 +24,7 @@ export async function loadData(input?: string) {
     let newCrypto = new CryptoCurrency(crypto.id, crypto.symbol, crypto.name);
 
     crypto.transactions.forEach((transaction: any) => {
-      newCrypto.addTransaction(
-        new Transaction(
-          transaction.type,
-          new Date(transaction.date),
-          transaction.amount,
-          transaction.cost
-        )
-      );
+      newCrypto.addTransaction(new Transaction(transaction.type, new Date(transaction.date), transaction.amount, transaction.cost));
     });
 
     cryptocurrencies.push(newCrypto);
@@ -47,13 +39,9 @@ export async function loadData(input?: string) {
 export function exportData() {
   let data = JSON.stringify(cryptocurrencies, null, 2);
   var exportDataBtn = document.getElementById("exportDataBtn")!;
-  
+
   exportDataBtn.onclick = () => {
-    console.log("test");
-    exportDataBtn.setAttribute(
-      "href",
-      URL.createObjectURL(new Blob([data], { type: "application/json" }))
-    );
+    exportDataBtn.setAttribute("href", URL.createObjectURL(new Blob([data], { type: "application/json" })));
     exportDataBtn.setAttribute("download", "cryptofolioData.json");
   };
 }

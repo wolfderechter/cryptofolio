@@ -140,6 +140,32 @@ export async function prepareLineChart1() {
         intersect: false,
       },
     },
+    plugins: [
+      {
+        id: "verticalLineOnHover",
+        afterDraw: (chart) => {
+          // Draw vertical line
+          const activeEle = chart.getActiveElements();
+
+          // If we are hovering the tooltip will be an active element
+          if (activeEle.length <= 0) return;
+
+          let x = activeEle[0].element.x;
+          let yAxis = chart.scales.y;
+          let ctx = chart.ctx;
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(x, yAxis.top);
+          ctx.lineTo(x, yAxis.bottom);
+          ctx.lineWidth = 0.5;
+          ctx.strokeStyle = colors.purple.threequarters;
+          ctx.setLineDash([5, 5]);
+          ctx.stroke();
+          ctx.restore();
+        },
+      },
+    ],
   });
 
   for (let [key, value] of allData) {
@@ -201,6 +227,7 @@ Colors
 const colors = {
   purple: {
     default: "rgba(149, 76, 233, 1)",
+    threequarters: "rgba(149, 76, 233, 0.75)",
     half: "rgba(149, 76, 233, 0.5)",
     quarter: "rgba(149, 76, 233, 0.25)",
     zero: "rgba(149, 76, 233, 0.05)",
