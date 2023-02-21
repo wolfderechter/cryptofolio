@@ -25,7 +25,7 @@ export async function getCoinsPrices(coins: string[]): Promise<string[]> {
     }
 
     // Add the currency in which it should be returned (usd)
-    query += "&vs_currencies=usd";
+    query += "&vs_currencies=usd%2Ceth";
 
     const res = await fetch(COINGECKO_API + query);
     const jsonResult = await res.json();
@@ -67,5 +67,27 @@ export async function getCoinChart(
   } catch (error) {
     console.error(error);
     return [];
+  }
+}
+
+/**
+ * Get coin data on a certain date
+ * @param coin: the unique crypto identifier string
+ * @param date: The date of data snapshot in dd-mm-yyyy eg. 30-12-2022
+ */
+export async function getCoinOnDate(
+  coin: string,
+  day: string
+): Promise<string> {
+  try {
+    let query =
+      COINGECKO_API + `coins/${coin}/history?date=${day}&localization=false`;
+    const res = await fetch(query);
+    const jsonResult = await res.json();
+
+    return jsonResult["market_data"]["current_price"];
+  } catch (error) {
+    console.error(error);
+    return "";
   }
 }

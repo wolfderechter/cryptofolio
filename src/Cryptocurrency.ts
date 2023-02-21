@@ -1,7 +1,7 @@
 import { Transaction } from "./Transaction";
 
 export class CryptoCurrency {
-  private transactions: Transaction[];
+  public transactions: Transaction[];
   public color: string;
   public id: string;
   public symbol: string;

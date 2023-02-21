@@ -15,9 +15,7 @@ let netInvested: number[] = [];
 export let datasetColors: { id: string; color: string }[] = [];
 
 const summaryTotalValue = document.getElementById("summaryTotalValue")!;
-const summaryTotalPercentage = document.getElementById(
-  "summaryTotalPercentage"
-)!;
+const summaryTotalPercentage = document.getElementById("summaryTotalPercentage")!;
 /* 
     The portfolio line chart consist of the value of the portfolio during the last x amount of days
 
@@ -142,11 +140,6 @@ export async function prepareLineChart1() {
         intersect: false,
       },
     },
-    //   customCanvasBackgroundColor: {
-    //     color: "#202224",
-    //   },
-    // },
-    // plugins: [plugin],
   });
 
   for (let [key, value] of allData) {
@@ -194,9 +187,7 @@ export async function prepareLineChart1() {
   const netInvestedTotal = netInvested[netInvested.length - 1];
   const percentage = ((totalValue - netInvestedTotal) / netInvestedTotal) * 100;
   summaryTotalValue.textContent = `$${totalValue ? totalValue.toFixed(2) : ""}`;
-  summaryTotalPercentage.textContent = `${
-    percentage ? percentage.toFixed(2) : ""
-  }%`;
+  summaryTotalPercentage.textContent = `${percentage ? percentage.toFixed(2) : ""}%`;
   if (totalValue) summaryTotalValue.style.opacity = "0.5";
   if (totalValue) summaryTotalPercentage.style.opacity = "0.5";
 }
@@ -220,9 +211,7 @@ const colors = {
   },
 };
 
-const totalValueGradient = canvas1
-  .getContext("2d")
-  ?.createLinearGradient(0, 25, 0, 300)!;
+const totalValueGradient = canvas1.getContext("2d")?.createLinearGradient(0, 25, 0, 300)!;
 totalValueGradient.addColorStop(0, colors.purple.half);
 totalValueGradient.addColorStop(0.5, colors.purple.quarter);
 totalValueGradient.addColorStop(0, colors.purple.quarter);

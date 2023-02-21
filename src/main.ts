@@ -1,11 +1,6 @@
 import { Coin, CryptoCurrency } from "./cryptocurrency";
-import {
-  saveData,
-  loadData,
-  exportData,
-  importData,
-} from "./data/localstorage";
-import { getCoins, getCoinsPrices } from "./data/Coingecko";
+import { saveData, loadData, exportData, importData } from "./data/localstorage";
+import { getCoinOnDate, getCoins, getCoinsPrices } from "./data/Coingecko";
 import { Transaction, transactionType } from "./Transaction";
 import { renderCharts } from "./charts/Init";
 
@@ -14,12 +9,9 @@ const addCryptoBtn = document.querySelector<HTMLButtonElement>("#addCrypto");
 const searchModal = document.getElementById("seach-modal")!;
 const transactionModal = document.getElementById("transaction-modal")!;
 const searchModalCloseBtn = document.getElementById("search-modal-close");
-const transactionModalCloseBtn = document.getElementById(
-  "transaction-modal-close"
-);
+const transactionModalCloseBtn = document.getElementById("transaction-modal-close");
 const searchForm = document.querySelector<HTMLFormElement>("#searchForm");
-const transactionForm =
-  document.querySelector<HTMLFormElement>("#transactionForm");
+const transactionForm = document.querySelector<HTMLFormElement>("#transactionForm");
 
 let input = document.getElementById("importDataBtn");
 if (input) input.addEventListener("change", importData);
@@ -66,9 +58,7 @@ document.getElementById("searchForm")?.addEventListener("submit", (e) => {
 });
 
 function searchCrypto() {
-  const input = document.querySelector<HTMLInputElement>(
-    "#crypto-search-input"
-  )!;
+  const input = document.querySelector<HTMLInputElement>("#crypto-search-input")!;
   // const innerModal = document.getElementById("inner-modal-content")!;
   const cryptoListDiv = document.getElementById("cryptoList")!;
   // Clear the list when entering a new search
@@ -109,9 +99,7 @@ function startTransaction(coin: Coin) {
   const transactionTitle = document.getElementById("transactionModalTitle")!;
 
   // Set the date input to today by default
-  const transactionDate = <HTMLInputElement>(
-    document.getElementById("transactionDate")
-  );
+  const transactionDate = <HTMLInputElement>document.getElementById("transactionDate");
   transactionDate.valueAsDate = new Date();
 
   transactionTitle.textContent = coin.name;
@@ -128,13 +116,8 @@ function startTransaction(coin: Coin) {
         new Transaction(
           transactionType.Buy,
           new Date(transactionDate.value),
-          Number(
-            (<HTMLInputElement>document.getElementById("transactionAmount"))
-              .value
-          ),
-          Number(
-            (<HTMLInputElement>document.getElementById("transactionCost")).value
-          )
+          Number((<HTMLInputElement>document.getElementById("transactionAmount")).value),
+          Number((<HTMLInputElement>document.getElementById("transactionCost")).value)
         )
       );
     } else {
@@ -145,16 +128,9 @@ function startTransaction(coin: Coin) {
       newCrypto.addTransaction(
         new Transaction(
           transactionType.Buy,
-          new Date(
-            (<HTMLInputElement>document.getElementById("transactionDate")).value
-          ),
-          Number(
-            (<HTMLInputElement>document.getElementById("transactionAmount"))
-              .value
-          ),
-          Number(
-            (<HTMLInputElement>document.getElementById("transactionCost")).value
-          )
+          new Date((<HTMLInputElement>document.getElementById("transactionDate")).value),
+          Number((<HTMLInputElement>document.getElementById("transactionAmount")).value),
+          Number((<HTMLInputElement>document.getElementById("transactionCost")).value)
         )
       );
     }
@@ -183,10 +159,8 @@ async function populateAssetsTable() {
   if (cryptocurrencies.length === 0) return;
 
   cryptocurrencies.forEach((asset) => {
-    const cryptoValue =
-      parseFloat(coinPrices[asset.id].usd) * asset.totalAmount;
-    const percentage =
-      ((cryptoValue - asset.totalCost) / asset.totalCost) * 100;
+    const cryptoValue = parseFloat(coinPrices[asset.id].usd) * asset.totalAmount;
+    const percentage = ((cryptoValue - asset.totalCost) / asset.totalCost) * 100;
 
     let tr = document.createElement("tr");
     tr.innerHTML = `
@@ -226,32 +200,55 @@ exportData(); // Setup the exportDataBtn so it's ready upon click
 
 /* 
   Staking rewards for ethereum can be defined as the gain in USD since buying the LSD rETH/...
+    
+  => added staking value can be calculated by comparing the conversion rate at the time of buying to the current conversion rate*
+  => Added staking value = ((eth/reth conversion rate now) - (eth/reth conversion rate at time of buying)) * amount of rETH held
+    -> This should be calculated for each transaction individually and summed up
 
-  => Can be caluclated by comparing the current value of the LSD coin to the value of the coin at the time of buying
+  *Assumes the conversion rate only goes up, but as we know it fluctuates so short-term it might be negative, in which case we show 0 rewards
+   Long term it should be positive and upwards
+
+  **In case of sales: calculate the rewards for the reth amount up until the sale, calculate the remaining reth rewards up until the next sale or until now.
+     => use FIFO basically
+     => can be simplified by starting at the beginning and checking for each transaction if a sale is coming
+        - if a sale is coming calculate the rewards up until the sale for the whole amount
+        - calculate the rewards for the remaining amount from after the sale up until the next sale or until now
 
 */
 const STAKED_ETH_COINS = ["rocket-pool-eth", "wrapped-steth"];
 async function calculateStakingRewards() {
-  let totalRewards = 0;
+  let totalRewardsETH = 0;
+  let totalRewardsUSD = 0;
   let totalStaked = 0;
   let stakedETH = false;
   const ethereumStaking = document.getElementById("ethereumStaking")!;
   const ethereumStakedAmount = document.getElementById("ethereumStakedAmount");
-  const ethereumStakingTotalRewards = document.getElementById(
-    "ethereumStakingTotalRewards"
-  );
+  const ethereumStakingTotalRewards = document.getElementById("ethereumStakingTotalRewards");
+
   for (const cc of cryptocurrencies) {
     if (STAKED_ETH_COINS.includes(cc.id)) {
       stakedETH = true;
-      let coinPrice = await getCoinsPrices([cc.id]);
-      let currentValue = coinPrice[cc.id].usd;
+      let coinPrice = await getCoinsPrices([cc.id, "ethereum"]); // the prices of the staked eth LSD and ethereum to use later on
+      let currentValue = coinPrice[cc.id]["usd"]; // the value of the staked eth LSD in USD for ease of access
 
       // Add the current dollar value staked to the total
       totalStaked += cc.totalAmount * currentValue;
 
-      // Calculate the difference in current dollar value minus the total cost spent in dollar
-      let reward = cc.totalAmount * currentValue - cc.totalCost;
-      if (reward > 0) totalRewards += reward;
+      // Loop through the transactions and calculate the rewards for each BUY transaction individually
+      for (const transaction of cc.transactions) {
+        // Fetch the coin price on the date of the purchase
+        let coinOnPurchaseDate = await getCoinOnDate(
+          cc.id,
+          transaction.date.toLocaleDateString("NL") // using .toLocaleDateString("NL") because it outputs the string in dd-mm-yyyy format
+        );
+
+        // Calculate the reward by multiplying the transaction amount with the delta of conversion rate from date of purchase vs now
+        let rewardETH = transaction.amount * (coinPrice[cc.id]["eth"] - parseFloat(coinOnPurchaseDate["eth"]));
+        let rewardUSD = rewardETH * coinPrice["ethereum"]["usd"]; // convert the eth rewards to usd by multiplying by the price of ETH now
+
+        if (rewardETH > 0) totalRewardsETH += rewardETH;
+        if (rewardUSD > 0) totalRewardsUSD += rewardUSD;
+      }
     }
 
     // Hide the staked ethereum card if no staked eth is found
@@ -262,8 +259,8 @@ async function calculateStakingRewards() {
     }
 
     if (ethereumStakedAmount && ethereumStakingTotalRewards) {
-      ethereumStakedAmount.textContent = `${totalStaked.toFixed(2)}`;
-      ethereumStakingTotalRewards.textContent = `${totalRewards.toFixed(2)}`;
+      ethereumStakedAmount.textContent = `${totalStaked.toFixed(2)} USD`;
+      ethereumStakingTotalRewards.textContent = `${totalRewardsUSD.toFixed(4)} USD`;
     }
   }
 }
