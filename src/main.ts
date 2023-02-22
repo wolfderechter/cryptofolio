@@ -8,8 +8,10 @@ export const cryptocurrencies: CryptoCurrency[] = [];
 const addCryptoBtn = document.querySelector<HTMLButtonElement>("#addCrypto");
 const searchModal = document.getElementById("seach-modal")!;
 const transactionModal = document.getElementById("transaction-modal")!;
+const manageTransactionsModal = document.getElementById("manage-transactions-modal")!;
 const searchModalCloseBtn = document.getElementById("search-modal-close");
 const transactionModalCloseBtn = document.getElementById("transaction-modal-close");
+const manageTransactionsModalCloseBtn = document.getElementById("manage-transactions-modal-close");
 const searchForm = document.querySelector<HTMLFormElement>("#searchForm");
 const transactionForm = document.querySelector<HTMLFormElement>("#transactionForm");
 
@@ -49,6 +51,17 @@ function closeTransactionModal(e?: MouseEvent) {
   if (transactionModal && transactionForm) {
     transactionModal.style.display = "none";
     transactionForm.reset();
+  }
+}
+
+manageTransactionsModalCloseBtn?.addEventListener("click", (e) => {
+  closeManageTransactionsModal(e);
+});
+
+function closeManageTransactionsModal(e?: MouseEvent) {
+  e?.preventDefault();
+  if (manageTransactionsModal) {
+    manageTransactionsModal.style.display = "none";
   }
 }
 
@@ -144,6 +157,25 @@ function startTransaction(coin: Coin) {
     calculateStakingRewards();
   };
 }
+function manageTransactions(coin: Coin) {
+  // Switch the modal popup to the transaction popup
+  manageTransactionsModal.style.display = "block";
+
+  const innerManageTransactionsContent = document.getElementById("inner-manage-transactions-modal-content")!;
+  const manageTransactionsTitle = document.getElementById("manageTransactionsModalTitle")!;
+  manageTransactionsTitle.textContent = coin.name;
+
+  innerManageTransactionsContent.innerHTML = "";
+
+  let crypto = cryptocurrencies.find((c) => c.id === coin.id);
+  if (crypto) {
+    for (const transaction of crypto.transactions) {
+      let elem = document.createElement("p");
+      elem.textContent = transaction.date.toLocaleDateString();
+      innerManageTransactionsContent.appendChild(elem);
+    }
+  }
+}
 
 async function populateAssetsTable() {
   const tableBody = document.getElementById("assetsTableBody")!;
@@ -179,6 +211,15 @@ async function populateAssetsTable() {
     if (addButton) {
       addButton.onclick = () =>
         startTransaction({
+          id: asset.id,
+          symbol: asset.symbol,
+          name: asset.name,
+        });
+    }
+    const manageButton = tr.querySelector<HTMLButtonElement>("#assetsTableManage");
+    if (manageButton) {
+      manageButton.onclick = () =>
+        manageTransactions({
           id: asset.id,
           symbol: asset.symbol,
           name: asset.name,
