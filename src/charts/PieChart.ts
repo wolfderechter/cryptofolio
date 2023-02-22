@@ -66,7 +66,7 @@ export function preparePieChart1() {
                 let percentageValue = (context[0].parsed / totalSum) * 100;
 
                 // Percentages smaller than 1 will display 2 decimals, others will show no decimals
-                if (percentageValue < 1) return `${percentageValue.toFixed(2)}%`;
+                if (percentageValue < 10) return `${percentageValue.toFixed(1)}%`;
 
                 return `${percentageValue.toFixed(0)}%`;
               }
@@ -133,7 +133,7 @@ export async function preparePieChart2() {
                 let percentageValue = (context[0].parsed / totalSum) * 100;
 
                 // Percentages smaller than 1 will display 2 decimals, others will show no decimals
-                if (percentageValue < 1) return `${percentageValue.toFixed(2)}%`;
+                if (percentageValue < 10) return `${percentageValue.toFixed(1)}%`;
 
                 return `${percentageValue.toFixed(0)}%`;
               }

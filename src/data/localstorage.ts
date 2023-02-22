@@ -17,7 +17,9 @@ export async function loadData(input?: string) {
   }
   if (cryptos == null) return;
 
-  cryptocurrencies.forEach((c) => cryptocurrencies.pop());
+  while(cryptocurrencies.length > 0){
+    cryptocurrencies.pop();
+  }
 
   // Recreate the objects from JSON
   cryptos.forEach((crypto: any) => {
