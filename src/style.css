@@ -346,3 +346,12 @@ input {
 #ethereumStakingTotalRewards {
   opacity: 0.5;
 }
+
+.ethereumStakingDailyRewards {
+  font-weight: 400;
+  font-size: 15px;
+}
+
+#ethereumStakingDailyRewards {
+  opacity: 0.5;
+}

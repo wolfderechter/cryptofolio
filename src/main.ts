@@ -258,13 +258,14 @@ exportData(); // Setup the exportDataBtn so it's ready upon click
 */
 const STAKED_ETH_COINS = ["rocket-pool-eth", "wrapped-steth"];
 async function calculateStakingRewards() {
-  let totalRewardsETH = 0;
+  // let totalRewardsETH = 0;
   let totalRewardsUSD = 0;
-  let totalStaked = 0;
+  let totalStakedUSD = 0;
   let stakedETH = false;
   const ethereumStaking = document.getElementById("ethereumStaking")!;
   const ethereumStakedAmount = document.getElementById("ethereumStakedAmount");
   const ethereumStakingTotalRewards = document.getElementById("ethereumStakingTotalRewards");
+  const ethereumStakingDailyRewards = document.getElementById("ethereumStakingDailyRewards");
 
   for (const cc of cryptocurrencies) {
     if (STAKED_ETH_COINS.includes(cc.id)) {
@@ -273,7 +274,7 @@ async function calculateStakingRewards() {
       let currentValue = coinPrice[cc.id]["usd"]; // the value of the staked eth LSD in USD for ease of access
 
       // Add the current dollar value staked to the total
-      totalStaked += cc.totalAmount * currentValue;
+      totalStakedUSD += cc.totalAmount * currentValue;
 
       // Loop through the transactions and calculate the rewards for each BUY transaction individually
       for (const transaction of cc.transactions) {
@@ -287,7 +288,7 @@ async function calculateStakingRewards() {
         let rewardETH = transaction.amount * (coinPrice[cc.id]["eth"] - parseFloat(coinOnPurchaseDate["eth"]));
         let rewardUSD = rewardETH * coinPrice["ethereum"]["usd"]; // convert the eth rewards to usd by multiplying by the price of ETH now
 
-        if (rewardETH > 0) totalRewardsETH += rewardETH;
+        // if (rewardETH > 0) totalRewardsETH += rewardETH;
         if (rewardUSD > 0) totalRewardsUSD += rewardUSD;
       }
     }
@@ -299,9 +300,20 @@ async function calculateStakingRewards() {
       ethereumStaking.style.display = "flex";
     }
 
-    if (ethereumStakedAmount && ethereumStakingTotalRewards) {
-      ethereumStakedAmount.textContent = `${totalStaked.toFixed(2)} USD`;
+    if (ethereumStakedAmount && ethereumStakingTotalRewards && ethereumStakingDailyRewards) {
+      ethereumStakedAmount.textContent = `${totalStakedUSD.toFixed(2)} USD`;
       ethereumStakingTotalRewards.textContent = `${totalRewardsUSD.toFixed(4)} USD`;
+
+      /*
+        Eth staking rewards of the last 24h can be calculated with:
+          1) multiply the total staked eth with the apr for 24h
+          2) calculate the rewards between yesterday and now for each holding and sum it up
+             => can be unreliable because reth can change quite a bit daily and is better for long term
+      */
+      //  ToDo: change hardcoded eth staking apy to something dynamic
+      let dailyRewardsUSD = (totalStakedUSD * 0.045) / 365;
+      console.log(totalStakedUSD);
+      ethereumStakingDailyRewards.textContent = `${dailyRewardsUSD.toFixed(4)} USD`;
     }
   }
 }
