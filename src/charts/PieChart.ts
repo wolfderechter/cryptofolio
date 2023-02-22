@@ -65,7 +65,8 @@ export function preparePieChart1() {
                 let totalSum = context[0].dataset.data.reduce((sum, current) => sum + current, 0);
                 let percentageValue = (context[0].parsed / totalSum) * 100;
 
-                // Percentages smaller than 1 will display 2 decimals, others will show no decimals
+                // Percentages smaller than 1 will display 2 decimals, smaller than 10 will display 1 decimal, others will display 0 decimals
+                if (percentageValue < 1) return `${percentageValue.toFixed(2)}%`;
                 if (percentageValue < 10) return `${percentageValue.toFixed(1)}%`;
 
                 return `${percentageValue.toFixed(0)}%`;
@@ -131,8 +132,9 @@ export async function preparePieChart2() {
               if (context[0] !== null) {
                 let totalSum = context[0].dataset.data.reduce((sum, current) => sum + current, 0);
                 let percentageValue = (context[0].parsed / totalSum) * 100;
-
-                // Percentages smaller than 1 will display 2 decimals, others will show no decimals
+                
+                // Percentages smaller than 1 will display 2 decimals, smaller than 10 will display 1 decimal, others will display 0 decimals
+                if (percentageValue < 1) return `${percentageValue.toFixed(2)}%`;
                 if (percentageValue < 10) return `${percentageValue.toFixed(1)}%`;
 
                 return `${percentageValue.toFixed(0)}%`;
