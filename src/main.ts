@@ -152,27 +152,62 @@ function startTransaction(coin: Coin) {
 
     // Close the transaction modal when done
     closeTransactionModal();
-    populateAssetsTable();
-    renderCharts();
-    calculateStakingRewards();
+    init();
   };
 }
 function manageTransactions(coin: Coin) {
   // Switch the modal popup to the transaction popup
   manageTransactionsModal.style.display = "block";
 
-  const innerManageTransactionsContent = document.getElementById("inner-manage-transactions-modal-content")!;
+  const manageTransactionsTableBody = document.getElementById("manageTransactionsTableBody")!;
   const manageTransactionsTitle = document.getElementById("manageTransactionsModalTitle")!;
   manageTransactionsTitle.textContent = coin.name;
 
-  innerManageTransactionsContent.innerHTML = "";
+  // Remove the table body completely
+  while (manageTransactionsTableBody.children.length > 0) {
+    if (manageTransactionsTableBody.firstChild) manageTransactionsTableBody.removeChild(manageTransactionsTableBody.firstChild);
+  }
 
   let crypto = cryptocurrencies.find((c) => c.id === coin.id);
   if (crypto) {
     for (const transaction of crypto.transactions) {
-      let elem = document.createElement("p");
-      elem.textContent = transaction.date.toLocaleDateString();
-      innerManageTransactionsContent.appendChild(elem);
+      let tr = document.createElement("tr");
+
+      /*  ToDO: Edit button will open up and fill in a manage transaction popup with the existing values 
+      
+          ToDO: Remove button will show a cancel/confirm button first before removing
+
+          Maybe add a unique ID to each transaction to identify the later on for editing/removing.
+      */
+      tr.innerHTML = `
+        <td>${transaction.date.toLocaleDateString()}</td>
+        <td>${transactionType[transaction.type]}</td>
+        <td>${transaction.amount} ${coin.symbol}</td>
+        <td>${transaction.cost} USD</td>
+        <td class="assetsTableBtns">
+            <button id="manageTransactionsTableManageBtn" class="fa-solid fa-pen-to-square iconBtn"></button>
+            <button id="manageTransactionsTableRemoveBtn" class="fa-solid fa-trash-can iconBtn"></button>
+        </td>
+      `;
+      const removeBtn = tr.querySelector<HTMLButtonElement>("#manageTransactionsTableRemoveBtn");
+      if (removeBtn) {
+        removeBtn.onclick = () => {
+          if (!crypto) return;
+          crypto.removeTransaction(transaction);
+
+          // If after removing the transactio the crypto has no transactions left, remove the crypto
+          if (crypto.amountOfTransactions < 1 || crypto.amountOfTransactions === undefined) {
+            cryptocurrencies.splice(cryptocurrencies.indexOf(crypto), 1);
+          }
+
+          // Persist the data
+          saveData();
+
+          closeManageTransactionsModal();
+          init();
+        };
+      }
+      manageTransactionsTableBody.appendChild(tr);
     }
   }
 }
@@ -203,8 +238,8 @@ async function populateAssetsTable() {
       <td>$${cryptoValue.toFixed(2)}</td>
       <td>${percentage.toFixed(2)}%</td>
       <td class="assetsTableBtns">
-          <button id="assetsTableAdd" class="fa fa-plus assetsTableBtn"></button>
-          <button id="assetsTableManage" class="fa fa-pencil-square-o assetsTableBtn"></button>
+          <button id="assetsTableAdd" class="fa fa-plus iconBtn"></button>
+          <button id="assetsTableManage" class="fa-solid fa-pen-to-square iconBtn"></button>
       </td>
     `;
     const addButton = tr.querySelector<HTMLButtonElement>("#assetsTableAdd");
@@ -229,15 +264,6 @@ async function populateAssetsTable() {
     tableBody?.appendChild(tr);
   });
 }
-
-export function init() {
-  populateAssetsTable();
-  renderCharts();
-}
-loadData();
-init();
-
-exportData(); // Setup the exportDataBtn so it's ready upon click
 
 /* 
   Staking rewards for ethereum can be defined as the gain in USD since buying the LSD rETH/...
@@ -267,6 +293,9 @@ async function calculateStakingRewards() {
   const ethereumStakingTotalRewards = document.getElementById("ethereumStakingTotalRewards");
   const ethereumStakingDailyRewards = document.getElementById("ethereumStakingDailyRewards");
 
+  // In case no cryptocurrencies are present (anymore) we set the boolean to false and exit
+  if (cryptocurrencies.length < 1) stakedETH = false;
+
   for (const cc of cryptocurrencies) {
     if (STAKED_ETH_COINS.includes(cc.id)) {
       stakedETH = true;
@@ -292,29 +321,36 @@ async function calculateStakingRewards() {
         if (rewardUSD > 0) totalRewardsUSD += rewardUSD;
       }
     }
+  }
+  // Hide the staked ethereum card if no staked eth is found
+  if (!stakedETH) {
+    ethereumStaking.style.display = "none";
+  } else {
+    ethereumStaking.style.display = "flex";
+  }
 
-    // Hide the staked ethereum card if no staked eth is found
-    if (!stakedETH) {
-      ethereumStaking.style.display = "none";
-    } else {
-      ethereumStaking.style.display = "flex";
-    }
+  if (ethereumStakedAmount && ethereumStakingTotalRewards && ethereumStakingDailyRewards) {
+    ethereumStakedAmount.textContent = `${totalStakedUSD.toFixed(2)} USD`;
+    ethereumStakingTotalRewards.textContent = `${totalRewardsUSD.toFixed(4)} USD`;
 
-    if (ethereumStakedAmount && ethereumStakingTotalRewards && ethereumStakingDailyRewards) {
-      ethereumStakedAmount.textContent = `${totalStakedUSD.toFixed(2)} USD`;
-      ethereumStakingTotalRewards.textContent = `${totalRewardsUSD.toFixed(4)} USD`;
-
-      /*
-        Eth staking rewards of the last 24h can be calculated with:
-          1) multiply the total staked eth with the apr for 24h
-          2) calculate the rewards between yesterday and now for each holding and sum it up
-             => can be unreliable because reth can change quite a bit daily and is better for long term
-      */
-      //  ToDo: change hardcoded eth staking apy to something dynamic
-      let dailyRewardsUSD = (totalStakedUSD * 0.045) / 365;
-      console.log(totalStakedUSD);
-      ethereumStakingDailyRewards.textContent = `${dailyRewardsUSD.toFixed(4)} USD`;
-    }
+    /*
+      Eth staking rewards of the last 24h can be calculated with:
+        1) multiply the total staked eth with the apr for 24h
+        2) calculate the rewards between yesterday and now for each holding and sum it up
+           => can be unreliable because reth can change quite a bit daily and is better for long term
+    */
+    //  ToDo: change hardcoded eth staking apy to something dynamic
+    let dailyRewardsUSD = (totalStakedUSD * 0.045) / 365;
+    ethereumStakingDailyRewards.textContent = `${dailyRewardsUSD.toFixed(4)} USD`;
   }
 }
-calculateStakingRewards();
+
+export function init() {
+  populateAssetsTable();
+  renderCharts();
+  calculateStakingRewards();
+}
+loadData();
+init();
+
+exportData(); // Setup the exportDataBtn so it's ready upon click

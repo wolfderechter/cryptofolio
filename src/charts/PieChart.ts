@@ -20,8 +20,14 @@ let colors: string[] = [];
 
 */
 export function preparePieChart1() {
+  if (cryptocurrencies.length === 0) {
+    pieChart1?.destroy();
+    return;
+  }
+
   // Reset the existing chart
   if (pieChart1 != null) pieChart1.destroy();
+
   labels1 = [];
   data1 = [];
   colors = [];
@@ -87,6 +93,10 @@ export function preparePieChart1() {
 */
 let coinPrices: string[] = [];
 export async function preparePieChart2() {
+  if (cryptocurrencies.length === 0) {
+    pieChart2?.destroy();
+    return;
+  }
   // Reset the existing chart
   if (pieChart2 != null) pieChart2.destroy();
   labels2 = [];
@@ -132,7 +142,7 @@ export async function preparePieChart2() {
               if (context[0] !== null) {
                 let totalSum = context[0].dataset.data.reduce((sum, current) => sum + current, 0);
                 let percentageValue = (context[0].parsed / totalSum) * 100;
-                
+
                 // Percentages smaller than 1 will display 2 decimals, smaller than 10 will display 1 decimal, others will display 0 decimals
                 if (percentageValue < 1) return `${percentageValue.toFixed(2)}%`;
                 if (percentageValue < 10) return `${percentageValue.toFixed(1)}%`;

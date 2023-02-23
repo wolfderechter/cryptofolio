@@ -22,6 +22,13 @@ const summaryTotalPercentage = document.getElementById("summaryTotalPercentage")
     Each day it should show the portfolio value at that time by combining all the amount of crypto held * price of that crypto during that day
 */
 export async function prepareLineChart1() {
+  // In case no cryptocurrencies are present (anymore) we destroy the chart and empty the 2 summary values
+  if (cryptocurrencies.length === 0) {
+    lineChart1?.destroy();
+    summaryTotalValue.textContent = `$`;
+    summaryTotalPercentage.textContent = `%`;
+    return;
+  }
   // Reset the chart
   if (lineChart1 != null) lineChart1.destroy();
   data1 = [];

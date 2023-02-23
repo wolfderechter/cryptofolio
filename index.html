@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cryptofolio</title>
   <link rel="stylesheet" href="./src/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
 </head>
 
 <body>
@@ -117,7 +117,17 @@
         <span class="close" id="manage-transactions-modal-close">&times;</span>
         <h2>Manage <span id="manageTransactionsModalTitle"></span> transactions</h2>
         <div class="inner-modal-content" id="inner-manage-transactions-modal-content">
-
+          <table class="table" id="manageTransactionsTable">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>type</th>
+                <th>Amount</th>
+                <th>Cost</th>
+              </tr>
+            </thead>
+            <tbody id="manageTransactionsTableBody">
+            </tbody>
         </div>
       </div>
     </div>
