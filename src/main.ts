@@ -115,6 +115,7 @@ function startTransaction(coin: Coin) {
   const transactionTitle = document.getElementById("transactionModalTitle")!;
 
   const transactionDate = <HTMLInputElement>document.getElementById("transactionDate");
+  const availableAmount = <HTMLInputElement>document.getElementById("availableAmount");
   const transactionAmount = <HTMLInputElement>document.getElementById("transactionAmount");
   const transactionCost = <HTMLInputElement>document.getElementById("transactionCost");
 
@@ -126,10 +127,10 @@ function startTransaction(coin: Coin) {
   buyTransactionBtn.classList.remove("active");
   buyTransactionBtn.classList.add("active");
   sellTransactionBtn.classList.remove("active");
+  availableAmount.textContent = "";
 
   // Check if the crypto is present in our holdings, otherwise we disable toggling between buy/sell
   let foundCrypto = cryptocurrencies.find((c) => c.id === coin.id);
-  console.log(foundCrypto);
   if (foundCrypto !== undefined) {
     sellTransactionBtn.style.opacity = "1";
 
@@ -140,8 +141,10 @@ function startTransaction(coin: Coin) {
       // If it's a Sell transaction, fill in the available amount
       if (sellTransactionBtn.classList.contains("active")) {
         transactionAmount.max = String(foundCrypto?.totalAmount);
+        availableAmount.textContent = `${foundCrypto?.totalAmount} ${foundCrypto?.symbol} available`;
       } else {
-        transactionAmount.max = "";
+        transactionAmount.removeAttribute("max");
+        availableAmount.textContent = "";
       }
     };
   } else {
@@ -164,8 +167,6 @@ function startTransaction(coin: Coin) {
       Number(transactionCost.value) <= 0 ||
       (transactionAmount.hasAttribute("max") && Number(transactionAmount.max) < Number(transactionAmount.value))
     ) {
-      console.log(transactionAmount.max);
-      console.log(Number(transactionAmount.max));
       addTransactionBtn.style.animation = "shake 0.2s ease-in-out 0s 2";
       addTransactionBtn.style.boxShadow = "0 0 0.6rem #ff0000";
 

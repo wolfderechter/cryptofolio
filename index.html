@@ -105,9 +105,16 @@
               <p class="active" id='buyTransactionBtn'>Buy</p>
               <p class="" id='sellTransactionBtn'>Sell</p>
             </div>
-            <input id="transactionDate" type="date">
-            <input id="transactionAmount" type="number" step="any" placeholder="Amount of coins" min="0">
-            <input id="transactionCost" type="number" step="any" placeholder="Total cost ($)" min="0">
+            <div>
+              <input id="transactionDate" type="date">
+            </div>
+            <div class="availableAmountDiv">
+              <span id="availableAmount"></span>
+              <input id="transactionAmount" type="number" step="any" placeholder="Amount of coins" min="0">
+            </div>
+            <div>
+              <input id="transactionCost" type="number" step="any" placeholder="Total cost ($)" min="0">
+            </div>
             <button id="addTransactionBtn">Add transaction</button>
           </form>
 
@@ -117,7 +124,7 @@
 
     <!-- Manage Transactions modal -->
     <div id="manage-transactions-modal" class="modal">
-      <div class="modal-content">
+      <div class="modal-content manage-transactions-modal-content">
         <span class="close" id="manage-transactions-modal-close">&times;</span>
         <h2>Manage <span id="manageTransactionsModalTitle"></span> transactions</h2>
         <div class="inner-modal-content" id="inner-manage-transactions-modal-content">

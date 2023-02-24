@@ -137,6 +137,8 @@ button:focus-visible {
   width: 400px;
   height: 600px;
   border-radius: 8px;
+
+  overflow: auto;
 }
 
 /* The Close Button */
@@ -195,9 +197,80 @@ input {
   width: 45px;
 }
 
+/* 
+
+  New Transaction popup
+
+*/
 #transactionForm>* {
-  margin: 10px;
+  margin: 10px auto;
 }
+
+#transactionForm div {
+  min-width: 55%;
+}
+
+.availableAmountDiv {
+  /* display: inline-grid;
+  justify-items: start; */
+  display: flex;
+  justify-items: start;
+  flex-direction: column;
+  align-items: center;
+}
+
+#availableAmount {
+  font-size: 12px;
+  font-weight: 500;
+  color: #757575;
+}
+
+#toggleTransactionType {
+  display: flex;
+  justify-content: center;
+}
+
+#buyTransactionBtn,
+#sellTransactionBtn {
+  border-radius: 8px;
+  padding: 5px 25px;
+  background-color: #1a1a1a;
+  margin: 0 2px;
+  cursor: pointer;
+  /* opacity: 0.8; */
+  ;
+}
+
+#buyTransactionBtn.active,
+#sellTransactionBtn.active {
+  background-color: rgba(149, 76, 233, 0.6);
+  opacity: 1;
+}
+
+@keyframes shake {
+  0% {
+    margin-left: 0rem;
+  }
+
+  25% {
+    margin-left: 0.5rem;
+  }
+
+  75% {
+    margin-left: -0.5rem;
+  }
+
+  100% {
+    margin-left: 0rem;
+  }
+}
+
+
+
+
+
+
+
 
 .assetsTable {
   background-color: #202224;
@@ -231,7 +304,8 @@ input {
 }
 
 .table * {
-  padding: 0 10px;
+  /* ToDO: Figure out the optimal padding for ALL tables */
+  padding: 5px 10px;
 }
 
 .assetsTableBtns {
@@ -248,7 +322,6 @@ input {
   padding: 10px 25px;
   background-color: #202224;
   border-radius: 20px;
-  /* width: 100%; */
   justify-content: center;
   flex-grow: 1;
 }
@@ -312,7 +385,11 @@ input {
 }
 
 
-/* Ethereum Staking */
+/* 
+
+  Ethereum Staking
+
+*/
 #ethereumStaking {
   display: flex;
   flex-direction: column;
@@ -325,7 +402,6 @@ input {
   padding-right: 50px;
   text-align: left;
 }
-
 
 #ethereumStakingTitle {
   font-weight: 500;
@@ -356,39 +432,11 @@ input {
   opacity: 0.5;
 }
 
-#toggleTransactionType {
-  display: flex;
-  justify-content: center;
-}
+/* 
 
-#buyTransactionBtn,
-#sellTransactionBtn {
-  border-radius: 8px;
-  padding: 5px 25px;
-  background-color: #1a1a1a;
-  margin: 0 2px;
-  cursor: pointer;
-  /* opacity: 0.8; */
-  ;
-}
+  Manage transactions
 
-#buyTransactionBtn.active,
-#sellTransactionBtn.active {
-  background-color: rgba(149, 76, 233, 0.6);
-  opacity: 1;
-}
-
-@keyframes shake {
-  0% {
-    margin-left: 0rem;
-  }
-  25% {
-    margin-left: 0.5rem;
-  }
-  75% {
-    margin-left: -0.5rem;
-  }
-  100% {
-    margin-left: 0rem;
-  }
+*/
+.manage-transactions-modal-content {
+  width: 500px;
 }
