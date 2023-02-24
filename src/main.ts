@@ -278,18 +278,37 @@ async function populateAssetsTable() {
     const percentage = ((cryptoValue - asset.totalCost) / asset.totalCost) * 100;
 
     let tr = document.createElement("tr");
-    tr.innerHTML = `
+
+    // When we sold everything
+    if (asset.totalAmount === 0) {
+      tr.innerHTML = `
       <td>${asset.name}</td>
-      <td>$${asset.averagePrice.toFixed(2)}</td>
+      <td>$${asset.averageBuyPrice.toFixed(2)}</td>
       <td>${asset.totalAmount} ${asset.symbol}</td>
-      <td>$${asset.totalCost}</td>
-      <td>$${cryptoValue.toFixed(2)}</td>
-      <td>${percentage.toFixed(2)}%</td>
+      <td>-</td>
+      <td>-</td>
+      <td>-</td>
       <td class="assetsTableBtns">
           <button id="assetsTableAdd" class="fa fa-plus iconBtn"></button>
           <button id="assetsTableManage" class="fa-solid fa-pen-to-square iconBtn"></button>
       </td>
     `;
+    } else {
+      // If the totalCost < 0 just show 0 => we made all our investments back by selling.
+      tr.innerHTML = `
+        <td>${asset.name}</td>
+        <td>$${asset.averageBuyPrice.toFixed(2)}</td>
+        <td>${asset.totalAmount} ${asset.symbol}</td>
+        <td>$${asset.totalCost > 0 ? asset.totalCost : 0}</td> 
+        <td>$${cryptoValue.toFixed(2)}</td>
+        <td>${percentage.toFixed(2)}%</td>
+        <td class="assetsTableBtns">
+            <button id="assetsTableAdd" class="fa fa-plus-minus iconBtn"></button>
+            <button id="assetsTableManage" class="fa-solid fa-pen-to-square iconBtn"></button>
+        </td>
+      `;
+    }
+
     const addButton = tr.querySelector<HTMLButtonElement>("#assetsTableAdd");
     if (addButton) {
       addButton.onclick = () =>

@@ -56,6 +56,12 @@ export class CryptoCurrency {
       else return sum - current.amount;
     }, 0);
   }
+  get totalBuyAmount(): number {
+    return this.transactions.reduce((sum, current) => {
+      if (current.type === transactionType.Buy) return sum + current.amount;
+      else return sum;
+    }, 0);
+  }
 
   get totalCost(): number {
     return this.transactions.reduce((sum, current) => {
@@ -63,9 +69,15 @@ export class CryptoCurrency {
       else return sum - current.cost;
     }, 0);
   }
+  get totalBuyCost(): number {
+    return this.transactions.reduce((sum, current) => {
+      if (current.type === transactionType.Buy) return sum + current.cost;
+      else return sum;
+    }, 0);
+  }
 
-  get averagePrice(): number {
-    return this.totalCost / this.totalAmount;
+  get averageBuyPrice(): number {
+    return this.totalBuyCost / this.totalBuyAmount;
   }
 
   get amountOfTransactions(): number {
