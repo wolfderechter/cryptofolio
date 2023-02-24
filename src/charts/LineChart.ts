@@ -30,10 +30,13 @@ export async function prepareLineChart1() {
     return;
   }
   // Reset the chart
-  if (lineChart1 != null) lineChart1.destroy();
+  if (lineChart1 != null) {
+    lineChart1.destroy();
+  }
   data1 = [];
   data1 = Array(100).fill({ x: null, y: 0 });
   netInvested = [];
+  allData.clear();
 
   let datesOnce = true;
 
@@ -177,7 +180,6 @@ export async function prepareLineChart1() {
 
   for (let [key, value] of allData) {
     let color = cryptocurrencies.find((c) => c.id === key)?.color;
-
     let index = 0;
     const newDataSet = {
       data: value.map((d) => {

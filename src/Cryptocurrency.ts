@@ -1,4 +1,4 @@
-import { Transaction } from "./Transaction";
+import { Transaction, transactionType } from "./Transaction";
 
 export class CryptoCurrency {
   public transactions: Transaction[];
@@ -32,25 +32,36 @@ export class CryptoCurrency {
    */
   calculateAmountOnDate(date: Date) {
     return this.transactions.reduce((sum, current) => {
-      if (current.date <= date) return sum + current.amount;
+      if (current.date <= date) {
+        if (current.type === transactionType.Buy) return sum + current.amount;
+        else return sum - current.amount;
+      }
 
       return sum;
     }, 0);
   }
   calculateCostOnDate(date: Date) {
     return this.transactions.reduce((sum, current) => {
-      if (current.date <= date) return sum + current.cost;
-
+      if (current.date <= date) {
+        if (current.type === transactionType.Buy) return sum + current.cost;
+        else return sum - current.cost;
+      }
       return sum;
     }, 0);
   }
 
   get totalAmount(): number {
-    return this.transactions.reduce((sum, current) => sum + current.amount, 0);
+    return this.transactions.reduce((sum, current) => {
+      if (current.type === transactionType.Buy) return sum + current.amount;
+      else return sum - current.amount;
+    }, 0);
   }
 
   get totalCost(): number {
-    return this.transactions.reduce((sum, current) => sum + current.cost, 0);
+    return this.transactions.reduce((sum, current) => {
+      if (current.type === transactionType.Buy) return sum + current.cost;
+      else return sum - current.cost;
+    }, 0);
   }
 
   get averagePrice(): number {

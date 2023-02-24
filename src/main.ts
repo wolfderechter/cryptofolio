@@ -188,7 +188,7 @@ function startTransaction(coin: Coin) {
 
       newCrypto.addTransaction(
         new Transaction(
-          transactionType.Buy,
+          selectedTransactionType,
           new Date((<HTMLInputElement>document.getElementById("transactionDate")).value),
           Number((<HTMLInputElement>document.getElementById("transactionAmount")).value),
           Number((<HTMLInputElement>document.getElementById("transactionCost")).value)
