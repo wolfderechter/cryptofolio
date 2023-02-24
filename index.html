@@ -101,9 +101,13 @@
         <div class="inner-modal-content" id="inner-transaction-modal-content">
           <h2>New transaction for <span id="transactionModalTitle"></span></h2>
           <form id="transactionForm">
+            <div class="button" id='toggleTransactionType'>
+              <p class="active" id='buyTransactionBtn'>Buy</p>
+              <p class="" id='sellTransactionBtn'>Sell</p>
+            </div>
             <input id="transactionDate" type="date">
-            <input id="transactionAmount" type="number" step="any" placeholder="Amount bought">
-            <input id="transactionCost" type="number" step="any" placeholder="Total cost ($)">
+            <input id="transactionAmount" type="number" step="any" placeholder="Amount of coins" min="0">
+            <input id="transactionCost" type="number" step="any" placeholder="Total cost ($)" min="0">
             <button id="addTransactionBtn">Add transaction</button>
           </form>
 

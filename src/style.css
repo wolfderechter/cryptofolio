@@ -195,7 +195,7 @@ input {
   width: 45px;
 }
 
-#transactionForm * {
+#transactionForm>* {
   margin: 10px;
 }
 
@@ -354,4 +354,41 @@ input {
 
 #ethereumStakingDailyRewards {
   opacity: 0.5;
+}
+
+#toggleTransactionType {
+  display: flex;
+  justify-content: center;
+}
+
+#buyTransactionBtn,
+#sellTransactionBtn {
+  border-radius: 8px;
+  padding: 5px 25px;
+  background-color: #1a1a1a;
+  margin: 0 2px;
+  cursor: pointer;
+  /* opacity: 0.8; */
+  ;
+}
+
+#buyTransactionBtn.active,
+#sellTransactionBtn.active {
+  background-color: rgba(149, 76, 233, 0.6);
+  opacity: 1;
+}
+
+@keyframes shake {
+  0% {
+    margin-left: 0rem;
+  }
+  25% {
+    margin-left: 0.5rem;
+  }
+  75% {
+    margin-left: -0.5rem;
+  }
+  100% {
+    margin-left: 0rem;
+  }
 }

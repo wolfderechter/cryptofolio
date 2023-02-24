@@ -108,30 +108,77 @@ function startTransaction(coin: Coin) {
   // Switch the modal popup to the transaction popup
   transactionModal.style.display = "block";
 
+  const toggleTransactionType = document.getElementById("toggleTransactionType")!;
+  const buyTransactionBtn = document.getElementById("buyTransactionBtn")!;
+  const sellTransactionBtn = document.getElementById("sellTransactionBtn")!;
   const addTransactionBtn = document.getElementById("addTransactionBtn")!;
   const transactionTitle = document.getElementById("transactionModalTitle")!;
 
-  // Set the date input to today by default
   const transactionDate = <HTMLInputElement>document.getElementById("transactionDate");
+  const transactionAmount = <HTMLInputElement>document.getElementById("transactionAmount");
+  const transactionCost = <HTMLInputElement>document.getElementById("transactionCost");
+
+  // Reset invalid button styling
+  addTransactionBtn.style.animation = "";
+  addTransactionBtn.style.boxShadow = "";
+
+  // Reset the toggle transactions buttons
+  buyTransactionBtn.classList.remove("active");
+  buyTransactionBtn.classList.add("active");
+  sellTransactionBtn.classList.remove("active");
+
+  // Check if the crypto is present in our holdings, otherwise we disable toggling between buy/sell
+  let foundCrypto = cryptocurrencies.find((c) => c.id === coin.id);
+  console.log(foundCrypto);
+  if (foundCrypto !== undefined) {
+    sellTransactionBtn.style.opacity = "1";
+
+    toggleTransactionType.onclick = () => {
+      buyTransactionBtn.classList.toggle("active");
+      sellTransactionBtn.classList.toggle("active");
+
+      // If it's a Sell transaction, fill in the available amount
+      if (sellTransactionBtn.classList.contains("active")) {
+        transactionAmount.max = String(foundCrypto?.totalAmount);
+      } else {
+        transactionAmount.max = "";
+      }
+    };
+  } else {
+    sellTransactionBtn.style.opacity = "0.2";
+    // Reset the onclick listener if the crypto is not found so we can't toggle
+    toggleTransactionType.onclick = null;
+  }
+
+  // Set the date input to today by default
   transactionDate.valueAsDate = new Date();
 
   transactionTitle.textContent = coin.name;
 
   addTransactionBtn.onclick = (e) => {
     e.preventDefault();
-    // Create the cryptocurrency object
-    // Add the transaction
-    let resultCrypto = cryptocurrencies.find((c) => c.id === coin.id);
 
+    // Validate the form
+    if (
+      Number(transactionAmount.value) <= 0 ||
+      Number(transactionCost.value) <= 0 ||
+      (transactionAmount.hasAttribute("max") && Number(transactionAmount.max) < Number(transactionAmount.value))
+    ) {
+      console.log(transactionAmount.max);
+      console.log(Number(transactionAmount.max));
+      addTransactionBtn.style.animation = "shake 0.2s ease-in-out 0s 2";
+      addTransactionBtn.style.boxShadow = "0 0 0.6rem #ff0000";
+
+      return;
+    }
+
+    // Create the cryptocurrency object
+    let resultCrypto = cryptocurrencies.find((c) => c.id === coin.id);
+    let selectedTransactionType = buyTransactionBtn.classList.contains("active") ? transactionType.Buy : transactionType.Sell;
     // If crypto was already present, add new transaction
     if (resultCrypto) {
       resultCrypto.addTransaction(
-        new Transaction(
-          transactionType.Buy,
-          new Date(transactionDate.value),
-          Number((<HTMLInputElement>document.getElementById("transactionAmount")).value),
-          Number((<HTMLInputElement>document.getElementById("transactionCost")).value)
-        )
+        new Transaction(selectedTransactionType, new Date(transactionDate.value), Number(transactionAmount.value), Number(transactionCost.value))
       );
     } else {
       // If crypto was not yet present, create it and add new transaction
