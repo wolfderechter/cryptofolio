@@ -97,13 +97,19 @@ export async function preparePieChart2() {
     pieChart2?.destroy();
     return;
   }
+  // First try to get the new prices
+  coinPrices = await getCoinsPrices(cryptocurrencies.map((c) => c.id));
+  // If we run into issues we stop what we are doing and don't refresh the charts
+  if (coinPrices.length === 0) {
+    return;
+  }
+
   // Reset the existing chart
   if (pieChart2 != null) pieChart2.destroy();
   labels2 = [];
   data2 = [];
   colors = [];
 
-  coinPrices = await getCoinsPrices(cryptocurrencies.map((c) => c.id));
   cryptocurrencies.forEach((crypto) => {
     labels2.push(crypto.symbol);
     data2.push(parseFloat(coinPrices[crypto.id].usd) * crypto.totalAmount);

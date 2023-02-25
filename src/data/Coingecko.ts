@@ -1,6 +1,6 @@
 const COINGECKO_API = "https://api.coingecko.com/api/v3/";
 
-export async function getCoins(input: string) {
+export async function getCoins(input: string): Promise<string[][]> {
   try {
     const query = `search?query=${input}`;
     const res = await fetch(COINGECKO_API + query);
@@ -8,7 +8,7 @@ export async function getCoins(input: string) {
 
     return jsonResult["coins"];
   } catch (error) {
-    console.error(error);
+    return [];
   }
 }
 
@@ -32,7 +32,6 @@ export async function getCoinsPrices(coins: string[]): Promise<string[]> {
 
     return jsonResult;
   } catch (error) {
-    console.error(error);
     return [];
   }
 }
@@ -49,23 +48,15 @@ export async function getCoinsPrices(coins: string[]): Promise<string[]> {
 
     
  */
-export async function getCoinChart(
-  coin: string,
-  days: number
-): Promise<string[]> {
+export async function getCoinChart(coin: string, days: number): Promise<string[]> {
   try {
-    let query =
-      COINGECKO_API +
-      `coins/${coin}/market_chart?vs_currency=usd&days=${
-        days - 1
-      }&interval=daily`;
+    let query = COINGECKO_API + `coins/${coin}/market_chart?vs_currency=usd&days=${days - 1}&interval=daily`;
     const res = await fetch(query);
     const jsonResult = await res.json();
 
     // api supports 'prices' 'market_caps' and 'total_volumes' but we only need prices currently
     return jsonResult["prices"];
   } catch (error) {
-    console.error(error);
     return [];
   }
 }
@@ -75,19 +66,14 @@ export async function getCoinChart(
  * @param coin: the unique crypto identifier string
  * @param date: The date of data snapshot in dd-mm-yyyy eg. 30-12-2022
  */
-export async function getCoinOnDate(
-  coin: string,
-  day: string
-): Promise<string> {
+export async function getCoinOnDate(coin: string, day: string): Promise<string> {
   try {
-    let query =
-      COINGECKO_API + `coins/${coin}/history?date=${day}&localization=false`;
+    let query = COINGECKO_API + `coins/${coin}/history?date=${day}&localization=false`;
     const res = await fetch(query);
     const jsonResult = await res.json();
 
     return jsonResult["market_data"]["current_price"];
   } catch (error) {
-    console.error(error);
     return "";
   }
 }

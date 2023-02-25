@@ -80,12 +80,16 @@ function searchCrypto() {
   // Do a search request to coingecko, passing the searchterm
   // take the coins section returned and display it
   getCoins(input.value).then((data) => {
+    if (data.length === 0) {
+      return;
+    }
+
     for (let c in data) {
       let coinDiv = document.createElement("div");
       let thumbnail = document.createElement("img");
-      thumbnail.src = data[c].large;
+      thumbnail.src = data[c]["large"];
       let name = document.createElement("p");
-      name.textContent = data[c].name;
+      name.textContent = data[c]["name"];
       coinDiv.appendChild(thumbnail);
       coinDiv.appendChild(name);
 
@@ -94,9 +98,9 @@ function searchCrypto() {
         e.preventDefault();
         closeSearchModal();
         startTransaction({
-          id: data[c].id,
-          symbol: data[c].symbol,
-          name: data[c].name,
+          id: data[c]["id"],
+          symbol: data[c]["symbol"],
+          name: data[c]["name"],
         });
       };
       cryptoListDiv.appendChild(coinDiv);
@@ -128,6 +132,7 @@ function startTransaction(coin: Coin) {
   buyTransactionBtn.classList.add("active");
   sellTransactionBtn.classList.remove("active");
   availableAmount.textContent = "";
+  transactionAmount.removeAttribute("max");
 
   // Check if the crypto is present in our holdings, otherwise we disable toggling between buy/sell
   let foundCrypto = cryptocurrencies.find((c) => c.id === coin.id);
@@ -143,8 +148,8 @@ function startTransaction(coin: Coin) {
         transactionAmount.max = String(foundCrypto?.totalAmount);
         availableAmount.textContent = `${foundCrypto?.totalAmount} ${foundCrypto?.symbol} available`;
       } else {
-        transactionAmount.removeAttribute("max");
         availableAmount.textContent = "";
+        transactionAmount.removeAttribute("max");
       }
     };
   } else {
@@ -167,6 +172,7 @@ function startTransaction(coin: Coin) {
       Number(transactionCost.value) <= 0 ||
       (transactionAmount.hasAttribute("max") && Number(transactionAmount.max) < Number(transactionAmount.value))
     ) {
+      // Show an error animation on the add transaction button
       addTransactionBtn.style.animation = "shake 0.2s ease-in-out 0s 2";
       addTransactionBtn.style.boxShadow = "0 0 0.6rem #ff0000";
 
@@ -262,14 +268,20 @@ function manageTransactions(coin: Coin) {
 
 async function populateAssetsTable() {
   const tableBody = document.getElementById("assetsTableBody")!;
+
+  const coinPrices = await getCoinsPrices(cryptocurrencies.map((c) => c.id));
+  // When we overload the coingecko api, we get a 429 and empty objects back
+  // In this case we stop what we are doing and tell the user to slow down
+  if (coinPrices.length === 0) {
+    return;
+  }
+
   // Removing it with a while loop is better than innerHTML = ""
   while (tableBody.children.length > 0) {
     if (tableBody.firstChild) {
       tableBody.removeChild(tableBody.firstChild);
     }
   }
-
-  const coinPrices = await getCoinsPrices(cryptocurrencies.map((c) => c.id));
 
   if (cryptocurrencies.length === 0) return;
 
@@ -362,11 +374,16 @@ async function calculateStakingRewards() {
 
   // In case no cryptocurrencies are present (anymore) we set the boolean to false and exit
   if (cryptocurrencies.length < 1) stakedETH = false;
+  let limited = false;
 
   for (const cc of cryptocurrencies) {
     if (STAKED_ETH_COINS.includes(cc.id)) {
       stakedETH = true;
       let coinPrice = await getCoinsPrices([cc.id, "ethereum"]); // the prices of the staked eth LSD and ethereum to use later on
+      if (coinPrice.length === 0) {
+        limited = true;
+        break;
+      }
       let currentValue = coinPrice[cc.id]["usd"]; // the value of the staked eth LSD in USD for ease of access
 
       // Add the current dollar value staked to the total
@@ -379,6 +396,10 @@ async function calculateStakingRewards() {
           cc.id,
           transaction.date.toLocaleDateString("NL") // using .toLocaleDateString("NL") because it outputs the string in dd-mm-yyyy format
         );
+        if (coinOnPurchaseDate.length === 0) {
+          limited = true;
+          break;
+        }
 
         // Calculate the reward by multiplying the transaction amount with the delta of conversion rate from date of purchase vs now
         let rewardETH = transaction.amount * (coinPrice[cc.id]["eth"] - parseFloat(coinOnPurchaseDate["eth"]));
@@ -389,6 +410,9 @@ async function calculateStakingRewards() {
       }
     }
   }
+  // If we are being rate limited, exit
+  if (limited) return;
+
   // Hide the staked ethereum card if no staked eth is found
   if (!stakedETH) {
     ethereumStaking.style.display = "none";

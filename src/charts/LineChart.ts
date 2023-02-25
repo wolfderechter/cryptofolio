@@ -29,16 +29,14 @@ export async function prepareLineChart1() {
     summaryTotalPercentage.textContent = `%`;
     return;
   }
-  // Reset the chart
-  if (lineChart1 != null) {
-    lineChart1.destroy();
-  }
+
   data1 = [];
   data1 = Array(100).fill({ x: null, y: 0 });
   netInvested = [];
   allData.clear();
 
-  let datesOnce = true;
+  let once = true;
+  let limited = false;
 
   for (const crypto of cryptocurrencies) {
     /*
@@ -51,13 +49,18 @@ export async function prepareLineChart1() {
     */
     let prices: number[];
     coinChart = await getCoinChart(crypto.id, 100);
+    if (coinChart.length === 0) {
+      limited = true;
+      break;
+    }
 
-    // Use the dates of the first crypto fetched for all the other cryptos, Do this only once
-    if (datesOnce) {
+    // Things we only need to do once
+    // - Use the dates of the first crypto fetched for all the other cryptos, Do this only once
+    if (once) {
       dates = coinChart.map((data) => {
         return new Date(data[0]);
       });
-      datesOnce = false;
+      once = false;
     }
 
     prices = coinChart.map((data) => parseFloat(data[1]));
@@ -87,6 +90,13 @@ export async function prepareLineChart1() {
         netInvested.push(cost);
       }
     }
+  }
+  // If we are being rate limited, stop what we are doing since the data is incomplete
+  if (limited) return;
+
+  // Reset the chart
+  if (lineChart1 != null) {
+    lineChart1.destroy();
   }
 
   lineChart1 = new Chart(canvas1, {
