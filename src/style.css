@@ -84,11 +84,6 @@ button:hover {
   border-color: #646cff;
 }
 
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -358,10 +353,34 @@ input {
   gap: 10px;
 }
 
+/* 
+
+  LINECHART
+
+*/
 .mainChart {
   width: 95%;
   padding: 10px 20px;
+  position: relative;
 }
+
+.totalValueTitle {
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.toggleDate {
+  margin-bottom: 10px;
+}
+
+.toggleDateModes {
+  padding: 5px;
+}
+
+.toggleDateModes.active {
+  border-color: #646cff;
+}
+
 
 
 /* Hide the input */

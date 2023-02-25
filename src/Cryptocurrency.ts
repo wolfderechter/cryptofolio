@@ -83,6 +83,10 @@ export class CryptoCurrency {
   get amountOfTransactions(): number {
     return this.transactions.length;
   }
+
+  get transactionDates(): Date[] {
+    return this.transactions.map((t) => t.date);
+  }
 }
 
 export interface Coin {

@@ -2,11 +2,14 @@ import { cryptocurrencies } from "../main";
 import { Chart } from "chart.js/auto";
 import { getCoinChart } from "../data/Coingecko";
 import "chartjs-adapter-date-fns";
-// import { enUS } from "date-fns/locale";
+
+let dateModeDays = 31;
+let dateModeArrayLength = 32; // The array length is the number of days + 1 except for 1D => 24 hours
+let dateModeInterval = "daily";
 
 let canvas1 = <HTMLCanvasElement>document.getElementById("lineChart1")!;
 let lineChart1: Chart<"line", { x: Date; y: number }[], unknown>;
-let data1: { x: Date; y: number }[] = Array(100).fill({ x: null, y: 0 });
+let data1: { x: Date; y: number }[] = Array(dateModeArrayLength).fill({ x: null, y: 0 });
 let allData: Map<string, any[]> = new Map();
 let coinChart: string[] = [];
 let dates: Date[] = [];
@@ -31,7 +34,7 @@ export async function prepareLineChart1() {
   }
 
   data1 = [];
-  data1 = Array(100).fill({ x: null, y: 0 });
+  data1 = Array(dateModeArrayLength).fill({ x: null, y: 0 });
   netInvested = [];
   allData.clear();
 
@@ -40,7 +43,7 @@ export async function prepareLineChart1() {
 
   for (const crypto of cryptocurrencies) {
     /*
-      By default prepare the chart for the last 100 days
+      By default prepare the chart for the last 31 days
         Returns an array of:
         [
         1675728000000 //Unix timestamp)
@@ -48,7 +51,8 @@ export async function prepareLineChart1() {
         ]
     */
     let prices: number[];
-    coinChart = await getCoinChart(crypto.id, 100);
+    coinChart = await getCoinChart(crypto.id, dateModeDays, dateModeInterval);
+
     if (coinChart.length === 0) {
       limited = true;
       break;
@@ -120,7 +124,7 @@ export async function prepareLineChart1() {
         x: {
           type: "time",
           time: {
-            unit: "day",
+            unit: dateModeInterval === "hourly" ? "hour" : "day",
           },
         },
         y: {
@@ -224,6 +228,7 @@ export async function prepareLineChart1() {
   };
 
   lineChart1.data.datasets.push(netInvestDataSet);
+  // if (dateModeInterval === "hourly") lineChart1!.options!.scales!.x!.time!.unit = "hour";
   lineChart1.update();
 
   // Calculate total value and total percentage & fill in the Summary
@@ -242,7 +247,6 @@ export async function prepareLineChart1() {
 Colors
 
 */
-
 const colors = {
   purple: {
     default: "rgba(149, 76, 233, 1)",
@@ -262,3 +266,79 @@ totalValueGradient.addColorStop(0, colors.purple.half);
 totalValueGradient.addColorStop(0.5, colors.purple.quarter);
 totalValueGradient.addColorStop(0, colors.purple.quarter);
 totalValueGradient.addColorStop(1, colors.purple.zero);
+
+/* 
+
+  Change Date Mode 
+
+*/
+const toggleDayMode = document.getElementById("toggleDayMode")!;
+const toggleWeekMode = document.getElementById("toggleWeekMode")!;
+const toggleMonthMode = document.getElementById("toggleMonthMode")!;
+const toggleYearMode = document.getElementById("toggleYearMode")!;
+const toggleAllMode = document.getElementById("toggleAllMode")!;
+
+toggleDayMode.addEventListener("click", switchDateMode);
+toggleWeekMode.addEventListener("click", switchDateMode);
+toggleMonthMode.addEventListener("click", switchDateMode);
+toggleYearMode.addEventListener("click", switchDateMode);
+toggleAllMode.addEventListener("click", switchDateMode);
+
+function switchDateMode(e: any) {
+  let target = e.target as HTMLButtonElement;
+
+  // Remove other active classes
+  toggleDayMode.classList.remove("active");
+  toggleWeekMode.classList.remove("active");
+  toggleMonthMode.classList.remove("active");
+  toggleYearMode.classList.remove("active");
+  toggleAllMode.classList.remove("active");
+
+  // Add the current active classes
+  target.classList.add("active");
+
+  dateModeDays = Number(target.value);
+  switch (target.value) {
+    case "day":
+      dateModeDays = 1;
+      dateModeArrayLength = 25;
+      dateModeInterval = "hourly";
+      break;
+    case "week":
+      dateModeDays = 7;
+      dateModeArrayLength = dateModeDays + 1;
+      dateModeInterval = "daily";
+      break;
+    case "month":
+      dateModeDays = 31;
+      dateModeArrayLength = dateModeDays + 1;
+      dateModeInterval = "daily";
+      break;
+    case "year":
+      dateModeDays = 365;
+      dateModeArrayLength = dateModeDays + 1;
+      dateModeInterval = "daily";
+      break;
+    case "all":
+      // Return the max amount of days => get the earliest transaction date
+      let earliestDate = cryptocurrencies
+        .map((c) => c.transactionDates)
+        .reduce(function (a, b) {
+          return a < b ? a : b;
+        })[0];
+      let currentDate = new Date();
+      const diffTime = Math.abs(currentDate.getTime() - earliestDate.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      dateModeDays = diffDays;
+      dateModeArrayLength = dateModeDays + 1;
+      dateModeInterval = "daily";
+      break;
+    default:
+      dateModeDays = 31;
+      dateModeArrayLength = dateModeDays + 1;
+      dateModeInterval = "daily";
+      break;
+  }
+
+  prepareLineChart1();
+}

@@ -48,9 +48,9 @@ export async function getCoinsPrices(coins: string[]): Promise<string[]> {
 
     
  */
-export async function getCoinChart(coin: string, days: number): Promise<string[]> {
+export async function getCoinChart(coin: string, days: number, interval: string): Promise<string[]> {
   try {
-    let query = COINGECKO_API + `coins/${coin}/market_chart?vs_currency=usd&days=${days - 1}&interval=daily`;
+    let query = COINGECKO_API + `coins/${coin}/market_chart?vs_currency=usd&days=${days}&interval=${interval}`;
     const res = await fetch(query);
     const jsonResult = await res.json();
 

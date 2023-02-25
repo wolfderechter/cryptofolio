@@ -61,7 +61,17 @@
 
 
     <div class="chart mainChart lineChart">
-      <h2>Total value over time</h2>
+      <span>
+        <h2 class="totalValueTitle">Total value over time</h2>
+        <div class="toggleDate">
+          <button id="toggleDayMode" class="toggleDateModes" value="day" type="button">24H</button>
+          <button id="toggleWeekMode" class="toggleDateModes" value="week" type="button">7D</button>
+          <button id="toggleMonthMode" class="toggleDateModes active" value="month" type="button">1M</button>
+          <button id="toggleYearMode" class="toggleDateModes" value="year" type="button">1Y</button>
+          <button id="toggleAllMode" class="toggleDateModes" value="all" type="button">All</button>
+        </div>
+      </span>
+
       <canvas id="lineChart1"></canvas>
     </div>
 
