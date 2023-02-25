@@ -360,6 +360,14 @@ async function populateAssetsTable() {
         - if a sale is coming calculate the rewards up until the sale for the whole amount
         - calculate the rewards for the remaining amount from after the sale up until the next sale or until now
 
+  Additional Remarks:
+    Tracking eth staking only makes sense by comparing the peg of date of staking and current date. The difference in the peg tells us the rewards.
+    Since the peg is between reth/eth we need to know how much eth we are essentially staking into reth.
+    -If we know the eth amount, easy 
+      => Need to support ETH as the transaction currency for staking
+    -If we don't know the eth amount, we can look it up for the date but it needs to be precise so exact timestamp (including hour/minutes).
+
+    Also we need to be aware of fees when swapping, possibly we could store these in the transactions.
 */
 const STAKED_ETH_COINS = ["rocket-pool-eth", "wrapped-steth"];
 async function calculateStakingRewards() {
@@ -384,6 +392,7 @@ async function calculateStakingRewards() {
         limited = true;
         break;
       }
+
       let currentValue = coinPrice[cc.id]["usd"]; // the value of the staked eth LSD in USD for ease of access
 
       // Add the current dollar value staked to the total
@@ -396,14 +405,25 @@ async function calculateStakingRewards() {
           cc.id,
           transaction.date.toLocaleDateString("NL") // using .toLocaleDateString("NL") because it outputs the string in dd-mm-yyyy format
         );
+        let ethOnPurchaseDate = await getCoinOnDate(
+          "ethereum",
+          transaction.date.toLocaleDateString("NL") // using .toLocaleDateString("NL") because it outputs the string in dd-mm-yyyy format
+        );
         if (coinOnPurchaseDate.length === 0) {
           limited = true;
           break;
         }
+        // Calculates the conversion rate based on the amount received and total cost so the actual conversion rate is calculated including the premium present (and fees)
+        let conversionRateOnDate = transaction.cost / (transaction.amount * ethOnPurchaseDate["usd"]);
 
         // Calculate the reward by multiplying the transaction amount with the delta of conversion rate from date of purchase vs now
-        let rewardETH = transaction.amount * (coinPrice[cc.id]["eth"] - parseFloat(coinOnPurchaseDate["eth"]));
+        let rewardETH = transaction.amount * (coinPrice[cc.id]["eth"] - conversionRateOnDate);
         let rewardUSD = rewardETH * coinPrice["ethereum"]["usd"]; // convert the eth rewards to usd by multiplying by the price of ETH now
+
+        // Alternatively, calculate use the official conversion rate on the day of staking
+        // This isn't always accurate since there can be premiums
+        // let rewardETH = transaction.amount * (coinPrice[cc.id]["eth"] - parseFloat(coinOnPurchaseDate["eth"]));
+        // let rewardUSD = rewardETHV1 * coinPrice["ethereum"]["usd"];
 
         // if (rewardETH > 0) totalRewardsETH += rewardETH;
         if (rewardUSD > 0) totalRewardsUSD += rewardUSD;

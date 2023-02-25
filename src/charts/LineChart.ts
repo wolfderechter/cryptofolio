@@ -228,7 +228,6 @@ export async function prepareLineChart1() {
   };
 
   lineChart1.data.datasets.push(netInvestDataSet);
-  // if (dateModeInterval === "hourly") lineChart1!.options!.scales!.x!.time!.unit = "hour";
   lineChart1.update();
 
   // Calculate total value and total percentage & fill in the Summary
