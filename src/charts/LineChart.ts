@@ -14,7 +14,7 @@ let allData: Map<string, any[]> = new Map();
 let coinChart: string[] = [];
 let dates: Date[] = [];
 let netInvested: number[] = [];
-
+let summaryOnce = true;
 export let datasetColors: { id: string; color: string }[] = [];
 
 const summaryTotalValue = document.getElementById("summaryTotalValue")!;
@@ -87,7 +87,7 @@ export async function prepareLineChart1() {
 
       let cost = crypto.calculateCostOnDate(dates[index]);
       // If a netInvested already exists on date index, add the cost to the value
-      if (netInvested[index]) {
+      if (netInvested[index] != null && netInvested[index] != undefined) {
         netInvested[index] += cost;
       } else {
         // else push the cost to the netInvested array
@@ -231,14 +231,18 @@ export async function prepareLineChart1() {
   lineChart1.update();
 
   // Calculate total value and total percentage & fill in the Summary
-  const totalValue = data1[data1.length - 1].y;
+  // Do this only once
+  if (summaryOnce) {
+    const totalValue = data1[data1.length - 1].y;
+    const netInvestedTotal = netInvested[netInvested.length - 1];
+    const percentage = ((totalValue - netInvestedTotal) / netInvestedTotal) * 100;
+    summaryTotalValue.textContent = `$${totalValue ? totalValue.toFixed(2) : ""}`;
+    summaryTotalPercentage.textContent = `${percentage ? percentage.toFixed(2) : ""}%`;
+    if (totalValue) summaryTotalValue.style.opacity = "0.5";
+    if (totalValue) summaryTotalPercentage.style.opacity = "0.5";
 
-  const netInvestedTotal = netInvested[netInvested.length - 1];
-  const percentage = ((totalValue - netInvestedTotal) / netInvestedTotal) * 100;
-  summaryTotalValue.textContent = `$${totalValue ? totalValue.toFixed(2) : ""}`;
-  summaryTotalPercentage.textContent = `${percentage ? percentage.toFixed(2) : ""}%`;
-  if (totalValue) summaryTotalValue.style.opacity = "0.5";
-  if (totalValue) summaryTotalPercentage.style.opacity = "0.5";
+    summaryOnce = false;
+  }
 }
 
 /*
@@ -295,8 +299,7 @@ function switchDateMode(e: any) {
 
   // Add the current active classes
   target.classList.add("active");
-
-  dateModeDays = Number(target.value);
+  // dateModeDays = Number(target.value);
   switch (target.value) {
     case "day":
       dateModeDays = 1;
@@ -323,7 +326,7 @@ function switchDateMode(e: any) {
       let earliestDate = cryptocurrencies
         .map((c) => c.transactionDates)
         .reduce(function (a, b) {
-          return a < b ? a : b;
+          return a > b ? a : b;
         })[0];
       let currentDate = new Date();
       const diffTime = Math.abs(currentDate.getTime() - earliestDate.getTime());
