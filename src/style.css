@@ -311,6 +311,11 @@ input {
   padding: 5px;
 }
 
+/* 
+
+  Summary
+
+*/
 .summary {
   display: flex;
   align-items: center;
@@ -325,10 +330,6 @@ input {
   font-weight: 600;
   font-size: 18px;
   margin: 0;
-}
-
-.summary span {
-  opacity: 0.1;
 }
 
 .summary>* {

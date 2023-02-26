@@ -268,7 +268,7 @@ function manageTransactions(coin: Coin) {
   }
 }
 
-async function populateAssetsTable() {
+async function populateAssetsTableAndSummary() {
   const tableBody = document.getElementById("assetsTableBody")!;
 
   const coinPrices = await getCoinsPrices(cryptocurrencies.map((c) => c.id));
@@ -363,6 +363,9 @@ async function populateAssetsTable() {
   if (summaryTotalValue) summaryTotalValue.style.opacity = "0.5";
   if (summaryTotalValue) summaryTotalPercentage.style.opacity = "0.5";
 }
+// Run the populate assetsTableAndSummary every x minutes -> 15 minutes or 900 000ms in this case: 15m*60s*1000ms
+// ToDO: make the x minutes configurable? with a minimum amount of 1 minute to not overload the coingecko API
+setInterval(populateAssetsTableAndSummary, 900000);
 
 /* 
   Staking rewards for ethereum can be defined as the gain in USD since buying the LSD rETH/...
@@ -477,7 +480,7 @@ async function calculateStakingRewards() {
 }
 
 export function init() {
-  populateAssetsTable();
+  populateAssetsTableAndSummary();
   renderCharts();
   calculateStakingRewards();
 }
