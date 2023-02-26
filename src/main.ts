@@ -14,6 +14,8 @@ const transactionModalCloseBtn = document.getElementById("transaction-modal-clos
 const manageTransactionsModalCloseBtn = document.getElementById("manage-transactions-modal-close");
 const searchForm = document.querySelector<HTMLFormElement>("#searchForm");
 const transactionForm = document.querySelector<HTMLFormElement>("#transactionForm");
+const summaryTotalValue = document.getElementById("summaryTotalValue")!;
+const summaryTotalPercentage = document.getElementById("summaryTotalPercentage")!;
 
 let input = document.getElementById("importDataBtn");
 if (input) input.addEventListener("change", importData);
@@ -283,11 +285,21 @@ async function populateAssetsTable() {
     }
   }
 
-  if (cryptocurrencies.length === 0) return;
+  if (cryptocurrencies.length === 0) {
+    summaryTotalValue.textContent = `$`;
+    summaryTotalPercentage.textContent = `%`;
+    return;
+  }
+
+  let cryptoValueSum = 0;
+  let cryptoCostSum = 0;
 
   cryptocurrencies.forEach((asset) => {
-    const cryptoValue = parseFloat(coinPrices[asset.id].usd) * asset.totalAmount;
+    const cryptoValue = parseFloat(coinPrices[asset.id]["usd"]) * asset.totalAmount;
     const percentage = ((cryptoValue - asset.totalCost) / asset.totalCost) * 100;
+
+    cryptoValueSum += cryptoValue;
+    cryptoCostSum += asset.totalCost;
 
     let tr = document.createElement("tr");
 
@@ -342,6 +354,14 @@ async function populateAssetsTable() {
 
     tableBody?.appendChild(tr);
   });
+
+  // Fill up the summary values
+  summaryTotalValue.textContent = `$${cryptoValueSum ? cryptoValueSum.toFixed(2) : ""}`;
+  const percentage = ((cryptoValueSum - cryptoCostSum) / cryptoCostSum) * 100;
+  summaryTotalPercentage.textContent = `${percentage ? percentage.toFixed(2) : ""}%`;
+
+  if (summaryTotalValue) summaryTotalValue.style.opacity = "0.5";
+  if (summaryTotalValue) summaryTotalPercentage.style.opacity = "0.5";
 }
 
 /* 

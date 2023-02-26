@@ -14,11 +14,8 @@ let allData: Map<string, any[]> = new Map();
 let coinChart: string[] = [];
 let dates: Date[] = [];
 let netInvested: number[] = [];
-let summaryOnce = true;
 export let datasetColors: { id: string; color: string }[] = [];
 
-const summaryTotalValue = document.getElementById("summaryTotalValue")!;
-const summaryTotalPercentage = document.getElementById("summaryTotalPercentage")!;
 /* 
     The portfolio line chart consist of the value of the portfolio during the last x amount of days
 
@@ -28,8 +25,6 @@ export async function prepareLineChart1() {
   // In case no cryptocurrencies are present (anymore) we destroy the chart and empty the 2 summary values
   if (cryptocurrencies.length === 0) {
     lineChart1?.destroy();
-    summaryTotalValue.textContent = `$`;
-    summaryTotalPercentage.textContent = `%`;
     return;
   }
 
@@ -229,20 +224,6 @@ export async function prepareLineChart1() {
 
   lineChart1.data.datasets.push(netInvestDataSet);
   lineChart1.update();
-
-  // Calculate total value and total percentage & fill in the Summary
-  // Do this only once
-  if (summaryOnce) {
-    const totalValue = data1[data1.length - 1].y;
-    const netInvestedTotal = netInvested[netInvested.length - 1];
-    const percentage = ((totalValue - netInvestedTotal) / netInvestedTotal) * 100;
-    summaryTotalValue.textContent = `$${totalValue ? totalValue.toFixed(2) : ""}`;
-    summaryTotalPercentage.textContent = `${percentage ? percentage.toFixed(2) : ""}%`;
-    if (totalValue) summaryTotalValue.style.opacity = "0.5";
-    if (totalValue) summaryTotalPercentage.style.opacity = "0.5";
-
-    summaryOnce = false;
-  }
 }
 
 /*
