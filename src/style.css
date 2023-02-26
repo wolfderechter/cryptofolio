@@ -5,7 +5,6 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  /* background-color: #242424; */
   background-color: #1c1e1f;
 
   font-synthesis: none;
@@ -13,7 +12,17 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  /* works on firefox, doesn't show in chrome*/
+  scrollbar-width: thin;
+
+  --dark-accent-color: #1a1a1a;
+
+
+  --scrollbar-color: #4d4d4d;
+  --scrollbar-color: #4d4d4d;
+  --border-radius-small: 8px;
 }
+
 
 a {
   font-weight: 500;
@@ -31,6 +40,21 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-color);
+  box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
+  border-radius: 8px;
+}
+
+body::-webkit-scrollbar {
+  width: 10px;
+}
+
+body::-webkit-scrollbar-track {
+  background-color: var(--dark-accent-color);
+  border-radius: var(--border-radius-small);
 }
 
 h1 {
@@ -69,13 +93,13 @@ h1 {
 }
 
 button {
-  border-radius: 8px;
+  border-radius: var(--border-radius-small);
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: var(--dark-accent-color);
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -115,7 +139,7 @@ button:hover {
   /* Full width */
   height: 100%;
   /* Full height */
-  overflow: auto;
+  /* overflow: auto; */
   /* Enable scroll if needed */
 
   background-color: rgba(0, 0, 0, 0.4);
@@ -131,9 +155,25 @@ button:hover {
   border: 1px solid #202224;
   width: 400px;
   height: 600px;
-  border-radius: 8px;
+  border-radius: var(--border-radius-small);
 
   overflow: auto;
+  scrollbar-width: thin;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-color);
+  box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
+  border-radius: var(--border-radius-small);
+}
+
+.modal-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background-color: var(--dark-accent-color);
+  border-radius: var(--border-radius-small);
 }
 
 /* The Close Button */
@@ -157,9 +197,9 @@ input {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: var(--dark-accent-color);
   transition: border-color 0.25s;
-  border-radius: 8px;
+  border-radius: var(--border-radius-small);
 }
 
 #inner-modal-content {
@@ -171,8 +211,24 @@ input {
   display: flex;
   flex-wrap: wrap;
   overflow: auto;
+  scrollbar-width: thin;
   width: 400px;
   height: 550px;
+}
+
+#cryptoList::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-color);
+  box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
+  border-radius: var(--border-radius-small);
+}
+
+#cryptoList::-webkit-scrollbar {
+  border-radius: var(--border-radius-small);
+}
+
+#cryptoList::-webkit-scrollbar-track {
+  background-color: var(--dark-accent-color);
+  border-radius: 10px;
 }
 
 #cryptoList div {
@@ -229,7 +285,7 @@ input {
 #sellTransactionBtn {
   border-radius: 8px;
   padding: 5px 25px;
-  background-color: #1a1a1a;
+  background-color: var(--dark-accent-color);
   margin: 0 2px;
   cursor: pointer;
   /* opacity: 0.8; */
@@ -238,7 +294,7 @@ input {
 
 #buyTransactionBtn.active,
 #sellTransactionBtn.active {
-  background-color: rgba(149, 76, 233, 0.6);
+  background-color: var(--scrollbar-color);
   opacity: 1;
 }
 
@@ -278,7 +334,23 @@ input {
   /* Max height so the table doesn't take up the whole page */
   max-height: 400px;
   overflow: auto;
+  scrollbar-width: thin;
   padding-bottom: 10px;
+}
+
+.assetsTable::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-color);
+  box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
+  border-radius: 10px;
+}
+
+.assetsTable::-webkit-scrollbar {
+  width: 10px;
+}
+
+.assetsTable::-webkit-scrollbar-track {
+  background-color: var(--dark-accent-color);
+  border-radius: 10px;
 }
 
 #addCrypto {
