@@ -3,6 +3,7 @@ import { saveData, loadData, exportData, importData } from "./data/localstorage"
 import { getCoinOnDate, getCoins, getCoinsPrices } from "./data/Coingecko";
 import { Transaction, transactionType } from "./Transaction";
 import { renderCharts } from "./charts/Init";
+import { CountUp } from "countup.js";
 
 export const cryptocurrencies: CryptoCurrency[] = [];
 const addCryptoBtn = document.querySelector<HTMLButtonElement>("#addCrypto");
@@ -14,11 +15,34 @@ const transactionModalCloseBtn = document.getElementById("transaction-modal-clos
 const manageTransactionsModalCloseBtn = document.getElementById("manage-transactions-modal-close");
 const searchForm = document.querySelector<HTMLFormElement>("#searchForm");
 const transactionForm = document.querySelector<HTMLFormElement>("#transactionForm");
+
+// Summary
 const summaryTotalValue = document.getElementById("summaryTotalValue")!;
+const summaryTotalValueContent = document.getElementById("summaryTotalValueContent")!;
 const summaryTotalPercentage = document.getElementById("summaryTotalPercentage")!;
 
+// Staking
+const ethereumStaking = document.getElementById("ethereumStaking")!;
+const ethereumStakedAmount = document.getElementById("ethereumStakedAmount")!;
+const ethereumStakingTotalRewards = document.getElementById("ethereumStakingTotalRewards")!;
+const ethereumStakingTotalRewardsContent = document.getElementById("ethereumStakingTotalRewardsContent")!;
+const ethereumStakingDailyRewards = document.getElementById("ethereumStakingDailyRewards")!;
+
+// Import data
 let input = document.getElementById("importDataBtn");
 if (input) input.addEventListener("change", importData);
+
+// Summary number animtions
+let summaryTotalValueContentCountUp = new CountUp(summaryTotalValueContent, 0, {
+  decimalPlaces: 2,
+  duration: 1,
+});
+
+// Staking rewards animations
+let ethereumStakingTotalRewardsCountUp = new CountUp(ethereumStakingTotalRewardsContent, 0, {
+  decimalPlaces: 4,
+  duration: 1,
+});
 
 // adding a crypto opens the modal with a search bar
 addCryptoBtn?.addEventListener("click", (e) => {
@@ -286,7 +310,7 @@ async function populateAssetsTableAndSummary() {
   }
 
   if (cryptocurrencies.length === 0) {
-    summaryTotalValue.textContent = `$`;
+    summaryTotalValueContent.textContent = ``;
     summaryTotalPercentage.textContent = `%`;
     return;
   }
@@ -356,7 +380,9 @@ async function populateAssetsTableAndSummary() {
   });
 
   // Fill up the summary values
-  summaryTotalValue.textContent = `$${cryptoValueSum ? cryptoValueSum.toFixed(2) : ""}`;
+  // summaryTotalValueContent.textContent = `${cryptoValueSum ? cryptoValueSum.toFixed(2) : ""}`;
+  summaryTotalValueContentCountUp.update(cryptoValueSum);
+
   const percentage = ((cryptoValueSum - cryptoCostSum) / cryptoCostSum) * 100;
   summaryTotalPercentage.textContent = `${percentage ? percentage.toFixed(2) : ""}%`;
 
@@ -398,10 +424,6 @@ async function calculateStakingRewards() {
   let totalRewardsUSD = 0;
   let totalStakedUSD = 0;
   let stakedETH = false;
-  const ethereumStaking = document.getElementById("ethereumStaking")!;
-  const ethereumStakedAmount = document.getElementById("ethereumStakedAmount");
-  const ethereumStakingTotalRewards = document.getElementById("ethereumStakingTotalRewards");
-  const ethereumStakingDailyRewards = document.getElementById("ethereumStakingDailyRewards");
 
   // In case no cryptocurrencies are present (anymore) we set the boolean to false and exit
   if (cryptocurrencies.length < 1) stakedETH = false;
@@ -465,7 +487,8 @@ async function calculateStakingRewards() {
 
   if (ethereumStakedAmount && ethereumStakingTotalRewards && ethereumStakingDailyRewards) {
     ethereumStakedAmount.textContent = `${totalStakedUSD.toFixed(2)} USD`;
-    ethereumStakingTotalRewards.textContent = `${totalRewardsUSD.toFixed(4)} USD`;
+    // ethereumStakingTotalRewards.textContent = `${totalRewardsUSD.toFixed(4)} USD`;
+    ethereumStakingTotalRewardsCountUp.update(totalRewardsUSD);
 
     /*
       Eth staking rewards of the last 24h can be calculated with:
@@ -476,6 +499,26 @@ async function calculateStakingRewards() {
     //  ToDo: change hardcoded eth staking apy to something dynamic
     let dailyRewardsUSD = (totalStakedUSD * 0.045) / 365;
     ethereumStakingDailyRewards.textContent = `${dailyRewardsUSD.toFixed(4)} USD`;
+
+    let stakingInterval: number;
+    ethereumStakingTotalRewards.onmouseenter = (e: MouseEvent) => {
+      console.log("enter");
+      ethereumStakingTotalRewardsCountUp.options!.decimalPlaces = 10;
+      ethereumStakingTotalRewardsCountUp.options!.duration = 2.5;
+      let value = totalRewardsUSD;
+      stakingInterval = setInterval(() => {
+        // ToDO: Convert the hardcoded APY of reth/wstETH to something better
+        value += value * (0.043 / 365 / 24 / 60 / 60);
+        ethereumStakingTotalRewardsCountUp.update(value);
+        console.log(value);
+      }, 1000);
+    };
+    ethereumStakingTotalRewards.onmouseleave = (e: MouseEvent) => {
+      console.log("leave");
+      ethereumStakingTotalRewardsCountUp.options!.decimalPlaces = 4;
+      ethereumStakingTotalRewardsCountUp.options!.duration = 1;
+      clearInterval(stakingInterval);
+    };
   }
 }
 
@@ -488,3 +531,12 @@ loadData();
 init();
 
 exportData(); // Setup the exportDataBtn so it's ready upon click
+
+function changeValue(value: number) {
+  ethereumStakingTotalRewardsCountUp.update(value);
+  setInterval(() => {
+    // ToDO: Convert the hardcoded APY of reth/wstETH to something better
+    value += value * (0.043 / 365 / 24 / 60 / 60);
+    changeValue(value);
+  }, 1000);
+}

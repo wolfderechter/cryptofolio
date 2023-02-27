@@ -489,6 +489,7 @@ input {
   background-color: #202224;
   border-radius: 20px;
   white-space: nowrap;
+  width: 25%;
 
   padding-left: 1.5rem;
   padding-right: 50px;
@@ -513,6 +514,7 @@ input {
 
 #ethereumStakingTotalRewards {
   opacity: 0.5;
+  cursor: pointer;
 }
 
 .ethereumStakingDailyRewards {
