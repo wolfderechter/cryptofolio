@@ -502,21 +502,22 @@ async function calculateStakingRewards() {
 
     let stakingInterval: number;
     ethereumStakingTotalRewards.onmouseenter = (e: MouseEvent) => {
-      console.log("enter");
+      // Increase the decimal places and duration while hovering
       ethereumStakingTotalRewardsCountUp.options!.decimalPlaces = 10;
       ethereumStakingTotalRewardsCountUp.options!.duration = 2.5;
+
       let value = totalRewardsUSD;
       stakingInterval = setInterval(() => {
         // ToDO: Convert the hardcoded APY of reth/wstETH to something better
         value += value * (0.043 / 365 / 24 / 60 / 60);
         ethereumStakingTotalRewardsCountUp.update(value);
-        console.log(value);
       }, 1000);
     };
     ethereumStakingTotalRewards.onmouseleave = (e: MouseEvent) => {
-      console.log("leave");
+      // Decrease the decimal places and duration when leaving
       ethereumStakingTotalRewardsCountUp.options!.decimalPlaces = 4;
       ethereumStakingTotalRewardsCountUp.options!.duration = 1;
+
       clearInterval(stakingInterval);
     };
   }
@@ -531,12 +532,3 @@ loadData();
 init();
 
 exportData(); // Setup the exportDataBtn so it's ready upon click
-
-function changeValue(value: number) {
-  ethereumStakingTotalRewardsCountUp.update(value);
-  setInterval(() => {
-    // ToDO: Convert the hardcoded APY of reth/wstETH to something better
-    value += value * (0.043 / 365 / 24 / 60 / 60);
-    changeValue(value);
-  }, 1000);
-}
