@@ -3,7 +3,7 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
+  color-scheme: dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #1c1e1f;
 
@@ -15,18 +15,23 @@
   /* works on firefox, doesn't show in chrome*/
   scrollbar-width: thin;
 
+  /* Used for various backgrounds */
+  --main-color: #202224;
+  /* Used for accent colors*/
   --dark-accent-color: #1a1a1a;
-
+  /* Used for a tags and for button borders on hover */
+  --accent-color-1: #646cff;
 
   --scrollbar-color: #4d4d4d;
   --scrollbar-color: #4d4d4d;
   --border-radius-small: 8px;
+  --border-radius-big: 20px;
 }
 
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--accent-color-1);
   text-decoration: inherit;
 }
 
@@ -69,25 +74,6 @@ h1 {
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-
-.logo.vanilla:hover {
-  filter: drop-shadow(0 0 2em #3178c6aa);
-}
-
-.card {
-  padding: 2em;
-}
-
 .read-the-docs {
   color: #888;
 }
@@ -105,22 +91,7 @@ button {
 }
 
 button:hover {
-  border-color: #646cff;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-
-  a:hover {
-    color: #747bff;
-  }
-
-  button {
-    background-color: #f9f9f9;
-  }
+  border-color: var(--accent-color-1);
 }
 
 /* The Modal (background) */
@@ -149,10 +120,10 @@ button:hover {
 /* Modal Content */
 .modal-content {
   color: #fefefe;
-  background-color: #202224;
+  background-color: var(--main-color);
   margin: auto;
   padding: 20px;
-  border: 1px solid #202224;
+  border: 1px solid var(--main-color);
   width: 400px;
   height: 600px;
   border-radius: var(--border-radius-small);
@@ -319,13 +290,15 @@ input {
 
 
 
+/* 
 
+  AssetsTable
 
-
+*/
 
 .assetsTable {
-  background-color: #202224;
-  border-radius: 20px;
+  background-color: var(--main-color);
+  border-radius: var(--border-radius-big);
   padding: 0px 20px;
   width: 100%;
   /* width: max-content; */
@@ -392,8 +365,8 @@ input {
   display: flex;
   align-items: center;
   padding: 10px 25px;
-  background-color: #202224;
-  border-radius: 20px;
+  background-color: var(--main-color);
+  border-radius: var(--border-radius-big);
   justify-content: center;
   flex-grow: 1;
 }
@@ -413,8 +386,8 @@ input {
   height: 400px;
   block-size: fit-content;
 
-  background-color: #202224;
-  border-radius: 20px;
+  background-color: var(--main-color);
+  border-radius: var(--border-radius-big);
   padding-bottom: 10px;
 }
 
@@ -451,7 +424,7 @@ input {
 }
 
 .toggleDateModes.active {
-  border-color: #646cff;
+  border-color: var(--accent-color-1);
 }
 
 
@@ -486,8 +459,8 @@ input {
   display: flex;
   flex-direction: column;
   padding: 10px;
-  background-color: #202224;
-  border-radius: 20px;
+  background-color: var(--main-color);
+  border-radius: var(--border-radius-big);
   white-space: nowrap;
   width: 30%;
 
