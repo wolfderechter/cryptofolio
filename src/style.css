@@ -489,11 +489,11 @@ input {
   background-color: #202224;
   border-radius: 20px;
   white-space: nowrap;
-  width: 25%;
+  width: 30%;
 
   padding-left: 1.5rem;
-  padding-right: 50px;
   text-align: left;
+  flex-grow: 1;
 }
 
 #ethereumStakingTitle {
