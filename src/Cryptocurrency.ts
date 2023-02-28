@@ -75,6 +75,12 @@ export class CryptoCurrency {
       else return sum;
     }, 0);
   }
+  get totalSellCost(): number {
+    return this.transactions.reduce((sum, current) => {
+      if (current.type === transactionType.Sell) return sum + current.cost;
+      else return sum;
+    }, 0);
+  }
 
   get averageBuyPrice(): number {
     return this.totalBuyCost / this.totalBuyAmount;

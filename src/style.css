@@ -343,7 +343,8 @@ input {
   display: inline;
 }
 
-.table * {
+#assetsTableBody tr td,
+.table tr th {
   /* ToDO: Figure out the optimal padding for ALL tables */
   padding: 5px 10px;
 }

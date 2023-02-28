@@ -316,14 +316,17 @@ async function populateAssetsTableAndSummary() {
   }
 
   let cryptoValueSum = 0;
-  let cryptoCostSum = 0;
+  let cryptoBuyCostSum = 0;
+  let cryptoSellCostSum = 0;
 
   cryptocurrencies.forEach((asset) => {
     const cryptoValue = parseFloat(coinPrices[asset.id]["usd"]) * asset.totalAmount;
-    const percentage = ((cryptoValue - asset.totalCost) / asset.totalCost) * 100;
+    const gain = cryptoValue + asset.totalSellCost - asset.totalBuyCost;
+    const gainInPercentage = (gain / asset.totalBuyCost) * 100;
 
     cryptoValueSum += cryptoValue;
-    cryptoCostSum += asset.totalCost;
+    cryptoBuyCostSum += asset.totalBuyCost;
+    cryptoSellCostSum += asset.totalSellCost;
 
     let tr = document.createElement("tr");
 
@@ -349,7 +352,7 @@ async function populateAssetsTableAndSummary() {
         <td>${asset.totalAmount} ${asset.symbol}</td>
         <td>$${asset.totalCost > 0 ? asset.totalCost : 0}</td> 
         <td>$${cryptoValue.toFixed(2)}</td>
-        <td>${percentage.toFixed(2)}%</td>
+        <td>${gainInPercentage.toFixed(2)}%</td>
         <td class="assetsTableBtns">
             <button id="assetsTableAdd" class="fa fa-plus-minus iconBtn"></button>
             <button id="assetsTableManage" class="fa-solid fa-pen-to-square iconBtn"></button>
@@ -383,7 +386,7 @@ async function populateAssetsTableAndSummary() {
   // summaryTotalValueContent.textContent = `${cryptoValueSum ? cryptoValueSum.toFixed(2) : ""}`;
   summaryTotalValueContentCountUp.update(cryptoValueSum);
 
-  const percentage = ((cryptoValueSum - cryptoCostSum) / cryptoCostSum) * 100;
+  const percentage = ((cryptoValueSum + cryptoSellCostSum - cryptoBuyCostSum) / cryptoBuyCostSum) * 100;
   summaryTotalPercentage.textContent = `${percentage ? percentage.toFixed(2) : ""}%`;
 
   if (summaryTotalValue) summaryTotalValue.style.opacity = "0.5";
