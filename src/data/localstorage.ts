@@ -1,6 +1,6 @@
-import { CryptoCurrency } from "../Cryptocurrency";
+import { CryptoCurrency } from "../cryptocurrency";
 import { cryptocurrencies, init } from "../main";
-import { Transaction } from "../Transaction";
+import { Transaction } from "../transaction";
 
 export function saveData() {
   localStorage.setItem("assets", JSON.stringify(cryptocurrencies));

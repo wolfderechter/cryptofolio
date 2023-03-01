@@ -1,4 +1,4 @@
-import { Transaction, transactionType } from "./Transaction";
+import { Transaction, transactionType } from "./transaction";
 
 export class CryptoCurrency {
   public transactions: Transaction[];

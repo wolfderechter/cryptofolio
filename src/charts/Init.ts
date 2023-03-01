@@ -1,5 +1,5 @@
-import { prepareLineChart1 } from "./LineChart";
-import { preparePieChart1, preparePieChart2 } from "./PieChart";
+import { prepareLineChart1 } from "./lineChart";
+import { preparePieChart1, preparePieChart2 } from "./pieChart";
 
 export function renderCharts() {
   prepareLineChart1();

@@ -1,6 +1,6 @@
 import { cryptocurrencies } from "../main";
 import { Chart } from "chart.js/auto";
-import { getCoinsPrices } from "../data/Coingecko";
+import { getCoinsPrices } from "../data/coingecko";
 
 let canvas1 = <HTMLCanvasElement>document.getElementById("pieChart1");
 let pieChart1: Chart<"pie", number[], string>;

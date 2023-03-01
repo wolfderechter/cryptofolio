@@ -1,6 +1,6 @@
 import { cryptocurrencies } from "../main";
 import { Chart } from "chart.js/auto";
-import { getCoinChart } from "../data/Coingecko";
+import { getCoinChart } from "../data/coingecko";
 import "chartjs-adapter-date-fns";
 
 let dateModeDays = 31;

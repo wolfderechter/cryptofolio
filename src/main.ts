@@ -1,8 +1,8 @@
 import { Coin, CryptoCurrency } from "./cryptocurrency";
 import { saveData, loadData, exportData, importData } from "./data/localstorage";
-import { getCoinOnDate, getCoins, getCoinsPrices } from "./data/Coingecko";
-import { Transaction, transactionType } from "./Transaction";
-import { renderCharts } from "./charts/Init";
+import { getCoinOnDate, getCoins, getCoinsPrices } from "./data/coingecko";
+import { Transaction, transactionType } from "./transaction";
+import { renderCharts } from "./charts/init";
 import { CountUp } from "countup.js";
 
 export const cryptocurrencies: CryptoCurrency[] = [];
