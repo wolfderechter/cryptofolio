@@ -112,7 +112,7 @@ export async function preparePieChart2() {
 
   cryptocurrencies.forEach((crypto) => {
     labels2.push(crypto.symbol);
-    data2.push(parseFloat(coinPrices[crypto.id].usd) * crypto.totalAmount);
+    data2.push(parseFloat(coinPrices[crypto.id]["usd"]) * crypto.totalAmount);
     colors.push(crypto.color);
   });
 
