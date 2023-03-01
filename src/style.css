@@ -259,8 +259,6 @@ input {
   background-color: var(--dark-accent-color);
   margin: 0 2px;
   cursor: pointer;
-  /* opacity: 0.8; */
-  ;
 }
 
 #buyTransactionBtn.active,
@@ -289,6 +287,34 @@ input {
 
 
 
+/* 
+
+  Edit Transaction Popup
+
+*/
+#editTransactionForm>* {
+  margin: 10px auto;
+}
+
+#editToggleTransactionType {
+  display: flex;
+  justify-content: center;
+}
+
+#editBuyTransactionBtn,
+#editSellTransactionBtn {
+  border-radius: 8px;
+  padding: 5px 25px;
+  background-color: var(--dark-accent-color);
+  margin: 0 2px;
+  cursor: pointer;
+}
+
+#editBuyTransactionBtn.active,
+#editSellTransactionBtn.active {
+  background-color: var(--scrollbar-color);
+  opacity: 1;
+}
 
 /* 
 

@@ -26,10 +26,11 @@ export let datasetColors: { id: string; color: string }[] = [];
 export async function prepareLineChart1() {
   // In case no cryptocurrencies are present (anymore) we destroy the chart and empty the 2 summary values
   if (cryptocurrencies.length === 0) {
+    loader.classList.add("disabled");
+    rateLimiting.classList.add("disabled");
     lineChart1?.destroy();
     return;
   }
-
   data1 = [];
   data1 = Array(dateModeArrayLength).fill({ x: null, y: 0 });
   netInvested = [];
@@ -96,7 +97,8 @@ export async function prepareLineChart1() {
       }
     }
     const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-    await sleep(cryptoIndex * 500 + 750);
+    await sleep(cryptoIndex * 5000 + 750);
+    // await sleep(cryptoIndex * 500 + 750);
   }
   // If we are being rate limited, stop what we are doing since the data is incomplete
   if (limited) {

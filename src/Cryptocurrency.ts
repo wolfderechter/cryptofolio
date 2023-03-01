@@ -19,9 +19,14 @@ export class CryptoCurrency {
     this.transactions.push(transaction);
   }
 
-  // use uuid here?
+  editTransaction(transaction: Transaction) {
+    let indexToEdit = this.transactions.findIndex((t) => t.uuid === transaction.uuid);
+    this.transactions[indexToEdit] = transaction;
+  }
+
   removeTransaction(transaction: Transaction) {
-    this.transactions.splice(this.transactions.indexOf(transaction), 1);
+    let indexToRemove = this.transactions.findIndex((t) => t.uuid === transaction.uuid);
+    this.transactions.splice(indexToRemove);
   }
 
   /* 

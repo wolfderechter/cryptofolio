@@ -13,9 +13,11 @@
     "vite": "^4.1.0"
   },
   "dependencies": {
+    "@types/uuid": "^9.0.1",
     "chart.js": "^4.2.1",
     "chartjs-adapter-date-fns": "^3.0.0",
     "countup.js": "^2.4.2",
-    "date-fns": "^2.29.3"
+    "date-fns": "^2.29.3",
+    "uuid": "^9.0.0"
   }
 }

@@ -6,6 +6,7 @@ export function saveData() {
   localStorage.setItem("assets", JSON.stringify(cryptocurrencies));
 }
 
+// ToDO: document
 export async function loadData(input?: string) {
   // Check if there is an input string with the data, else check the localstorage for the data. Parse that data and create the cryptocurrency objects
   let cryptos;
@@ -17,7 +18,7 @@ export async function loadData(input?: string) {
   }
   if (cryptos == null) return;
 
-  while(cryptocurrencies.length > 0){
+  while (cryptocurrencies.length > 0) {
     cryptocurrencies.pop();
   }
 
@@ -26,7 +27,7 @@ export async function loadData(input?: string) {
     let newCrypto = new CryptoCurrency(crypto.id, crypto.symbol, crypto.name);
 
     crypto.transactions.forEach((transaction: any) => {
-      newCrypto.addTransaction(new Transaction(transaction.type, new Date(transaction.date), transaction.amount, transaction.cost));
+      newCrypto.addTransaction(new Transaction(transaction.type, new Date(transaction.date), transaction.amount, transaction.cost, transaction.uuid));
     });
 
     cryptocurrencies.push(newCrypto);

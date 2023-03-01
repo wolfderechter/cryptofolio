@@ -7,12 +7,20 @@ import { CountUp } from "countup.js";
 
 export const cryptocurrencies: CryptoCurrency[] = [];
 const addCryptoBtn = document.querySelector<HTMLButtonElement>("#addCrypto");
+
+// Modals
 const searchModal = document.getElementById("seach-modal")!;
 const transactionModal = document.getElementById("transaction-modal")!;
 const manageTransactionsModal = document.getElementById("manage-transactions-modal")!;
+const editTransactionModal = document.getElementById("edit-transaction-modal")!;
+
+// Close Btns
 const searchModalCloseBtn = document.getElementById("search-modal-close");
 const transactionModalCloseBtn = document.getElementById("transaction-modal-close");
 const manageTransactionsModalCloseBtn = document.getElementById("manage-transactions-modal-close");
+const editTransactionModalCloseBtn = document.getElementById("edit-transaction-modal-close");
+
+// Forms
 const searchForm = document.querySelector<HTMLFormElement>("#searchForm");
 const transactionForm = document.querySelector<HTMLFormElement>("#transactionForm");
 
@@ -90,6 +98,16 @@ function closeManageTransactionsModal(e?: MouseEvent) {
     manageTransactionsModal.style.display = "none";
   }
 }
+editTransactionModalCloseBtn?.addEventListener("click", (e) => {
+  closeEditTransactionModal(e);
+});
+
+function closeEditTransactionModal(e?: MouseEvent) {
+  e?.preventDefault();
+  if (editTransactionModal) {
+    editTransactionModal.style.display = "none";
+  }
+}
 
 document.getElementById("searchForm")?.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -98,7 +116,6 @@ document.getElementById("searchForm")?.addEventListener("submit", (e) => {
 
 function searchCrypto() {
   const input = document.querySelector<HTMLInputElement>("#crypto-search-input")!;
-  // const innerModal = document.getElementById("inner-modal-content")!;
   const cryptoListDiv = document.getElementById("cryptoList")!;
   // Clear the list when entering a new search
   cryptoListDiv.innerHTML = "";
@@ -219,12 +236,7 @@ function startTransaction(coin: Coin) {
       cryptocurrencies.push(newCrypto);
 
       newCrypto.addTransaction(
-        new Transaction(
-          selectedTransactionType,
-          new Date((<HTMLInputElement>document.getElementById("transactionDate")).value),
-          Number((<HTMLInputElement>document.getElementById("transactionAmount")).value),
-          Number((<HTMLInputElement>document.getElementById("transactionCost")).value)
-        )
+        new Transaction(selectedTransactionType, new Date(transactionDate.value), Number(transactionAmount.value), Number(transactionCost.value))
       );
     }
     // Persist the data
@@ -239,61 +251,133 @@ function manageTransactions(coin: Coin) {
   // Switch the modal popup to the transaction popup
   manageTransactionsModal.style.display = "block";
 
-  const manageTransactionsTableBody = document.getElementById("manageTransactionsTableBody")!;
   const manageTransactionsTitle = document.getElementById("manageTransactionsModalTitle")!;
   manageTransactionsTitle.textContent = coin.name;
+
+  let crypto = cryptocurrencies.find((c) => c.id === coin.id);
+  if (crypto) {
+    refreshManageTransactions(crypto);
+  }
+}
+
+function refreshManageTransactions(crypto: CryptoCurrency) {
+  const manageTransactionsTableBody = document.getElementById("manageTransactionsTableBody")!;
 
   // Remove the table body completely
   while (manageTransactionsTableBody.children.length > 0) {
     if (manageTransactionsTableBody.firstChild) manageTransactionsTableBody.removeChild(manageTransactionsTableBody.firstChild);
   }
 
-  let crypto = cryptocurrencies.find((c) => c.id === coin.id);
-  if (crypto) {
-    for (const transaction of crypto.transactions) {
-      let tr = document.createElement("tr");
+  for (const transaction of crypto.transactions) {
+    let tr = document.createElement("tr");
 
-      /*  ToDO: Edit button will open up and fill in a manage transaction popup with the existing values 
-      
-          ToDO: Remove button will show a cancel/confirm button first before removing
+    /*      
+        ToDO: Remove button will show a cancel/confirm button first before removing
+    */
+    tr.innerHTML = `
+      <td>${transaction.date.toLocaleDateString()}</td>
+      <td>${transactionType[transaction.type]}</td>
+      <td>${transaction.amount} ${crypto.symbol}</td>
+      <td>${transaction.cost} USD</td>
+      <td class="assetsTableBtns">
+          <button id="manageTransactionsTableEditBtn" class="fa-solid fa-pen-to-square iconBtn"></button>
+          <button id="manageTransactionsTableRemoveBtn" class="fa-solid fa-trash-can iconBtn"></button>
+      </td>
+    `;
+    const editBtn = tr.querySelector<HTMLButtonElement>("#manageTransactionsTableEditBtn");
+    const removeBtn = tr.querySelector<HTMLButtonElement>("#manageTransactionsTableRemoveBtn");
+    if (removeBtn) {
+      removeBtn.onclick = () => {
+        if (!crypto) return;
+        crypto.removeTransaction(transaction);
 
-          Maybe add a unique ID to each transaction to identify the later on for editing/removing.
-      */
-      tr.innerHTML = `
-        <td>${transaction.date.toLocaleDateString()}</td>
-        <td>${transactionType[transaction.type]}</td>
-        <td>${transaction.amount} ${coin.symbol}</td>
-        <td>${transaction.cost} USD</td>
-        <td class="assetsTableBtns">
-            <button id="manageTransactionsTableManageBtn" class="fa-solid fa-pen-to-square iconBtn"></button>
-            <button id="manageTransactionsTableRemoveBtn" class="fa-solid fa-trash-can iconBtn"></button>
-        </td>
-      `;
-      const removeBtn = tr.querySelector<HTMLButtonElement>("#manageTransactionsTableRemoveBtn");
-      if (removeBtn) {
-        removeBtn.onclick = () => {
-          if (!crypto) return;
-          crypto.removeTransaction(transaction);
+        // If after removing the transactio the crypto has no transactions left, remove the crypto
+        if (crypto.amountOfTransactions < 1 || crypto.amountOfTransactions === undefined) {
+          cryptocurrencies.splice(cryptocurrencies.indexOf(crypto), 1);
+        }
 
-          // If after removing the transactio the crypto has no transactions left, remove the crypto
-          if (crypto.amountOfTransactions < 1 || crypto.amountOfTransactions === undefined) {
-            cryptocurrencies.splice(cryptocurrencies.indexOf(crypto), 1);
-          }
+        // Persist the data
+        saveData();
 
-          // Persist the data
-          saveData();
-
-          closeManageTransactionsModal();
-          init();
-        };
-      }
-      manageTransactionsTableBody.appendChild(tr);
+        closeManageTransactionsModal();
+        init();
+      };
     }
+    if (editBtn) {
+      editBtn.onclick = () => {
+        if (!crypto) return;
+        closeTransactionModal();
+        editTransaction(crypto, transaction);
+      };
+    }
+    manageTransactionsTableBody.appendChild(tr);
   }
+}
+
+function editTransaction(crypto: CryptoCurrency, transaction: Transaction) {
+  editTransactionModal.style.display = "block";
+
+  const editTransactionTitle = document.getElementById("editTransactionModalTitle")!;
+  const toggleTransactionType = document.getElementById("editToggleTransactionType")!;
+  const buyTransactionBtn = document.getElementById("editBuyTransactionBtn")!;
+  const sellTransactionBtn = document.getElementById("editSellTransactionBtn")!;
+  const editTransactionBtn = document.getElementById("editTransactionBtn")!;
+
+  // Prepare the modal
+  editTransactionTitle.textContent = crypto.name;
+  buyTransactionBtn.classList.remove("active");
+  sellTransactionBtn.classList.remove("active");
+
+  toggleTransactionType.onclick = () => {
+    buyTransactionBtn.classList.toggle("active");
+    sellTransactionBtn.classList.toggle("active");
+  };
+
+  // Fill in the form values
+  const transactionDate = <HTMLInputElement>document.getElementById("editTransactionDate");
+  const transactionAmount = <HTMLInputElement>document.getElementById("editTransactionAmount");
+  const transactionCost = <HTMLInputElement>document.getElementById("editTransactionCost");
+
+  transaction.type === transactionType.Buy ? buyTransactionBtn.classList.add("active") : sellTransactionBtn.classList.add("active");
+  transactionDate.valueAsDate = transaction.date;
+  transactionAmount.value = String(transaction.amount);
+  transactionCost.value = String(transaction.cost);
+
+  // Add btn listener on save where the values get updated
+  editTransactionBtn.onclick = (e) => {
+    e.preventDefault();
+
+    // let selectedTransactionType = buyTransactionBtn.classList.contains("active") ? transactionType.Buy : transactionType.Sell;
+    let currentCrypto = cryptocurrencies.find((c) => c.id === crypto.id);
+    let selectedTransactionType = buyTransactionBtn.classList.contains("active") ? transactionType.Buy : transactionType.Sell;
+
+    if (currentCrypto) {
+      // selectedTransactionType, new Date(transactionDate.value), Number(transactionAmount.value), Number(transactionCost.value)
+      currentCrypto.editTransaction(
+        new Transaction(
+          selectedTransactionType,
+          new Date(transactionDate.value),
+          Number(transactionAmount.value),
+          Number(transactionCost.value),
+          transaction.uuid
+        )
+      );
+      refreshManageTransactions(currentCrypto);
+    }
+    closeEditTransactionModal();
+    saveData();
+    init();
+  };
 }
 
 async function populateAssetsTableAndSummary() {
   const tableBody = document.getElementById("assetsTableBody")!;
+
+  if (cryptocurrencies.length === 0) {
+    summaryTotalValueContent.textContent = ``;
+    summaryTotalPercentage.textContent = `%`;
+    return;
+  }
 
   const coinPrices = await getCoinsPrices(cryptocurrencies.map((c) => c.id));
   // When we overload the coingecko api, we get a 429 and empty objects back
@@ -307,12 +391,6 @@ async function populateAssetsTableAndSummary() {
     if (tableBody.firstChild) {
       tableBody.removeChild(tableBody.firstChild);
     }
-  }
-
-  if (cryptocurrencies.length === 0) {
-    summaryTotalValueContent.textContent = ``;
-    summaryTotalPercentage.textContent = `%`;
-    return;
   }
 
   let cryptoValueSum = 0;
@@ -504,7 +582,7 @@ async function calculateStakingRewards() {
     ethereumStakingDailyRewards.textContent = `${dailyRewardsUSD.toFixed(4)} USD`;
 
     let stakingInterval: number;
-    ethereumStakingTotalRewards.onmouseenter = (e: MouseEvent) => {
+    ethereumStakingTotalRewards.onmouseenter = () => {
       // Increase the decimal places and duration while hovering
       ethereumStakingTotalRewardsCountUp.options!.decimalPlaces = 10;
       ethereumStakingTotalRewardsCountUp.options!.duration = 2.5;
@@ -516,7 +594,7 @@ async function calculateStakingRewards() {
         ethereumStakingTotalRewardsCountUp.update(value);
       }, 1000);
     };
-    ethereumStakingTotalRewards.onmouseleave = (e: MouseEvent) => {
+    ethereumStakingTotalRewards.onmouseleave = () => {
       // Decrease the decimal places and duration when leaving
       ethereumStakingTotalRewardsCountUp.options!.decimalPlaces = 4;
       ethereumStakingTotalRewardsCountUp.options!.duration = 1;
