@@ -8,6 +8,8 @@ let dateModeArrayLength = 32; // The array length is the number of days + 1 exce
 let dateModeInterval = "daily";
 
 let canvas1 = <HTMLCanvasElement>document.getElementById("lineChart1")!;
+let rateLimiting = <HTMLDivElement>document.getElementById("rateLimiting")!;
+let loader = <HTMLDivElement>document.getElementById("loader")!;
 let lineChart1: Chart<"line", { x: Date; y: number }[], unknown>;
 let data1: { x: Date; y: number }[] = Array(dateModeArrayLength).fill({ x: null, y: 0 });
 let allData: Map<string, any[]> = new Map();
@@ -35,6 +37,9 @@ export async function prepareLineChart1() {
 
   let once = true;
   let limited = false;
+  let cryptoIndex = 0;
+  loader.classList.remove("disabled");
+  rateLimiting.classList.add("disabled");
 
   for (const crypto of cryptocurrencies) {
     /*
@@ -47,6 +52,7 @@ export async function prepareLineChart1() {
     */
     let prices: number[];
     coinChart = await getCoinChart(crypto.id, dateModeDays, dateModeInterval);
+    cryptoIndex++;
 
     if (coinChart.length === 0) {
       limited = true;
@@ -89,14 +95,20 @@ export async function prepareLineChart1() {
         netInvested.push(cost);
       }
     }
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    await sleep(cryptoIndex * 500 + 750);
   }
   // If we are being rate limited, stop what we are doing since the data is incomplete
-  if (limited) return;
+  if (limited) {
+    rateLimiting.classList.remove("disabled");
+    return;
+  }
 
   // Reset the chart
   if (lineChart1 != null) {
     lineChart1.destroy();
   }
+  loader.classList.add("disabled");
 
   lineChart1 = new Chart(canvas1, {
     type: "line",

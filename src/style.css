@@ -370,6 +370,7 @@ input {
   border-radius: var(--border-radius-big);
   justify-content: center;
   flex-grow: 1;
+  width: 100%;
 }
 
 .summary h3 {
@@ -507,4 +508,58 @@ input {
 */
 .manage-transactions-modal-content {
   width: 500px;
+}
+
+
+/* 
+
+Loader
+
+*/
+.loader {
+  border: 5px solid #f3f3f3;
+  border-top-color: rgb(243, 243, 243);
+  border-top-style: solid;
+  border-top-width: 5px;
+  -webkit-animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
+  border-top: 5px solid #555;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin: 75px auto;
+}
+
+#loader.disabled {
+  display: none;
+}
+
+#rateLimiting {
+  margin: 25px auto;
+  font-weight: 700;
+}
+
+#rateLimiting.disabled {
+  display: none;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
 }
