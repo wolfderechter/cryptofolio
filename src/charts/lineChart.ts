@@ -9,6 +9,7 @@ let dateModeInterval = "daily";
 
 let canvas1 = <HTMLCanvasElement>document.getElementById("lineChart1")!;
 let rateLimiting = <HTMLDivElement>document.getElementById("rateLimiting")!;
+let toggleDate = <HTMLDivElement>document.getElementById("toggleDate")!;
 let loader = <HTMLDivElement>document.getElementById("loader")!;
 let lineChart1: Chart<"line", { x: Date; y: number }[], unknown>;
 let data1: { x: Date; y: number }[] = Array(dateModeArrayLength).fill({ x: null, y: 0 });
@@ -24,13 +25,17 @@ export let datasetColors: { id: string; color: string }[] = [];
     Each day it should show the portfolio value at that time by combining all the amount of crypto held * price of that crypto during that day
 */
 export async function prepareLineChart1() {
-  // In case no cryptocurrencies are present (anymore) we destroy the chart and empty the 2 summary values
+  // In case no cryptocurrencies are present (anymore) we destroy the chart, hide the toggle dates and the canvas so it doesn't get shown if it's still calculating
   if (cryptocurrencies.length === 0) {
     loader.classList.add("disabled");
     rateLimiting.classList.add("disabled");
-    lineChart1?.destroy();
+    canvas1.style.display = "none";
+    toggleDate.style.display = "none";
     return;
   }
+  
+  canvas1.style.display = "block";
+  toggleDate.style.display = "block";
   data1 = [];
   data1 = Array(dateModeArrayLength).fill({ x: null, y: 0 });
   netInvested = [];
@@ -279,6 +284,10 @@ toggleYearMode.addEventListener("click", switchDateMode);
 toggleAllMode.addEventListener("click", switchDateMode);
 
 function switchDateMode(e: any) {
+  if (cryptocurrencies.length === 0) {
+    return;
+  }
+
   let target = e.target as HTMLButtonElement;
 
   // Remove other active classes

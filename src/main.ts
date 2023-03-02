@@ -290,6 +290,7 @@ function refreshManageTransactions(crypto: CryptoCurrency) {
     if (removeBtn) {
       removeBtn.onclick = () => {
         if (!crypto) return;
+
         crypto.removeTransaction(transaction);
 
         // If after removing the transactio the crypto has no transactions left, remove the crypto
@@ -377,6 +378,12 @@ async function populateAssetsTableAndSummary() {
   if (cryptocurrencies.length === 0) {
     summaryTotalValueContent.textContent = ``;
     summaryTotalPercentage.textContent = `%`;
+    // Clear the table
+    while (tableBody.children.length > 0) {
+      if (tableBody.firstChild) {
+        tableBody.removeChild(tableBody.firstChild);
+      }
+    }
     return;
   }
 
