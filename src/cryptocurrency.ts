@@ -1,3 +1,4 @@
+import { getColor } from "./charts/colors";
 import { Transaction, transactionType } from "./transaction";
 
 export class CryptoCurrency {
@@ -6,13 +7,15 @@ export class CryptoCurrency {
   public id: string;
   public symbol: string;
   public name: string;
+  public thumbnail: string;
 
-  constructor(id: string, symbol: string, name: string, color?: string) {
+  constructor(id: string, symbol: string, name: string, thumbnail: string, color?: string) {
     this.id = id;
     this.symbol = symbol;
     this.name = name;
     this.transactions = new Array<Transaction>();
-    this.color = color ? color : "#" + (((1 << 24) * Math.random()) | 0).toString(16).padStart(6, "0");
+    this.thumbnail = thumbnail;
+    this.color = color ? color : getColor(id);
   }
 
   addTransaction(transaction: Transaction) {
@@ -104,4 +107,5 @@ export interface Coin {
   id: string;
   name: string;
   symbol: string;
+  thumbnail: string;
 }

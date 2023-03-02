@@ -253,10 +253,6 @@ const colors = {
     quarter: "rgba(149, 76, 233, 0.25)",
     zero: "rgba(149, 76, 233, 0.05)",
   },
-  indigo: {
-    default: "rgba(80, 102, 120, 1)",
-    quarter: "rgba(80, 102, 120, 0.25)",
-  },
 };
 
 const totalValueGradient = canvas1.getContext("2d")?.createLinearGradient(0, 25, 0, 300)!;

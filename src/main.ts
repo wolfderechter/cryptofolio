@@ -144,6 +144,7 @@ function searchCrypto() {
           id: data[c]["id"],
           symbol: data[c]["symbol"],
           name: data[c]["name"],
+          thumbnail: data[c]["large"],
         });
       };
       cryptoListDiv.appendChild(coinDiv);
@@ -232,7 +233,7 @@ function startTransaction(coin: Coin) {
       );
     } else {
       // If crypto was not yet present, create it and add new transaction
-      let newCrypto = new CryptoCurrency(coin.id, coin.symbol, coin.name);
+      let newCrypto = new CryptoCurrency(coin.id, coin.symbol, coin.name, coin.thumbnail);
       cryptocurrencies.push(newCrypto);
 
       newCrypto.addTransaction(
@@ -445,6 +446,7 @@ async function populateAssetsTableAndSummary() {
           id: asset.id,
           symbol: asset.symbol,
           name: asset.name,
+          thumbnail: asset.thumbnail,
         });
     }
     const manageButton = tr.querySelector<HTMLButtonElement>("#assetsTableManage");
@@ -454,6 +456,7 @@ async function populateAssetsTableAndSummary() {
           id: asset.id,
           symbol: asset.symbol,
           name: asset.name,
+          thumbnail: asset.thumbnail,
         });
     }
 

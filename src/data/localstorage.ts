@@ -24,7 +24,7 @@ export async function loadData(input?: string) {
 
   // Recreate the objects from JSON
   cryptos.forEach((crypto: any) => {
-    let newCrypto = new CryptoCurrency(crypto.id, crypto.symbol, crypto.name);
+    let newCrypto = new CryptoCurrency(crypto.id, crypto.symbol, crypto.name, crypto.thumbnail);
 
     crypto.transactions.forEach((transaction: any) => {
       newCrypto.addTransaction(new Transaction(transaction.type, new Date(transaction.date), transaction.amount, transaction.cost, transaction.uuid));
