@@ -591,7 +591,7 @@ async function calculateStakingRewards() {
     let dailyRewardsUSD = (totalStakedUSD * 0.045) / 365;
     ethereumStakingDailyRewards.textContent = `${dailyRewardsUSD.toFixed(4)} USD`;
 
-    let stakingInterval: NodeJS.Timer;
+    let stakingInterval: ReturnType<typeof setInterval> | undefined;
     ethereumStakingTotalRewards.onmouseenter = () => {
       // Increase the decimal places and duration while hovering
       ethereumStakingTotalRewardsCountUp.options!.decimalPlaces = 10;
@@ -609,7 +609,7 @@ async function calculateStakingRewards() {
       ethereumStakingTotalRewardsCountUp.options!.decimalPlaces = 4;
       ethereumStakingTotalRewardsCountUp.options!.duration = 1;
 
-      clearInterval(stakingInterval);
+      clearInterval(stakingInterval!);
     };
   }
 }
