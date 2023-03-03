@@ -1,5 +1,9 @@
 const COINGECKO_API = "https://api.coingecko.com/api/v3/";
 
+/**
+ * Search for cryptocurrencies by a searchterm
+ * @param input: the searchterm for finding cryptocurrencies
+ */
 export async function getCoins(input: string): Promise<string[][]> {
   try {
     const query = `search?query=${input}`;
@@ -12,6 +16,10 @@ export async function getCoins(input: string): Promise<string[][]> {
   }
 }
 
+/**
+ * Get prices of multiple coins at once
+ * @param coins[]: array of unique crypto identifier strings
+ */
 export async function getCoinsPrices(coins: string[]): Promise<string[]> {
   try {
     let query = `simple/price?ids=`;
@@ -47,6 +55,12 @@ export async function getCoinsPrices(coins: string[]): Promise<string[]> {
     example: 'https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=10'
 
     
+ */
+/**
+ * Get historical market data chart based on parameters
+ * @param coin: the unique crypto identifier string
+ * @param days: How many days back to fetch data
+ * @param interval: granularity of the data (hourly, daily...)
  */
 export async function getCoinChart(coin: string, days: number, interval: string): Promise<string[]> {
   try {

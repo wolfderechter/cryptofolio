@@ -8,6 +8,7 @@ let dateModeArrayLength = 32; // The array length is the number of days + 1 exce
 let dateModeInterval = "daily";
 
 let canvas1 = <HTMLCanvasElement>document.getElementById("lineChart1")!;
+let canvas1Parent = <HTMLCanvasElement>document.getElementById("lineChart1Parent")!;
 let rateLimiting = <HTMLDivElement>document.getElementById("rateLimiting")!;
 let toggleDate = <HTMLDivElement>document.getElementById("toggleDate")!;
 let loader = <HTMLDivElement>document.getElementById("loader")!;
@@ -29,12 +30,11 @@ export async function prepareLineChart1() {
   if (cryptocurrencies.length === 0) {
     loader.classList.add("disabled");
     rateLimiting.classList.add("disabled");
-    canvas1.style.display = "none";
     toggleDate.style.display = "none";
     return;
   }
   
-  canvas1.style.display = "block";
+  canvas1Parent.style.display = "none";
   toggleDate.style.display = "block";
   data1 = [];
   data1 = Array(dateModeArrayLength).fill({ x: null, y: 0 });
@@ -115,7 +115,9 @@ export async function prepareLineChart1() {
   if (lineChart1 != null) {
     lineChart1.destroy();
   }
+
   loader.classList.add("disabled");
+  if (cryptocurrencies.length > 0) canvas1Parent.style.display = "block";
 
   lineChart1 = new Chart(canvas1, {
     type: "line",

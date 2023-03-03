@@ -2,11 +2,18 @@ import { CryptoCurrency } from "../cryptocurrency";
 import { cryptocurrencies, init } from "../main";
 import { Transaction } from "../transaction";
 
+/**
+ * Save cryptocurrencies to localstorage.
+ */
 export function saveData() {
   localStorage.setItem("assets", JSON.stringify(cryptocurrencies));
 }
 
-// ToDO: document
+/**
+ * load in data from an optional input string or else from localstorage.
+ * Will clear out the current cryptocurrencies object and fill up with the new data.
+ * @param input: optional string of cryptocurrency objects in jsom format
+ */
 export async function loadData(input?: string) {
   // Check if there is an input string with the data, else check the localstorage for the data. Parse that data and create the cryptocurrency objects
   let cryptos;
@@ -39,6 +46,9 @@ export async function loadData(input?: string) {
   }
 }
 
+/**
+ * This function will setup the exportDataBtn to download the cryptocurrencies as a json file on click.
+ */
 export function exportData() {
   let data = JSON.stringify(cryptocurrencies, null, 2);
   var exportDataBtn = document.getElementById("exportDataBtn")!;
@@ -49,6 +59,9 @@ export function exportData() {
   };
 }
 
+/**
+ * Will import data from a file and call the loadData function with this data.
+ */
 export function importData(event: { preventDefault: () => void }) {
   let input = <HTMLInputElement>document.getElementById("importDataBtn");
 

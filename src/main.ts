@@ -591,7 +591,7 @@ async function calculateStakingRewards() {
     let dailyRewardsUSD = (totalStakedUSD * 0.045) / 365;
     ethereumStakingDailyRewards.textContent = `${dailyRewardsUSD.toFixed(4)} USD`;
 
-    let stakingInterval: number;
+    let stakingInterval: NodeJS.Timer;
     ethereumStakingTotalRewards.onmouseenter = () => {
       // Increase the decimal places and duration while hovering
       ethereumStakingTotalRewardsCountUp.options!.decimalPlaces = 10;

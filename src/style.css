@@ -125,7 +125,7 @@ button:hover {
   padding: 20px;
   border: 1px solid var(--main-color);
   width: 400px;
-  height: 600px;
+  height: 400px;
   border-radius: var(--border-radius-small);
 
   overflow: auto;
@@ -175,7 +175,7 @@ input {
 
 #inner-modal-content {
   width: 400px;
-  height: 600px;
+  height: 400px;
 }
 
 #cryptoList {
@@ -184,7 +184,6 @@ input {
   overflow: auto;
   scrollbar-width: thin;
   width: 400px;
-  height: 550px;
 }
 
 #cryptoList::-webkit-scrollbar-thumb {
