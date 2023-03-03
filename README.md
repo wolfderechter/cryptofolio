@@ -1,5 +1,7 @@
 # Cryptofolio
 
+![Cryptofolio Screenshot](https://raw.githubusercontent.com/wolfderechter/cryptofolio/vanilla-ts/Screenshot.png)
+
 [Cryptofolio](github.com/wolfderechter/cryptofolio) is a self-hosted crypto portfolio tracker. It allows you to manually manage and keep track of transactions and averages.
 
 Cryptofolio is written in Typescript, the charts are built with ChartJS and it uses the Coingecko API to get crypto data.
