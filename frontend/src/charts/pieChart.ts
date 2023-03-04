@@ -13,7 +13,6 @@ let labels2: string[] = [];
 let data2: number[] = [];
 
 let colors: string[] = [];
-
 /* 
 
     First pie chart that displays the initial values 
