@@ -1,4 +1,4 @@
-import { cryptocurrencies } from "../main";
+import { cryptocurrencies, SLEEP_TIME } from "../main";
 import { Chart } from "chart.js/auto";
 import { getCoinChart } from "../data/coingecko";
 import "chartjs-adapter-date-fns";
@@ -33,7 +33,7 @@ export async function prepareLineChart1() {
     toggleDate.style.display = "none";
     return;
   }
-  
+
   canvas1Parent.style.display = "none";
   toggleDate.style.display = "block";
   data1 = [];
@@ -102,8 +102,7 @@ export async function prepareLineChart1() {
       }
     }
     const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-    await sleep(cryptoIndex * 5000 + 750);
-    // await sleep(cryptoIndex * 500 + 750);
+    await sleep(cryptoIndex * SLEEP_TIME + 750);
   }
   // If we are being rate limited, stop what we are doing since the data is incomplete
   if (limited) {
