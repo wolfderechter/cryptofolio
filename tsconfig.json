@@ -7,7 +7,7 @@
     "moduleResolution": "Node",
     "strict": true,
     "resolveJsonModule": true,
-    // "isolatedModules": true,
+    "noImplicitAny": false,
     "esModuleInterop": true,
     "noEmit": true,
     "noUnusedLocals": true,
