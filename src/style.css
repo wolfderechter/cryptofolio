@@ -28,7 +28,6 @@
   --border-radius-big: 20px;
 }
 
-
 a {
   font-weight: 500;
   color: var(--accent-color-1);
@@ -179,9 +178,10 @@ input {
 }
 
 #cryptoList {
-  display: flex;
-  flex-wrap: wrap;
-  overflow: auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  overflow-x: clip;
+  overflow-y: auto;
   scrollbar-width: thin;
   width: 400px;
 }
@@ -204,9 +204,6 @@ input {
 #cryptoList div {
   margin: 20px;
   object-fit: cover;
-}
-
-#cryptoList div {
   height: auto;
   max-height: 100px;
   width: auto;
@@ -218,7 +215,17 @@ input {
   width: 45px;
 }
 
-/* 
+#cryptoList div p {
+  margin: 0;
+  text-align: center;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+/*
 
   New Transaction popup
 
@@ -284,9 +291,7 @@ input {
   }
 }
 
-
-
-/* 
+/*
 
   Edit Transaction Popup
 
@@ -315,7 +320,7 @@ input {
   opacity: 1;
 }
 
-/* 
+/*
 
   AssetsTable
 
@@ -382,7 +387,7 @@ input {
   padding: 5px;
 }
 
-/* 
+/*
 
   Summary
 
@@ -426,7 +431,7 @@ input {
   gap: 10px;
 }
 
-/* 
+/*
 
   LINECHART
 
@@ -455,8 +460,6 @@ input {
   border-color: var(--accent-color-1);
 }
 
-
-
 /* Hide the input */
 #exportDataBtn {
   cursor: pointer;
@@ -477,8 +480,7 @@ input {
   line-height: 24px;
 }
 
-
-/* 
+/*
 
   Ethereum Staking
 
@@ -527,7 +529,7 @@ input {
   opacity: 0.5;
 }
 
-/* 
+/*
 
   Manage transactions
 
@@ -536,8 +538,7 @@ input {
   width: 500px;
 }
 
-
-/* 
+/*
 
 Loader
 
