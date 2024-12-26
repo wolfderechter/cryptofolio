@@ -1,5 +1,10 @@
 import { Coin, CryptoCurrency } from "./cryptocurrency";
-import { saveData, loadData, exportData, importData } from "./data/localstorage";
+import {
+  saveData,
+  loadData,
+  exportData,
+  importData,
+} from "./data/localstorage";
 import { getCoinOnDate, getCoins, getCoinsPrices } from "./data/coingecko";
 import { Transaction, transactionType } from "./transaction";
 import { renderCharts } from "./charts/init";
@@ -14,102 +19,185 @@ const addCryptoBtn = document.querySelector<HTMLButtonElement>("#addCrypto");
 // Modals
 const searchModal = document.getElementById("seach-modal")!;
 const transactionModal = document.getElementById("transaction-modal")!;
-const manageTransactionsModal = document.getElementById("manage-transactions-modal")!;
+const manageTransactionsModal = document.getElementById(
+  "manage-transactions-modal"
+)!;
 const editTransactionModal = document.getElementById("edit-transaction-modal")!;
 
 // Close Btns
 const searchModalCloseBtn = document.getElementById("search-modal-close");
-const transactionModalCloseBtn = document.getElementById("transaction-modal-close");
-const manageTransactionsModalCloseBtn = document.getElementById("manage-transactions-modal-close");
-const editTransactionModalCloseBtn = document.getElementById("edit-transaction-modal-close");
+const transactionModalCloseBtn = document.getElementById(
+  "transaction-modal-close"
+);
+const manageTransactionsModalCloseBtn = document.getElementById(
+  "manage-transactions-modal-close"
+);
+const editTransactionModalCloseBtn = document.getElementById(
+  "edit-transaction-modal-close"
+);
 
 // Forms
 const searchForm = document.querySelector<HTMLFormElement>("#searchForm");
-const transactionForm = document.querySelector<HTMLFormElement>("#transactionForm");
+const transactionForm =
+  document.querySelector<HTMLFormElement>("#transactionForm");
 
 // Summary
 const summaryTotalValue = document.getElementById("summaryTotalValue")!;
-const summaryTotalValueContent = document.getElementById("summaryTotalValueContent")!;
-const summaryTotalPercentage = document.getElementById("summaryTotalPercentage")!;
+const summaryTotalValueContent = document.getElementById(
+  "summaryTotalValueContent"
+)!;
+const summaryTotalPercentage = document.getElementById(
+  "summaryTotalPercentage"
+)!;
 
 // Staking
 const ethereumStaking = document.getElementById("ethereumStaking")!;
 const ethereumStakedAmount = document.getElementById("ethereumStakedAmount")!;
-const ethereumStakingTotalRewards = document.getElementById("ethereumStakingTotalRewards")!;
-const ethereumStakingTotalRewardsContent = document.getElementById("ethereumStakingTotalRewardsContent")!;
-const ethereumStakingDailyRewards = document.getElementById("ethereumStakingDailyRewards")!;
+const ethereumStakingTotalRewards = document.getElementById(
+  "ethereumStakingTotalRewards"
+)!;
+const ethereumStakingTotalRewardsContent = document.getElementById(
+  "ethereumStakingTotalRewardsContent"
+)!;
+const ethereumStakingDailyRewards = document.getElementById(
+  "ethereumStakingDailyRewards"
+)!;
 
 // Import data
 let input = document.getElementById("importDataBtn");
 if (input) input.addEventListener("change", importData);
 
-// Summary number animtions
+// Summary number animations
 let summaryTotalValueContentCountUp = new CountUp(summaryTotalValueContent, 0, {
   decimalPlaces: 2,
   duration: 1,
 });
 
 // Staking rewards animations
-let ethereumStakingTotalRewardsCountUp = new CountUp(ethereumStakingTotalRewardsContent, 0, {
-  decimalPlaces: 4,
-  duration: 1,
-});
+let ethereumStakingTotalRewardsCountUp = new CountUp(
+  ethereumStakingTotalRewardsContent,
+  0,
+  {
+    decimalPlaces: 4,
+    duration: 1,
+  }
+);
 
-// adding a crypto opens the modal with a search bar
-addCryptoBtn?.addEventListener("click", (e) => {
-  e.preventDefault();
-  if (searchModal) {
-    searchModal.style.display = "block";
+//
+// Search modal -----------------------------------
+//
+const openSearchModal = () => {
+  if (!searchModal) return;
 
-    // Clear the popup before opening it
-    const cryptoListDiv = document.getElementById("cryptoList")!;
+  // Clear the crypto list
+  const cryptoListDiv = document.getElementById("cryptoList");
+  if (cryptoListDiv) {
     cryptoListDiv.innerHTML = "";
   }
+
+  // Show modal
+  searchModal.style.display = "block";
+
+  // Add escape key listener
+  window.addEventListener("keydown", handleEscapeKeySearchModal);
+};
+
+const handleEscapeKeySearchModal = (e: KeyboardEvent) => {
+  if (e.key === "Escape") {
+    closeSearchModal();
+  }
+};
+
+searchModalCloseBtn?.addEventListener("click", (e) => {
+  e?.preventDefault();
+  closeSearchModal();
+});
+
+function closeSearchModal() {
+  if (!searchModal || !searchForm) return;
+
+  // Hide modal and reset form to clean state
+  searchModal.style.display = "none";
+  searchForm.reset();
+
+  // Remove escape key listener
+  window.removeEventListener("keydown", handleEscapeKeySearchModal);
+}
+
+// Event listeners
+addCryptoBtn?.addEventListener("click", (e) => {
+  e.preventDefault();
+  openSearchModal();
 });
 
 searchModalCloseBtn?.addEventListener("click", (e) => {
-  closeSearchModal(e);
+  e.preventDefault();
+  closeSearchModal();
 });
+//
+// -------------------------------------------------------------
+//
 
-function closeSearchModal(e?: MouseEvent) {
-  e?.preventDefault();
-  if (searchModal && searchForm) {
-    searchModal.style.display = "none";
-    searchForm.reset();
+//
+// Transaction Modal-------------------------------------------------------------
+//
+const handleEscapeKeyTransactionModal = (e: KeyboardEvent) => {
+  if (e.key === "Escape") {
+    closeTransactionModal();
   }
-}
+};
+const handleEscapeKeyManageTransactionModal = (e: KeyboardEvent) => {
+  if (e.key === "Escape") {
+    closeManageTransactionsModal();
+  }
+};
+const handleEscapeKeyEditTransactionModal = (e: KeyboardEvent) => {
+  if (e.key === "Escape") {
+    closeEditTransactionModal();
+  }
+};
 
 transactionModalCloseBtn?.addEventListener("click", (e) => {
-  closeTransactionModal(e);
+  e.preventDefault();
+  closeTransactionModal();
 });
-
-function closeTransactionModal(e?: MouseEvent) {
-  e?.preventDefault();
-  if (transactionModal && transactionForm) {
-    transactionModal.style.display = "none";
-    transactionForm.reset();
-  }
-}
 
 manageTransactionsModalCloseBtn?.addEventListener("click", (e) => {
-  closeManageTransactionsModal(e);
+  e.preventDefault();
+  closeManageTransactionsModal();
 });
 
-function closeManageTransactionsModal(e?: MouseEvent) {
-  e?.preventDefault();
-  if (manageTransactionsModal) {
-    manageTransactionsModal.style.display = "none";
-  }
-}
 editTransactionModalCloseBtn?.addEventListener("click", (e) => {
-  closeEditTransactionModal(e);
+  e.preventDefault();
+  closeEditTransactionModal();
 });
 
-function closeEditTransactionModal(e?: MouseEvent) {
-  e?.preventDefault();
-  if (editTransactionModal) {
-    editTransactionModal.style.display = "none";
-  }
+function closeTransactionModal() {
+  if (!transactionModal || !transactionForm) return;
+
+  transactionModal.style.display = "none";
+  transactionForm.reset();
+
+  // Remove escape key listener
+  window.removeEventListener("keydown", handleEscapeKeyTransactionModal);
+}
+
+function closeManageTransactionsModal() {
+  if (!manageTransactionsModal) return;
+
+  manageTransactionsModal.style.display = "none";
+
+  // Remove escape key listener
+  window.removeEventListener("keydown", handleEscapeKeyManageTransactionModal);
+}
+
+function closeEditTransactionModal() {
+  if (!editTransactionModal) return;
+
+  editTransactionModal.style.display = "none";
+
+  // Remove escape key listener
+  window.removeEventListener("keydown", handleEscapeKeyEditTransactionModal);
 }
 
 document.getElementById("searchForm")?.addEventListener("submit", (e) => {
@@ -118,7 +206,9 @@ document.getElementById("searchForm")?.addEventListener("submit", (e) => {
 });
 
 function searchCrypto() {
-  const input = document.querySelector<HTMLInputElement>("#crypto-search-input")!;
+  const input = document.querySelector<HTMLInputElement>(
+    "#crypto-search-input"
+  )!;
   const cryptoListDiv = document.getElementById("cryptoList")!;
   // Clear the list when entering a new search
   cryptoListDiv.innerHTML = "";
@@ -159,16 +249,29 @@ function startTransaction(coin: Coin) {
   // Switch the modal popup to the transaction popup
   transactionModal.style.display = "block";
 
-  const toggleTransactionType = document.getElementById("toggleTransactionType")!;
+  // Add escape key listener
+  window.addEventListener("keydown", handleEscapeKeyTransactionModal);
+
+  const toggleTransactionType = document.getElementById(
+    "toggleTransactionType"
+  )!;
   const buyTransactionBtn = document.getElementById("buyTransactionBtn")!;
   const sellTransactionBtn = document.getElementById("sellTransactionBtn")!;
   const addTransactionBtn = document.getElementById("addTransactionBtn")!;
   const transactionTitle = document.getElementById("transactionModalTitle")!;
 
-  const transactionDate = <HTMLInputElement>document.getElementById("transactionDate");
-  const availableAmount = <HTMLInputElement>document.getElementById("availableAmount");
-  const transactionAmount = <HTMLInputElement>document.getElementById("transactionAmount");
-  const transactionCost = <HTMLInputElement>document.getElementById("transactionCost");
+  const transactionDate = <HTMLInputElement>(
+    document.getElementById("transactionDate")
+  );
+  const availableAmount = <HTMLInputElement>(
+    document.getElementById("availableAmount")
+  );
+  const transactionAmount = <HTMLInputElement>(
+    document.getElementById("transactionAmount")
+  );
+  const transactionCost = <HTMLInputElement>(
+    document.getElementById("transactionCost")
+  );
 
   // Reset invalid button styling
   addTransactionBtn.style.animation = "";
@@ -217,7 +320,8 @@ function startTransaction(coin: Coin) {
     if (
       Number(transactionAmount.value) <= 0 ||
       Number(transactionCost.value) <= 0 ||
-      (transactionAmount.hasAttribute("max") && Number(transactionAmount.max) < Number(transactionAmount.value))
+      (transactionAmount.hasAttribute("max") &&
+        Number(transactionAmount.max) < Number(transactionAmount.value))
     ) {
       // Show an error animation on the add transaction button
       addTransactionBtn.style.animation = "shake 0.2s ease-in-out 0s 2";
@@ -228,19 +332,36 @@ function startTransaction(coin: Coin) {
 
     // Create the cryptocurrency object
     let resultCrypto = cryptocurrencies.find((c) => c.id === coin.id);
-    let selectedTransactionType = buyTransactionBtn.classList.contains("active") ? transactionType.Buy : transactionType.Sell;
+    let selectedTransactionType = buyTransactionBtn.classList.contains("active")
+      ? transactionType.Buy
+      : transactionType.Sell;
     // If crypto was already present, add new transaction
     if (resultCrypto) {
       resultCrypto.addTransaction(
-        new Transaction(selectedTransactionType, new Date(transactionDate.value), Number(transactionAmount.value), Number(transactionCost.value))
+        new Transaction(
+          selectedTransactionType,
+          new Date(transactionDate.value),
+          Number(transactionAmount.value),
+          Number(transactionCost.value)
+        )
       );
     } else {
       // If crypto was not yet present, create it and add new transaction
-      let newCrypto = new CryptoCurrency(coin.id, coin.symbol, coin.name, coin.thumbnail);
+      let newCrypto = new CryptoCurrency(
+        coin.id,
+        coin.symbol,
+        coin.name,
+        coin.thumbnail
+      );
       cryptocurrencies.push(newCrypto);
 
       newCrypto.addTransaction(
-        new Transaction(selectedTransactionType, new Date(transactionDate.value), Number(transactionAmount.value), Number(transactionCost.value))
+        new Transaction(
+          selectedTransactionType,
+          new Date(transactionDate.value),
+          Number(transactionAmount.value),
+          Number(transactionCost.value)
+        )
       );
     }
     // Persist the data
@@ -255,7 +376,11 @@ function manageTransactions(coin: Coin) {
   // Switch the modal popup to the transaction popup
   manageTransactionsModal.style.display = "block";
 
-  const manageTransactionsTitle = document.getElementById("manageTransactionsModalTitle")!;
+  window.addEventListener("keydown", handleEscapeKeyManageTransactionModal);
+
+  const manageTransactionsTitle = document.getElementById(
+    "manageTransactionsModalTitle"
+  )!;
   manageTransactionsTitle.textContent = coin.name;
 
   let crypto = cryptocurrencies.find((c) => c.id === coin.id);
@@ -265,17 +390,22 @@ function manageTransactions(coin: Coin) {
 }
 
 function refreshManageTransactions(crypto: CryptoCurrency) {
-  const manageTransactionsTableBody = document.getElementById("manageTransactionsTableBody")!;
+  const manageTransactionsTableBody = document.getElementById(
+    "manageTransactionsTableBody"
+  )!;
 
   // Remove the table body completely
   while (manageTransactionsTableBody.children.length > 0) {
-    if (manageTransactionsTableBody.firstChild) manageTransactionsTableBody.removeChild(manageTransactionsTableBody.firstChild);
+    if (manageTransactionsTableBody.firstChild)
+      manageTransactionsTableBody.removeChild(
+        manageTransactionsTableBody.firstChild
+      );
   }
 
   for (const transaction of crypto.transactions) {
     let tr = document.createElement("tr");
 
-    /*      
+    /*
         ToDO: Remove button will show a cancel/confirm button first before removing
     */
     tr.innerHTML = `
@@ -288,8 +418,12 @@ function refreshManageTransactions(crypto: CryptoCurrency) {
           <button id="manageTransactionsTableRemoveBtn" class="fa-solid fa-trash-can iconBtn"></button>
       </td>
     `;
-    const editBtn = tr.querySelector<HTMLButtonElement>("#manageTransactionsTableEditBtn");
-    const removeBtn = tr.querySelector<HTMLButtonElement>("#manageTransactionsTableRemoveBtn");
+    const editBtn = tr.querySelector<HTMLButtonElement>(
+      "#manageTransactionsTableEditBtn"
+    );
+    const removeBtn = tr.querySelector<HTMLButtonElement>(
+      "#manageTransactionsTableRemoveBtn"
+    );
     if (removeBtn) {
       removeBtn.onclick = () => {
         if (!crypto) return;
@@ -297,7 +431,10 @@ function refreshManageTransactions(crypto: CryptoCurrency) {
         crypto.removeTransaction(transaction);
 
         // If after removing the transactio the crypto has no transactions left, remove the crypto
-        if (crypto.amountOfTransactions < 1 || crypto.amountOfTransactions === undefined) {
+        if (
+          crypto.amountOfTransactions < 1 ||
+          crypto.amountOfTransactions === undefined
+        ) {
           cryptocurrencies.splice(cryptocurrencies.indexOf(crypto), 1);
         }
 
@@ -322,8 +459,14 @@ function refreshManageTransactions(crypto: CryptoCurrency) {
 function editTransaction(crypto: CryptoCurrency, transaction: Transaction) {
   editTransactionModal.style.display = "block";
 
-  const editTransactionTitle = document.getElementById("editTransactionModalTitle")!;
-  const toggleTransactionType = document.getElementById("editToggleTransactionType")!;
+  window.addEventListener("keydown", handleEscapeKeyEditTransactionModal);
+
+  const editTransactionTitle = document.getElementById(
+    "editTransactionModalTitle"
+  )!;
+  const toggleTransactionType = document.getElementById(
+    "editToggleTransactionType"
+  )!;
   const buyTransactionBtn = document.getElementById("editBuyTransactionBtn")!;
   const sellTransactionBtn = document.getElementById("editSellTransactionBtn")!;
   const editTransactionBtn = document.getElementById("editTransactionBtn")!;
@@ -339,11 +482,19 @@ function editTransaction(crypto: CryptoCurrency, transaction: Transaction) {
   };
 
   // Fill in the form values
-  const transactionDate = <HTMLInputElement>document.getElementById("editTransactionDate");
-  const transactionAmount = <HTMLInputElement>document.getElementById("editTransactionAmount");
-  const transactionCost = <HTMLInputElement>document.getElementById("editTransactionCost");
+  const transactionDate = <HTMLInputElement>(
+    document.getElementById("editTransactionDate")
+  );
+  const transactionAmount = <HTMLInputElement>(
+    document.getElementById("editTransactionAmount")
+  );
+  const transactionCost = <HTMLInputElement>(
+    document.getElementById("editTransactionCost")
+  );
 
-  transaction.type === transactionType.Buy ? buyTransactionBtn.classList.add("active") : sellTransactionBtn.classList.add("active");
+  transaction.type === transactionType.Buy
+    ? buyTransactionBtn.classList.add("active")
+    : sellTransactionBtn.classList.add("active");
   transactionDate.valueAsDate = transaction.date;
   transactionAmount.value = String(transaction.amount);
   transactionCost.value = String(transaction.cost);
@@ -354,7 +505,9 @@ function editTransaction(crypto: CryptoCurrency, transaction: Transaction) {
 
     // let selectedTransactionType = buyTransactionBtn.classList.contains("active") ? transactionType.Buy : transactionType.Sell;
     let currentCrypto = cryptocurrencies.find((c) => c.id === crypto.id);
-    let selectedTransactionType = buyTransactionBtn.classList.contains("active") ? transactionType.Buy : transactionType.Sell;
+    let selectedTransactionType = buyTransactionBtn.classList.contains("active")
+      ? transactionType.Buy
+      : transactionType.Sell;
 
     if (currentCrypto) {
       // selectedTransactionType, new Date(transactionDate.value), Number(transactionAmount.value), Number(transactionCost.value)
@@ -409,7 +562,8 @@ async function populateAssetsTableAndSummary() {
   let cryptoSellCostSum = 0;
 
   cryptocurrencies.forEach((asset) => {
-    const cryptoValue = parseFloat(coinPrices[asset.id]["usd"]) * asset.totalAmount;
+    const cryptoValue =
+      parseFloat(coinPrices[asset.id]["usd"]) * asset.totalAmount;
     const gain = cryptoValue + asset.totalSellCost - asset.totalBuyCost;
     const gainInPercentage = (gain / asset.totalBuyCost) * 100;
 
@@ -439,7 +593,7 @@ async function populateAssetsTableAndSummary() {
         <td>${asset.name}</td>
         <td>$${asset.averageBuyPrice.toFixed(2)}</td>
         <td>${asset.totalAmount} ${asset.symbol}</td>
-        <td>$${asset.totalCost > 0 ? asset.totalCost : 0}</td> 
+        <td>$${asset.totalCost > 0 ? asset.totalCost : 0}</td>
         <td>$${cryptoValue.toFixed(2)}</td>
         <td>${gainInPercentage.toFixed(2)}%</td>
         <td class="assetsTableBtns">
@@ -459,7 +613,8 @@ async function populateAssetsTableAndSummary() {
           thumbnail: asset.thumbnail,
         });
     }
-    const manageButton = tr.querySelector<HTMLButtonElement>("#assetsTableManage");
+    const manageButton =
+      tr.querySelector<HTMLButtonElement>("#assetsTableManage");
     if (manageButton) {
       manageButton.onclick = () =>
         manageTransactions({
@@ -477,8 +632,13 @@ async function populateAssetsTableAndSummary() {
   // summaryTotalValueContent.textContent = `${cryptoValueSum ? cryptoValueSum.toFixed(2) : ""}`;
   summaryTotalValueContentCountUp.update(cryptoValueSum);
 
-  const percentage = ((cryptoValueSum + cryptoSellCostSum - cryptoBuyCostSum) / cryptoBuyCostSum) * 100;
-  summaryTotalPercentage.textContent = `${percentage ? percentage.toFixed(2) : ""}%`;
+  const percentage =
+    ((cryptoValueSum + cryptoSellCostSum - cryptoBuyCostSum) /
+      cryptoBuyCostSum) *
+    100;
+  summaryTotalPercentage.textContent = `${
+    percentage ? percentage.toFixed(2) : ""
+  }%`;
 
   if (summaryTotalValue) summaryTotalValue.style.opacity = "0.5";
   if (summaryTotalValue) summaryTotalPercentage.style.opacity = "0.5";
@@ -487,9 +647,9 @@ async function populateAssetsTableAndSummary() {
 // ToDO: make the x minutes configurable? with a minimum amount of 1 minute to not overload the coingecko API
 setInterval(populateAssetsTableAndSummary, 900000);
 
-/* 
+/*
   Staking rewards for ethereum can be defined as the gain in USD since buying the LSD rETH/...
-    
+
   => added staking value can be calculated by comparing the conversion rate at the time of buying to the current conversion rate*
   => Added staking value = ((eth/reth conversion rate now) - (eth/reth conversion rate at time of buying)) * amount of rETH held
     -> This should be calculated for each transaction individually and summed up
@@ -506,7 +666,7 @@ setInterval(populateAssetsTableAndSummary, 900000);
   Additional Remarks:
     Tracking eth staking only makes sense by comparing the peg of date of staking and current date. The difference in the peg tells us the rewards.
     Since the peg is between reth/eth we need to know how much eth we are essentially staking into reth.
-    -If we know the eth amount, easy 
+    -If we know the eth amount, easy
       => Need to support ETH as the transaction currency for staking
     -If we don't know the eth amount, we can look it up for the date but it needs to be precise so exact timestamp (including hour/minutes).
 
@@ -553,10 +713,12 @@ async function calculateStakingRewards() {
           break;
         }
         // Calculates the conversion rate based on the amount received and total cost so the actual conversion rate is calculated including the premium present (and fees)
-        let conversionRateOnDate = transaction.cost / (transaction.amount * ethOnPurchaseDate["usd"]);
+        let conversionRateOnDate =
+          transaction.cost / (transaction.amount * ethOnPurchaseDate["usd"]);
 
         // Calculate the reward by multiplying the transaction amount with the delta of conversion rate from date of purchase vs now
-        let rewardETH = transaction.amount * (coinPrice[cc.id]["eth"] - conversionRateOnDate);
+        let rewardETH =
+          transaction.amount * (coinPrice[cc.id]["eth"] - conversionRateOnDate);
         let rewardUSD = rewardETH * coinPrice["ethereum"]["usd"]; // convert the eth rewards to usd by multiplying by the price of ETH now
 
         // Alternatively, calculate use the official conversion rate on the day of staking
@@ -579,7 +741,11 @@ async function calculateStakingRewards() {
     ethereumStaking.style.display = "flex";
   }
 
-  if (ethereumStakedAmount && ethereumStakingTotalRewards && ethereumStakingDailyRewards) {
+  if (
+    ethereumStakedAmount &&
+    ethereumStakingTotalRewards &&
+    ethereumStakingDailyRewards
+  ) {
     ethereumStakedAmount.textContent = `${totalStakedUSD.toFixed(2)} USD`;
     // ethereumStakingTotalRewards.textContent = `${totalRewardsUSD.toFixed(4)} USD`;
     ethereumStakingTotalRewardsCountUp.update(totalRewardsUSD);
@@ -592,7 +758,9 @@ async function calculateStakingRewards() {
     */
     //  ToDo: change hardcoded eth staking apy to something dynamic
     let dailyRewardsUSD = (totalStakedUSD * 0.045) / 365;
-    ethereumStakingDailyRewards.textContent = `${dailyRewardsUSD.toFixed(4)} USD`;
+    ethereumStakingDailyRewards.textContent = `${dailyRewardsUSD.toFixed(
+      4
+    )} USD`;
 
     let stakingInterval: ReturnType<typeof setInterval> | undefined;
     ethereumStakingTotalRewards.onmouseenter = () => {
