@@ -44,7 +44,7 @@ export async function getCoinsPrices(coins: string[]): Promise<string[]> {
   }
 }
 
-/* 
+/*
     Get historical market data include price, market cap, and 24h volume (granularity auto)
 
     Data granularity is automatic (cannot be adjusted)
@@ -54,7 +54,7 @@ export async function getCoinsPrices(coins: string[]): Promise<string[]> {
 
     example: 'https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=10'
 
-    
+
  */
 /**
  * Get historical market data chart based on parameters
@@ -62,9 +62,15 @@ export async function getCoinsPrices(coins: string[]): Promise<string[]> {
  * @param days: How many days back to fetch data
  * @param interval: granularity of the data (hourly, daily...)
  */
-export async function getCoinChart(coin: string, days: number, interval: string): Promise<string[]> {
+export async function getCoinChart(
+  coin: string,
+  days: number,
+  interval: string
+): Promise<string[]> {
   try {
-    let query = COINGECKO_API + `coins/${coin}/market_chart?vs_currency=usd&days=${days}&interval=${interval}`;
+    let query =
+      COINGECKO_API +
+      `coins/${coin}/market_chart?vs_currency=usd&days=${days}&interval=${interval}`;
     const res = await fetch(query);
     const jsonResult = await res.json();
 
@@ -80,9 +86,13 @@ export async function getCoinChart(coin: string, days: number, interval: string)
  * @param coin: the unique crypto identifier string
  * @param date: The date of data snapshot in dd-mm-yyyy eg. 30-12-2022
  */
-export async function getCoinOnDate(coin: string, day: string): Promise<string> {
+export async function getCoinOnDate(
+  coin: string,
+  day: string
+): Promise<string> {
   try {
-    let query = COINGECKO_API + `coins/${coin}/history?date=${day}&localization=false`;
+    let query =
+      COINGECKO_API + `coins/${coin}/history?date=${day}&localization=false`;
     const res = await fetch(query);
     const jsonResult = await res.json();
 
