@@ -2,7 +2,6 @@ import { Coin, CryptoCurrency } from "./cryptocurrency";
 import {
   saveData,
   loadData,
-  exportData,
   importData,
 } from "./data/localstorage";
 import { getCoinOnDate, getCoins, getCoinsPrices } from "./data/coingecko";
@@ -793,4 +792,3 @@ export function init() {
 loadData();
 init();
 
-exportData(); // Setup the exportDataBtn so it's ready upon click
