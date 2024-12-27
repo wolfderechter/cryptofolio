@@ -1,0 +1,27 @@
+const CACHE_PREFIX = "coingecko_cache_";
+
+export function getCache(key: string): any | null {
+  const cachedData = localStorage.getItem(CACHE_PREFIX + key);
+  if (cachedData) {
+    return JSON.parse(cachedData);
+  }
+  return null;
+}
+
+// Default cache of 1 hour
+export function setCache(
+  key: string,
+  data: any,
+  ttl: number = 60 * 60 * 1000,
+): void {
+  const cacheData = {
+    data,
+    expiry: Date.now() + ttl,
+  };
+  localStorage.setItem(CACHE_PREFIX + key, JSON.stringify(cacheData));
+}
+
+export function isCacheValid(key: string): boolean {
+  const cachedData = getCache(key);
+  return cachedData && cachedData.expiry > Date.now();
+}

@@ -1,3 +1,5 @@
+import { getCache, setCache, isCacheValid } from "./cache";
+
 const COINGECKO_API = "https://api.coingecko.com/api/v3/";
 
 /**
@@ -5,12 +7,20 @@ const COINGECKO_API = "https://api.coingecko.com/api/v3/";
  * @param input: the searchterm for finding cryptocurrencies
  */
 export async function getCoins(input: string): Promise<string[][]> {
+  const cacheKey = `getCoins_${input}`;
+
+  if (isCacheValid(cacheKey)) {
+    return getCache(cacheKey).data;
+  }
+
   try {
     const query = `search?query=${input}`;
     const res = await fetch(COINGECKO_API + query);
     const jsonResult = await res.json();
 
-    return jsonResult["coins"];
+    const result = jsonResult["coins"];
+    setCache(cacheKey, result);
+    return result;
   } catch (error) {
     return [];
   }
@@ -21,6 +31,12 @@ export async function getCoins(input: string): Promise<string[][]> {
  * @param coins[]: array of unique crypto identifier strings
  */
 export async function getCoinsPrices(coins: string[]): Promise<string[]> {
+  const cacheKey = `getCoinsPrices_${coins.join(",")}`;
+
+  if (isCacheValid(cacheKey)) {
+    return getCache(cacheKey).data;
+  }
+
   try {
     let query = `simple/price?ids=`;
     for (let i = 0; i < coins.length; i++) {
@@ -35,10 +51,11 @@ export async function getCoinsPrices(coins: string[]): Promise<string[]> {
     // Add the currency in which it should be returned (usd)
     query += "&vs_currencies=usd%2Ceth";
 
-    const res = await fetch(COINGECKO_API + query);
-    const jsonResult = await res.json();
+    const response = await fetch(COINGECKO_API + query);
+    const result = await response.json();
 
-    return jsonResult;
+    setCache(cacheKey, result);
+    return result;
   } catch (error) {
     return [];
   }
@@ -65,9 +82,15 @@ export async function getCoinsPrices(coins: string[]): Promise<string[]> {
 export async function getCoinChart(
   coin: string,
   days: number,
-  interval: string
+  interval: string,
 ): Promise<string[]> {
   try {
+    const cacheKey = `getCoinChart_${coin}_${days}_${interval}`;
+
+    if (isCacheValid(cacheKey)) {
+      return getCache(cacheKey).data;
+    }
+
     let query =
       COINGECKO_API +
       `coins/${coin}/market_chart?vs_currency=usd&days=${days}&interval=${interval}`;
@@ -75,7 +98,9 @@ export async function getCoinChart(
     const jsonResult = await res.json();
 
     // api supports 'prices' 'market_caps' and 'total_volumes' but we only need prices currently
-    return jsonResult["prices"];
+    const result = jsonResult["prices"];
+    setCache(cacheKey, result);
+    return result;
   } catch (error) {
     return [];
   }
@@ -88,15 +113,23 @@ export async function getCoinChart(
  */
 export async function getCoinOnDate(
   coin: string,
-  day: string
+  day: string,
 ): Promise<string> {
   try {
+    const cacheKey = `getCoinOnDate_${coin}_${day}`;
+
+    if (isCacheValid(cacheKey)) {
+      return getCache(cacheKey).data;
+    }
+
     let query =
       COINGECKO_API + `coins/${coin}/history?date=${day}&localization=false`;
-    const res = await fetch(query);
-    const jsonResult = await res.json();
+    const response = await fetch(query);
+    const jsonResult = await response.json();
 
-    return jsonResult["market_data"]["current_price"];
+    const result = jsonResult["market_data"]["current_price"];
+    setCache(cacheKey, result);
+    return result;
   } catch (error) {
     return "";
   }
