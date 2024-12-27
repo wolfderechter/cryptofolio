@@ -21,7 +21,8 @@ export async function loadData(input?: string) {
     cryptos = JSON.parse(input);
   } else {
     let cryptosString;
-    if ((cryptosString = localStorage.getItem("assets"))) cryptos = JSON.parse(cryptosString);
+    if ((cryptosString = localStorage.getItem("assets")))
+      cryptos = JSON.parse(cryptosString);
   }
   if (cryptos == null) return;
 
@@ -31,10 +32,24 @@ export async function loadData(input?: string) {
 
   // Recreate the objects from JSON
   cryptos.forEach((crypto: any) => {
-    let newCrypto = new CryptoCurrency(crypto.id, crypto.symbol, crypto.name, crypto.thumbnail, crypto.color);
+    let newCrypto = new CryptoCurrency(
+      crypto.id,
+      crypto.symbol,
+      crypto.name,
+      crypto.thumbnail,
+      crypto.color
+    );
 
     crypto.transactions.forEach((transaction: any) => {
-      newCrypto.addTransaction(new Transaction(transaction.type, new Date(transaction.date), transaction.amount, transaction.cost, transaction.uuid));
+      newCrypto.addTransaction(
+        new Transaction(
+          transaction.type,
+          new Date(transaction.date),
+          transaction.amount,
+          transaction.cost,
+          transaction.uuid
+        )
+      );
     });
 
     cryptocurrencies.push(newCrypto);
@@ -49,15 +64,15 @@ export async function loadData(input?: string) {
 /**
  * This function will setup the exportDataBtn to download the cryptocurrencies as a json file on click.
  */
-export function exportData() {
+const exportDataBtn = document.getElementById("exportDataBtn")!;
+exportDataBtn.onclick = () => {
   let data = JSON.stringify(cryptocurrencies, null, 2);
-  var exportDataBtn = document.getElementById("exportDataBtn")!;
-
-  exportDataBtn.onclick = () => {
-    exportDataBtn.setAttribute("href", URL.createObjectURL(new Blob([data], { type: "application/json" })));
-    exportDataBtn.setAttribute("download", "cryptofolioData.json");
-  };
-}
+  exportDataBtn.setAttribute(
+    "href",
+    URL.createObjectURL(new Blob([data], { type: "application/json" }))
+  );
+  exportDataBtn.setAttribute("download", "cryptofolioData.json");
+};
 
 /**
  * Will import data from a file and call the loadData function with this data.
