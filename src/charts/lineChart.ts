@@ -2,6 +2,7 @@ import { cryptocurrencies, SLEEP_TIME } from "../main";
 import { Chart } from "chart.js/auto";
 import { getCoinChart } from "../data/coingecko";
 import "chartjs-adapter-date-fns";
+import { isCacheValid } from '../data/cache';
 
 let dateModeDays = 31;
 let dateModeArrayLength = 32; // The array length is the number of days + 1 except for 1D => 24 hours
@@ -20,7 +21,7 @@ let dates: Date[] = [];
 let netInvested: number[] = [];
 export let datasetColors: { id: string; color: string }[] = [];
 
-/* 
+/*
     The portfolio line chart consist of the value of the portfolio during the last x amount of days
 
     Each day it should show the portfolio value at that time by combining all the amount of crypto held * price of that crypto during that day
@@ -86,9 +87,9 @@ export async function prepareLineChart1() {
       if (!allData.has(crypto.id)) allData.set(crypto.id, []);
       allData.get(crypto.id)?.push(coinTotal);
 
-      /* 
+      /*
         1. calculate the total cost per coin by a certain date
-        2. if a cost is already present for that day, add it up. 
+        2. if a cost is already present for that day, add it up.
            Else push a new cost
       */
 
@@ -101,8 +102,14 @@ export async function prepareLineChart1() {
         netInvested.push(cost);
       }
     }
-    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-    await sleep(cryptoIndex * SLEEP_TIME + 750);
+
+    // If data is cached continue, if not sleep for a bit to prevent rate limiting
+    const cacheKey = `getCoinChart_${crypto.id}_${dateModeDays}_${dateModeInterval}`;
+
+    if (!isCacheValid(cacheKey)) {
+      const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+      await sleep(cryptoIndex * SLEEP_TIME + 750);
+    }
   }
   // If we are being rate limited, stop what we are doing since the data is incomplete
   if (limited) {
@@ -267,9 +274,9 @@ totalValueGradient.addColorStop(0.5, colors.purple.quarter);
 totalValueGradient.addColorStop(0, colors.purple.quarter);
 totalValueGradient.addColorStop(1, colors.purple.zero);
 
-/* 
+/*
 
-  Change Date Mode 
+  Change Date Mode
 
 */
 const toggleDayMode = document.getElementById("toggleDayMode")!;
