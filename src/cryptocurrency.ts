@@ -9,13 +9,19 @@ export class CryptoCurrency {
   public name: string;
   public thumbnail: string;
 
-  constructor(id: string, symbol: string, name: string, thumbnail: string, color?: string) {
+  constructor(
+    id: string,
+    symbol: string,
+    name: string,
+    thumbnail: string,
+    color?: string
+  ) {
     this.id = id;
     this.symbol = symbol;
     this.name = name;
     this.transactions = new Array<Transaction>();
     this.thumbnail = thumbnail;
-    this.color = color ? color : getColor(id);
+    this.color = color ? color : getColor();
   }
 
   addTransaction(transaction: Transaction) {
@@ -23,19 +29,23 @@ export class CryptoCurrency {
   }
 
   editTransaction(transaction: Transaction) {
-    let indexToEdit = this.transactions.findIndex((t) => t.uuid === transaction.uuid);
+    let indexToEdit = this.transactions.findIndex(
+      (t) => t.uuid === transaction.uuid
+    );
     this.transactions[indexToEdit] = transaction;
   }
 
   removeTransaction(transaction: Transaction) {
-    let indexToRemove = this.transactions.findIndex((t) => t.uuid === transaction.uuid);
+    let indexToRemove = this.transactions.findIndex(
+      (t) => t.uuid === transaction.uuid
+    );
     this.transactions.splice(indexToRemove);
   }
 
-  /* 
+  /*
     Loop through the transactions, if the date of the transaction is smaller than or equal to the given date
     we include the transaction amount in the total sum
-    
+
     if the date of transaction is after the given date we don't include the transaction amount
    */
   calculateAmountOnDate(date: Date) {

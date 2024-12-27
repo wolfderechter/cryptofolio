@@ -1,16 +1,21 @@
 import { cryptocurrencies } from "../main";
 
-export function getColor(cryptoId: string): string {
-  // Get the existing colors and remove them from the list of predefined available colors
-  const existingColors = cryptocurrencies.map((c) => c.color);
-  existingColors.forEach((c) => {
-    PREDEFINED_COLORS.splice(PREDEFINED_COLORS.indexOf(c));
-  });
+const PREDEFINED_COLORS = ["#a60bdb"]; // Add more colors as needed
 
-  if (cryptoId) {
-    return PREDEFINED_COLORS[0];
+export function getColor(): string {
+  // Get the existing colors
+  const existingColors = new Set(cryptocurrencies.map((c) => c.color));
+
+  // Find the first predefined color that hasn't been used yet
+  const availableColor = PREDEFINED_COLORS.find(
+    (color) => !existingColors.has(color)
+  );
+
+  // If an available predefined color is found, return it
+  if (availableColor) {
+    return availableColor;
   }
+
+  // If all predefined colors are used, return a random color
   return "#" + (((1 << 24) * Math.random()) | 0).toString(16).padStart(6, "0");
 }
-
-const PREDEFINED_COLORS = ["#a60bdb"];
