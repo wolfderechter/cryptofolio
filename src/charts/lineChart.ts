@@ -4,24 +4,35 @@ import { getCoinChart } from "../data/coingecko";
 import "chartjs-adapter-date-fns";
 import { isCacheValid } from "../data/cache";
 
+// Constants
 const DATE_MODES = {
   DAY: { days: 1, interval: "hourly", arrayLength: 25 },
   WEEK: { days: 7, interval: "daily", arrayLength: 8 },
   MONTH: { days: 31, interval: "daily", arrayLength: 32 },
   YEAR: { days: 365, interval: "daily", arrayLength: 366 },
-  ALL: { days: 0, interval: "daily", arrayLength: 0 },
+  ALL: { days: 0, interval: "daily", arrayLength: 0 }, // Special case
 };
-let dateModeDays = DATE_MODES.MONTH.days;
-let dateModeInterval = DATE_MODES.MONTH.interval;
-let dateModeArrayLength = DATE_MODES.MONTH.arrayLength;
 
-let canvas1 = <HTMLCanvasElement>document.getElementById("lineChart1")!;
-let canvas1Parent = <HTMLCanvasElement>(
-  document.getElementById("lineChart1Parent")!
-);
-let rateLimiting = <HTMLDivElement>document.getElementById("rateLimiting")!;
-let toggleDate = <HTMLDivElement>document.getElementById("toggleDate")!;
-let loader = <HTMLDivElement>document.getElementById("loader")!;
+const colors = {
+  purple: {
+    default: "rgba(149, 76, 233, 1)",
+    threequarters: "rgba(149, 76, 233, 0.75)",
+    half: "rgba(149, 76, 233, 0.5)",
+    quarter: "rgba(149, 76, 233, 0.25)",
+    zero: "rgba(149, 76, 233, 0.05)",
+  },
+};
+
+// DOM Elements
+const canvas1 = document.getElementById("lineChart1") as HTMLCanvasElement;
+const canvas1Parent = document.getElementById(
+  "lineChart1Parent"
+) as HTMLElement;
+const rateLimiting = document.getElementById("rateLimiting") as HTMLDivElement;
+const toggleDate = document.getElementById("toggleDate") as HTMLDivElement;
+const loader = document.getElementById("loader") as HTMLDivElement;
+
+// Chart and Data
 let lineChart1: Chart<"line", { x: Date; y: number }[], unknown>;
 let data1: { x: Date; y: number }[] = Array(dateModeArrayLength).fill({
   x: null,
@@ -31,13 +42,15 @@ let allData: Map<string, any[]> = new Map();
 let coinChart: string[] = [];
 let dates: Date[] = [];
 let netInvested: number[] = [];
-export let datasetColors: { id: string; color: string }[] = [];
+// Initialize Gradient
+const totalValueGradient = canvas1
+  .getContext("2d")
+  ?.createLinearGradient(0, 25, 0, 300)!;
+totalValueGradient.addColorStop(0, colors.purple.half);
+totalValueGradient.addColorStop(0.5, colors.purple.quarter);
+totalValueGradient.addColorStop(1, colors.purple.zero);
 
-/*
-
-Helper functions
-
-*/
+// Helper Functions
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // Returns the max amount of days, based on the earliest transaction date
@@ -255,7 +268,7 @@ export async function prepareLineChart1() {
       label: key,
       backgroundColor: color,
       borderColor: color,
-      hidden: true, //disable by default to keep it clean
+      hidden: true,
       pointRadius: 0,
       order: 0,
       borderWidth: 1,
@@ -274,44 +287,21 @@ export async function prepareLineChart1() {
     label: "Net invested",
     backgroundColor: netInvestedColor,
     borderColor: netInvestedColor,
-    hidden: true, //disable by default to keep it clean
+    hidden: true,
     pointRadius: 0,
     order: 1,
     borderWidth: 1,
   };
-
   lineChart1.data.datasets.push(netInvestDataSet);
   lineChart1.update();
 }
 
-/*
+// Date Mode Variables
+let dateModeDays = DATE_MODES.MONTH.days;
+let dateModeInterval = DATE_MODES.MONTH.interval;
+let dateModeArrayLength = DATE_MODES.MONTH.arrayLength;
 
-Colors
-
-*/
-const colors = {
-  purple: {
-    default: "rgba(149, 76, 233, 1)",
-    threequarters: "rgba(149, 76, 233, 0.75)",
-    half: "rgba(149, 76, 233, 0.5)",
-    quarter: "rgba(149, 76, 233, 0.25)",
-    zero: "rgba(149, 76, 233, 0.05)",
-  },
-};
-
-const totalValueGradient = canvas1
-  .getContext("2d")
-  ?.createLinearGradient(0, 25, 0, 300)!;
-totalValueGradient.addColorStop(0, colors.purple.half);
-totalValueGradient.addColorStop(0.5, colors.purple.quarter);
-totalValueGradient.addColorStop(0, colors.purple.quarter);
-totalValueGradient.addColorStop(1, colors.purple.zero);
-
-/*
-
-  Change Date Mode
-
-*/
+// Date Mode Switching
 const toggleDayMode = document.getElementById("toggleDayMode")!;
 const toggleWeekMode = document.getElementById("toggleWeekMode")!;
 const toggleMonthMode = document.getElementById("toggleMonthMode")!;
@@ -324,12 +314,12 @@ const toggleAllMode = document.getElementById("toggleAllMode")!;
   toggleMonthMode,
   toggleYearMode,
   toggleAllMode,
-].forEach((element) => element.addEventListener("click", switchDateMode));
+].forEach((element) => {
+  element.addEventListener("click", switchDateMode);
+});
 
 function switchDateMode(e: Event) {
-  if (cryptocurrencies.length === 0) {
-    return;
-  }
+  if (cryptocurrencies.length === 0) return;
 
   const target = e.target as HTMLButtonElement;
 
@@ -341,8 +331,6 @@ function switchDateMode(e: Event) {
     toggleYearMode,
     toggleAllMode,
   ].forEach((element) => element.classList.remove("active"));
-
-  // Add the current active classes
   target.classList.add("active");
 
   // dateModeDays = Number(target.value);
