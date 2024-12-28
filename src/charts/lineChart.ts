@@ -189,7 +189,7 @@ export async function prepareLineChart1() {
       dates = coinChart.map((data) => new Date(data[0]));
     }
 
-    const prices = coinChart.map((data) => parseFloat(data[1]));
+    const prices = coinChart.map((data) => data[1]);
     updateChartData(crypto, prices);
 
     const cacheKey = `getCoinChart_${crypto.id}_${dateModeDays}_${dateModeInterval}`;
@@ -239,22 +239,20 @@ export async function prepareLineChart1() {
   lineChart1.data.datasets.push(netInvestDataSet);
   lineChart1.update();
 }
-
 // Date Mode Variables
 let dateModeDays = DATE_MODES.MONTH.days;
 let dateModeInterval = DATE_MODES.MONTH.interval;
 
 // Date Mode Switching
+// const toggleDayMode = document.getElementById("toggleDayMode")!;
 const toggleWeekMode = document.getElementById("toggleWeekMode")!;
 const toggleMonthMode = document.getElementById("toggleMonthMode")!;
 const toggleYearMode = document.getElementById("toggleYearMode")!;
-const toggleAllMode = document.getElementById("toggleAllMode")!;
+// const toggleAllMode = document.getElementById("toggleAllMode")!;
 
-[toggleWeekMode, toggleMonthMode, toggleYearMode, toggleAllMode].forEach(
-  (element) => {
-    element.addEventListener("click", switchDateMode);
-  }
-);
+[toggleWeekMode, toggleMonthMode, toggleYearMode].forEach((element) => {
+  element.addEventListener("click", switchDateMode);
+});
 
 function switchDateMode(e: Event) {
   if (cryptocurrencies.length === 0) return;
@@ -262,8 +260,8 @@ function switchDateMode(e: Event) {
   const target = e.target as HTMLButtonElement;
 
   // Remove other active classes
-  [toggleWeekMode, toggleMonthMode, toggleYearMode, toggleAllMode].forEach(
-    (element) => element.classList.remove("active")
+  [toggleWeekMode, toggleMonthMode, toggleYearMode].forEach((element) =>
+    element.classList.remove("active")
   );
 
   target.classList.add("active");

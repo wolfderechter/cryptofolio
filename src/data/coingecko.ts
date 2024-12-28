@@ -82,8 +82,8 @@ export async function getCoinsPrices(coins: string[]): Promise<string[]> {
 export async function getCoinChart(
   coin: string,
   days: number,
-  interval: string,
-): Promise<string[]> {
+  interval: string
+): Promise<[string, number][]> {
   try {
     const cacheKey = `getCoinChart_${coin}_${days}_${interval}`;
 
@@ -98,9 +98,35 @@ export async function getCoinChart(
     const jsonResult = await res.json();
 
     // api supports 'prices' 'market_caps' and 'total_volumes' but we only need prices currently
-    const result = jsonResult["prices"];
-    setCache(cacheKey, result);
-    return result;
+    const prices = jsonResult["prices"];
+
+    // Generate a full dates array for the requested date range
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(endDate.getDate() - (days - 1));
+
+    const fullDates: Date[] = [];
+    let currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+      fullDates.push(new Date(currentDate));
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    // Create a map of date to price for the coin
+    const priceMap = new Map<string, number>();
+    for (const data of prices) {
+      const date = new Date(data[0]).toISOString().split("T")[0]; // Use YYYY-MM-DD as the key
+      priceMap.set(date, data[1]);
+    }
+
+    // Align the coin's prices with the full dates array
+    const alignedPrices: [string, number][] = fullDates.map((date) => {
+      const dateKey = date.toISOString().split("T")[0];
+      return [dateKey, priceMap.get(dateKey) || 0]; // Use null for missing dates
+    });
+
+    setCache(cacheKey, alignedPrices);
+    return alignedPrices;
   } catch (error) {
     return [];
   }
@@ -113,7 +139,7 @@ export async function getCoinChart(
  */
 export async function getCoinOnDate(
   coin: string,
-  day: string,
+  day: string
 ): Promise<string> {
   try {
     const cacheKey = `getCoinOnDate_${coin}_${day}`;
