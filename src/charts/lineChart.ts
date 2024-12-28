@@ -34,14 +34,12 @@ const loader = document.getElementById("loader") as HTMLDivElement;
 
 // Chart and Data
 let lineChart1: Chart<"line", { x: Date; y: number }[], unknown>;
-let data1: { x: Date; y: number }[] = Array(dateModeArrayLength).fill({
-  x: null,
-  y: 0,
-});
+let data1: { x: Date; y: number }[] = [];
 let allData: Map<string, any[]> = new Map();
 let coinChart: string[] = [];
 let dates: Date[] = [];
 let netInvested: number[] = [];
+
 // Initialize Gradient
 const totalValueGradient = canvas1
   .getContext("2d")
@@ -63,7 +61,7 @@ const calculateEarliestDate = () => {
 const calculateDiffDays = (earliestDate: Date) => {
   const currentDate = new Date();
   const diffTime = Math.abs(currentDate.getTime() - earliestDate.getTime());
-  return Math.ceil(diffTime / (1000 * 60 * 60 * 24 ));
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 };
 
 /*
@@ -197,9 +195,7 @@ export async function prepareLineChart1() {
           beginAtZero: true,
           ticks: {
             // Include a dollar sign in the ticks
-            callback: function (value) {
-              return "$ " + value;
-            },
+            callback: (value) => `$ ${value}`,
           },
         },
       },
@@ -207,12 +203,9 @@ export async function prepareLineChart1() {
       plugins: {
         tooltip: {
           callbacks: {
-            label: function (context) {
+            label: (context) => {
               let label = context.dataset.label || "";
-
-              if (label) {
-                label += ": ";
-              }
+              if (label) label += ": ";
               if (context.parsed.y !== null) {
                 label += new Intl.NumberFormat("en-US", {
                   style: "currency",
@@ -234,15 +227,12 @@ export async function prepareLineChart1() {
       {
         id: "verticalLineOnHover",
         afterDraw: (chart) => {
-          // Draw vertical line
           const activeEle = chart.getActiveElements();
-
-          // If we are hovering the tooltip will be an active element
           if (activeEle.length <= 0) return;
 
-          let x = activeEle[0].element.x;
-          let yAxis = chart.scales.y;
-          let ctx = chart.ctx;
+          const x = activeEle[0].element.x;
+          const yAxis = chart.scales.y;
+          const ctx = chart.ctx;
 
           ctx.save();
           ctx.beginPath();
@@ -262,9 +252,7 @@ export async function prepareLineChart1() {
     let color = cryptocurrencies.find((c) => c.id === key)?.color;
     let index = 0;
     const newDataSet = {
-      data: value.map((d) => {
-        return { x: dates[index++], y: d };
-      }),
+      data: value.map((d, i) => ({ x: dates[i], y: d })),
       label: key,
       backgroundColor: color,
       borderColor: color,
@@ -273,17 +261,12 @@ export async function prepareLineChart1() {
       order: 0,
       borderWidth: 1,
     };
-
     lineChart1.data.datasets.push(newDataSet);
   }
 
-  // Add the netinvested dataset to the linechart
-  let index = 0;
-  let netInvestedColor = "#c3f73a";
+  const netInvestedColor = "#c3f73a";
   const netInvestDataSet = {
-    data: netInvested.map((net) => {
-      return { x: dates[index++], y: net };
-    }),
+    data: netInvested.map((net, i) => ({ x: dates[i], y: net })),
     label: "Net invested",
     backgroundColor: netInvestedColor,
     borderColor: netInvestedColor,
@@ -331,9 +314,9 @@ function switchDateMode(e: Event) {
     toggleYearMode,
     toggleAllMode,
   ].forEach((element) => element.classList.remove("active"));
+
   target.classList.add("active");
 
-  // dateModeDays = Number(target.value);
   const mode = target.value.toUpperCase();
   if (mode === "ALL") {
     const earliestDate = calculateEarliestDate();
