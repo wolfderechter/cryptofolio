@@ -36,7 +36,6 @@ const loader = document.getElementById("loader") as HTMLDivElement;
 let lineChart1: Chart<"line", { x: Date; y: number }[], unknown>;
 let data1: { x: Date; y: number }[] = [];
 let allData: Map<string, any[]> = new Map();
-let coinChart: string[] = [];
 let dates: Date[] = [];
 let netInvested: number[] = [];
 
@@ -64,110 +63,23 @@ const calculateDiffDays = (earliestDate: Date) => {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 };
 
-/*
-    The portfolio line chart consist of the value of the portfolio during the last x amount of days
+const updateChartData = (crypto: any, prices: number[]) => {
+  for (let index = 0; index < dates.length; index++) {
+    const amount = crypto.calculateAmountOnDate(dates[index]);
+    const coinTotal = amount * prices[index];
 
-    Each day it should show the portfolio value at that time by combining all the amount of crypto held * price of that crypto during that day
-*/
-export async function prepareLineChart1() {
-  // In case no cryptocurrencies are present (anymore) we destroy the chart, hide the toggle dates and the canvas so it doesn't get shown if it's still calculating
-  if (cryptocurrencies.length === 0) {
-    loader.classList.add("disabled");
-    rateLimiting.classList.add("disabled");
-    toggleDate.style.display = "none";
-    return;
+    data1[index] = { x: dates[index], y: (data1[index]?.y || 0) + coinTotal };
+    // save per coin the total each day in the allData array
+    if (!allData.has(crypto.id)) allData.set(crypto.id, []);
+    allData.get(crypto.id)?.push(coinTotal);
+
+    const cost = crypto.calculateCostOnDate(dates[index]);
+    netInvested[index] = (netInvested[index] || 0) + cost;
   }
+};
 
-  canvas1Parent.style.display = "none";
-  toggleDate.style.display = "block";
-  data1 = [];
-  data1 = Array(dateModeArrayLength).fill({ x: null, y: 0 });
-  netInvested = [];
-  allData.clear();
-
-  let once = true;
-  let limited = false;
-  let cryptoIndex = 0;
-  loader.classList.remove("disabled");
-  rateLimiting.classList.add("disabled");
-
-  for (const crypto of cryptocurrencies) {
-    /*
-      By default prepare the chart for the last 31 days
-        Returns an array of:
-        [
-        1675728000000 //Unix timestamp)
-        22786.483006387727 //price during that day
-        ]
-    */
-    let prices: number[];
-    coinChart = await getCoinChart(crypto.id, dateModeDays, dateModeInterval);
-    cryptoIndex++;
-
-    if (coinChart.length === 0) {
-      limited = true;
-      break;
-    }
-
-    // Things we only need to do once
-    // - Use the dates of the first crypto fetched for all the other cryptos, Do this only once
-    if (once) {
-      dates = coinChart.map((data) => {
-        return new Date(data[0]);
-      });
-      once = false;
-    }
-
-    prices = coinChart.map((data) => parseFloat(data[1]));
-
-    for (let index = 0; index < coinChart.length; index++) {
-      // calculate how much of a coin I have on a certain date
-      let amount = crypto.calculateAmountOnDate(dates[index]);
-      let coinTotal = amount * prices[index];
-
-      data1[index] = { x: dates[index], y: data1[index]?.y + coinTotal };
-      // save per coin the total each day in the allData array
-      if (!allData.has(crypto.id)) allData.set(crypto.id, []);
-      allData.get(crypto.id)?.push(coinTotal);
-
-      /*
-        1. calculate the total cost per coin by a certain date
-        2. if a cost is already present for that day, add it up.
-           Else push a new cost
-      */
-
-      let cost = crypto.calculateCostOnDate(dates[index]);
-      // If a netInvested already exists on date index, add the cost to the value
-      if (netInvested[index] != null && netInvested[index] != undefined) {
-        netInvested[index] += cost;
-      } else {
-        // else push the cost to the netInvested array
-        netInvested.push(cost);
-      }
-    }
-
-    // If data is cached continue, if not sleep for a bit to prevent rate limiting
-    const cacheKey = `getCoinChart_${crypto.id}_${dateModeDays}_${dateModeInterval}`;
-
-    if (!isCacheValid(cacheKey)) {
-      await sleep(cryptoIndex * SLEEP_TIME + 750);
-    }
-  }
-  // If we are being rate limited, stop what we are doing since the data is incomplete
-  if (limited) {
-    rateLimiting.classList.remove("disabled");
-    return;
-  }
-
-  // Reset the chart
-  if (lineChart1 != null) {
-    lineChart1.destroy();
-  }
-
-  loader.classList.add("disabled");
-  if (cryptocurrencies.length > 0) canvas1Parent.style.display = "block";
-
-  lineChart1 = new Chart(canvas1, {
+const createChart = () => {
+  return new Chart(canvas1, {
     type: "line",
     data: {
       datasets: [
@@ -247,10 +159,65 @@ export async function prepareLineChart1() {
       },
     ],
   });
+};
 
-  for (let [key, value] of allData) {
-    let color = cryptocurrencies.find((c) => c.id === key)?.color;
-    let index = 0;
+// Main Function
+export async function prepareLineChart1() {
+  if (cryptocurrencies.length === 0) {
+    loader.classList.add("disabled");
+    rateLimiting.classList.add("disabled");
+    toggleDate.style.display = "none";
+    return;
+  }
+
+  canvas1Parent.style.display = "none";
+  toggleDate.style.display = "block";
+  data1 = Array(dateModeArrayLength).fill({ x: null, y: 0 });
+  netInvested = [];
+  allData.clear();
+
+  let limited = false;
+  loader.classList.remove("disabled");
+  rateLimiting.classList.add("disabled");
+
+  for (const [index, crypto] of cryptocurrencies.entries()) {
+    const coinChart = await getCoinChart(
+      crypto.id,
+      dateModeDays,
+      dateModeInterval
+    );
+    if (coinChart.length === 0) {
+      limited = true;
+      break;
+    }
+
+    if (index === 0) {
+      dates = coinChart.map((data) => new Date(data[0]));
+    }
+
+    const prices = coinChart.map((data) => parseFloat(data[1]));
+    updateChartData(crypto, prices);
+
+    const cacheKey = `getCoinChart_${crypto.id}_${dateModeDays}_${dateModeInterval}`;
+    if (!isCacheValid(cacheKey)) {
+      await sleep(index * SLEEP_TIME + 750);
+    }
+  }
+
+  // If we are being rate limited, stop what we are doing since the data is incomplete
+  if (limited) {
+    rateLimiting.classList.remove("disabled");
+    return;
+  }
+
+  if (lineChart1) lineChart1.destroy();
+  loader.classList.add("disabled");
+  if (cryptocurrencies.length > 0) canvas1Parent.style.display = "block";
+
+  lineChart1 = createChart();
+
+  for (const [key, value] of allData) {
+    const color = cryptocurrencies.find((c) => c.id === key)?.color;
     const newDataSet = {
       data: value.map((d, i) => ({ x: dates[i], y: d })),
       label: key,
