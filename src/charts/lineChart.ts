@@ -2,24 +2,56 @@ import { cryptocurrencies, SLEEP_TIME } from "../main";
 import { Chart } from "chart.js/auto";
 import { getCoinChart } from "../data/coingecko";
 import "chartjs-adapter-date-fns";
-import { isCacheValid } from '../data/cache';
+import { isCacheValid } from "../data/cache";
 
-let dateModeDays = 31;
-let dateModeArrayLength = 32; // The array length is the number of days + 1 except for 1D => 24 hours
-let dateModeInterval = "daily";
+const DATE_MODES = {
+  DAY: { days: 1, interval: "hourly", arrayLength: 25 },
+  WEEK: { days: 7, interval: "daily", arrayLength: 8 },
+  MONTH: { days: 31, interval: "daily", arrayLength: 32 },
+  YEAR: { days: 365, interval: "daily", arrayLength: 366 },
+  ALL: { days: 0, interval: "daily", arrayLength: 0 },
+};
+let dateModeDays = DATE_MODES.MONTH.days;
+let dateModeInterval = DATE_MODES.MONTH.interval;
+let dateModeArrayLength = DATE_MODES.MONTH.arrayLength;
 
 let canvas1 = <HTMLCanvasElement>document.getElementById("lineChart1")!;
-let canvas1Parent = <HTMLCanvasElement>document.getElementById("lineChart1Parent")!;
+let canvas1Parent = <HTMLCanvasElement>(
+  document.getElementById("lineChart1Parent")!
+);
 let rateLimiting = <HTMLDivElement>document.getElementById("rateLimiting")!;
 let toggleDate = <HTMLDivElement>document.getElementById("toggleDate")!;
 let loader = <HTMLDivElement>document.getElementById("loader")!;
 let lineChart1: Chart<"line", { x: Date; y: number }[], unknown>;
-let data1: { x: Date; y: number }[] = Array(dateModeArrayLength).fill({ x: null, y: 0 });
+let data1: { x: Date; y: number }[] = Array(dateModeArrayLength).fill({
+  x: null,
+  y: 0,
+});
 let allData: Map<string, any[]> = new Map();
 let coinChart: string[] = [];
 let dates: Date[] = [];
 let netInvested: number[] = [];
 export let datasetColors: { id: string; color: string }[] = [];
+
+/*
+
+Helper functions
+
+*/
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+// Returns the max amount of days, based on the earliest transaction date
+const calculateEarliestDate = () => {
+  return cryptocurrencies
+    .map((c) => c.transactionDates)
+    .reduce((a, b) => (a > b ? a : b))[0];
+};
+
+const calculateDiffDays = (earliestDate: Date) => {
+  const currentDate = new Date();
+  const diffTime = Math.abs(currentDate.getTime() - earliestDate.getTime());
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24 ));
+};
 
 /*
     The portfolio line chart consist of the value of the portfolio during the last x amount of days
@@ -107,7 +139,6 @@ export async function prepareLineChart1() {
     const cacheKey = `getCoinChart_${crypto.id}_${dateModeDays}_${dateModeInterval}`;
 
     if (!isCacheValid(cacheKey)) {
-      const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
       await sleep(cryptoIndex * SLEEP_TIME + 750);
     }
   }
@@ -268,7 +299,9 @@ const colors = {
   },
 };
 
-const totalValueGradient = canvas1.getContext("2d")?.createLinearGradient(0, 25, 0, 300)!;
+const totalValueGradient = canvas1
+  .getContext("2d")
+  ?.createLinearGradient(0, 25, 0, 300)!;
 totalValueGradient.addColorStop(0, colors.purple.half);
 totalValueGradient.addColorStop(0.5, colors.purple.quarter);
 totalValueGradient.addColorStop(0, colors.purple.quarter);
@@ -285,69 +318,45 @@ const toggleMonthMode = document.getElementById("toggleMonthMode")!;
 const toggleYearMode = document.getElementById("toggleYearMode")!;
 const toggleAllMode = document.getElementById("toggleAllMode")!;
 
-toggleDayMode.addEventListener("click", switchDateMode);
-toggleWeekMode.addEventListener("click", switchDateMode);
-toggleMonthMode.addEventListener("click", switchDateMode);
-toggleYearMode.addEventListener("click", switchDateMode);
-toggleAllMode.addEventListener("click", switchDateMode);
+[
+  toggleDayMode,
+  toggleWeekMode,
+  toggleMonthMode,
+  toggleYearMode,
+  toggleAllMode,
+].forEach((element) => element.addEventListener("click", switchDateMode));
 
-function switchDateMode(e: any) {
+function switchDateMode(e: Event) {
   if (cryptocurrencies.length === 0) {
     return;
   }
 
-  let target = e.target as HTMLButtonElement;
+  const target = e.target as HTMLButtonElement;
 
   // Remove other active classes
-  toggleDayMode.classList.remove("active");
-  toggleWeekMode.classList.remove("active");
-  toggleMonthMode.classList.remove("active");
-  toggleYearMode.classList.remove("active");
-  toggleAllMode.classList.remove("active");
+  [
+    toggleDayMode,
+    toggleWeekMode,
+    toggleMonthMode,
+    toggleYearMode,
+    toggleAllMode,
+  ].forEach((element) => element.classList.remove("active"));
 
   // Add the current active classes
   target.classList.add("active");
+
   // dateModeDays = Number(target.value);
-  switch (target.value) {
-    case "day":
-      dateModeDays = 1;
-      dateModeArrayLength = 25;
-      dateModeInterval = "hourly";
-      break;
-    case "week":
-      dateModeDays = 7;
-      dateModeArrayLength = dateModeDays + 1;
-      dateModeInterval = "daily";
-      break;
-    case "month":
-      dateModeDays = 31;
-      dateModeArrayLength = dateModeDays + 1;
-      dateModeInterval = "daily";
-      break;
-    case "year":
-      dateModeDays = 365;
-      dateModeArrayLength = dateModeDays + 1;
-      dateModeInterval = "daily";
-      break;
-    case "all":
-      // Return the max amount of days => get the earliest transaction date
-      let earliestDate = cryptocurrencies
-        .map((c) => c.transactionDates)
-        .reduce(function (a, b) {
-          return a > b ? a : b;
-        })[0];
-      let currentDate = new Date();
-      const diffTime = Math.abs(currentDate.getTime() - earliestDate.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      dateModeDays = diffDays;
-      dateModeArrayLength = dateModeDays + 1;
-      dateModeInterval = "daily";
-      break;
-    default:
-      dateModeDays = 31;
-      dateModeArrayLength = dateModeDays + 1;
-      dateModeInterval = "daily";
-      break;
+  const mode = target.value.toUpperCase();
+  if (mode === "ALL") {
+    const earliestDate = calculateEarliestDate();
+    dateModeDays = calculateDiffDays(earliestDate);
+    dateModeInterval = DATE_MODES.ALL.interval;
+    dateModeArrayLength = DATE_MODES.ALL.arrayLength;
+  } else {
+    const { days, interval, arrayLength } = DATE_MODES[mode];
+    dateModeDays = days;
+    dateModeInterval = interval;
+    dateModeArrayLength = arrayLength;
   }
 
   prepareLineChart1();
