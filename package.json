@@ -9,15 +9,15 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "typescript": "^4.9.3",
-    "vite": "^4.1.0"
+    "typescript": "^5.7.2",
+    "vite": "^6.0.6"
   },
   "dependencies": {
-    "@types/uuid": "^9.0.1",
-    "chart.js": "^4.2.1",
+    "@types/uuid": "^10.0.0",
+    "chart.js": "^4.4.7",
     "chartjs-adapter-date-fns": "^3.0.0",
-    "countup.js": "^2.4.2",
-    "date-fns": "^2.29.3",
-    "uuid": "^9.0.0"
+    "countup.js": "^2.8.0",
+    "date-fns": "^4.1.0",
+    "uuid": "^11.0.3"
   }
 }
