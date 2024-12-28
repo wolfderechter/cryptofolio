@@ -56,6 +56,40 @@ const calculateEarliestDate = () => {
     .reduce((a, b) => (a > b ? a : b))[0];
 };
 
+const generateFullDatesArray = (days: number): Date[] => {
+  const dates: Date[] = [];
+  const endDate = new Date();
+  const startDate = new Date();
+  startDate.setDate(endDate.getDate() - (days - 1));
+
+  let currentDate = new Date(startDate);
+  while (currentDate <= endDate) {
+    dates.push(new Date(currentDate));
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+  return dates;
+};
+
+const normalizeCoinChart = (coinChart: [string, number][], dates: Date[]): [string, number][] => {
+  const normalizedChart: [string, number][] = [];
+  const coinDataMap = new Map<string, number>();
+
+  // Create a map of date to price for the coin
+  for (const data of coinChart) {
+    const date = new Date(data[0]).toISOString().split("T")[0]; // Use YYYY-MM-DD as the key
+    coinDataMap.set(date, data[1]);
+  }
+
+  // Fill in missing dates with [date, 0]
+  for (const date of dates) {
+    const dateKey = date.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+    const price = coinDataMap.get(dateKey) || 0;
+    normalizedChart.push([dateKey, price]); // Use the formatted date string
+  }
+
+  return normalizedChart;
+};
+
 const updateChartData = (crypto: any, prices: number[]) => {
   for (let index = 0; index < dates.length; index++) {
     const amount = crypto.calculateAmountOnDate(dates[index]);
@@ -173,6 +207,9 @@ export async function prepareLineChart1() {
   loader.classList.remove("disabled");
   rateLimiting.classList.add("disabled");
 
+  // Generate the full dates array for the selected date mode
+  const fullDates = generateFullDatesArray(dateModeDays);
+
   for (const [index, crypto] of cryptocurrencies.entries()) {
     const coinChart = await getCoinChart(
       crypto.id,
@@ -185,11 +222,16 @@ export async function prepareLineChart1() {
       break;
     }
 
+    // Normalize the coinChart data to include all dates
+    const normalizedCoinChart = normalizeCoinChart(coinChart, fullDates);
+
     if (index === 0) {
-      dates = coinChart.map((data) => new Date(data[0]));
+      // Use the normalized dates for the chart
+      dates = normalizedCoinChart.map((data) => new Date(data[0]));
     }
 
-    const prices = coinChart.map((data) => data[1]);
+    const prices = normalizedCoinChart.map((data) => data[1]);
+    console.log('normalizedCoinChart', normalizedCoinChart);
     updateChartData(crypto, prices);
 
     const cacheKey = `getCoinChart_${crypto.id}_${dateModeDays}_${dateModeInterval}`;
