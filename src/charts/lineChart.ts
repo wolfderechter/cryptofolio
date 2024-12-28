@@ -6,12 +6,10 @@ import { isCacheValid } from "../data/cache";
 
 // Constants
 const DATE_MODES = {
-  // Hourly chart has been disabled in the coingecko free api :(
-  // DAY: { days: 1, interval: "hourly", arrayLength: 25 },
-  WEEK: { days: 7, interval: "daily", arrayLength: 8 },
-  MONTH: { days: 31, interval: "daily", arrayLength: 32 },
-  YEAR: { days: 365, interval: "daily", arrayLength: 366 },
-  ALL: { days: 0, interval: "daily", arrayLength: 0 }, // Special case
+  WEEK: { days: 7, interval: "daily" },
+  MONTH: { days: 31, interval: "daily" },
+  YEAR: { days: 365, interval: "daily" },
+  ALL: { days: 0, interval: "daily" }, // Special case
 };
 
 const colors = {
@@ -56,12 +54,6 @@ const calculateEarliestDate = () => {
   return cryptocurrencies
     .map((c) => c.transactionDates)
     .reduce((a, b) => (a > b ? a : b))[0];
-};
-
-const calculateDiffDays = (earliestDate: Date) => {
-  const currentDate = new Date();
-  const diffTime = Math.abs(currentDate.getTime() - earliestDate.getTime());
-  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 };
 
 const updateChartData = (crypto: any, prices: number[]) => {
@@ -173,8 +165,8 @@ export async function prepareLineChart1() {
 
   canvas1Parent.style.display = "none";
   toggleDate.style.display = "block";
-  data1 = Array(dateModeArrayLength).fill({ x: null, y: 0 });
-  netInvested = [];
+  data1 = []; // Initialize as empty array
+  netInvested = []; // Initialize as empty array
   allData.clear();
 
   let limited = false;
@@ -251,24 +243,18 @@ export async function prepareLineChart1() {
 // Date Mode Variables
 let dateModeDays = DATE_MODES.MONTH.days;
 let dateModeInterval = DATE_MODES.MONTH.interval;
-let dateModeArrayLength = DATE_MODES.MONTH.arrayLength;
 
 // Date Mode Switching
-// const toggleDayMode = document.getElementById("toggleDayMode")!;
 const toggleWeekMode = document.getElementById("toggleWeekMode")!;
 const toggleMonthMode = document.getElementById("toggleMonthMode")!;
 const toggleYearMode = document.getElementById("toggleYearMode")!;
 const toggleAllMode = document.getElementById("toggleAllMode")!;
 
-[
-  // toggleDayMode,
-  toggleWeekMode,
-  toggleMonthMode,
-  toggleYearMode,
-  toggleAllMode,
-].forEach((element) => {
-  element.addEventListener("click", switchDateMode);
-});
+[toggleWeekMode, toggleMonthMode, toggleYearMode, toggleAllMode].forEach(
+  (element) => {
+    element.addEventListener("click", switchDateMode);
+  }
+);
 
 function switchDateMode(e: Event) {
   if (cryptocurrencies.length === 0) return;
@@ -276,27 +262,23 @@ function switchDateMode(e: Event) {
   const target = e.target as HTMLButtonElement;
 
   // Remove other active classes
-  [
-    // toggleDayMode,
-    toggleWeekMode,
-    toggleMonthMode,
-    toggleYearMode,
-    toggleAllMode,
-  ].forEach((element) => element.classList.remove("active"));
+  [toggleWeekMode, toggleMonthMode, toggleYearMode, toggleAllMode].forEach(
+    (element) => element.classList.remove("active")
+  );
 
   target.classList.add("active");
 
   const mode = target.value.toUpperCase();
   if (mode === "ALL") {
     const earliestDate = calculateEarliestDate();
-    dateModeDays = calculateDiffDays(earliestDate);
+    dateModeDays = Math.ceil(
+      (new Date().getTime() - earliestDate.getTime()) / (1000 * 60 * 60 * 24)
+    );
     dateModeInterval = DATE_MODES.ALL.interval;
-    dateModeArrayLength = DATE_MODES.ALL.arrayLength;
   } else {
-    const { days, interval, arrayLength } = DATE_MODES[mode];
+    const { days, interval } = DATE_MODES[mode];
     dateModeDays = days;
     dateModeInterval = interval;
-    dateModeArrayLength = arrayLength;
   }
 
   prepareLineChart1();
