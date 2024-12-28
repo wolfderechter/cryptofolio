@@ -6,7 +6,8 @@ import { isCacheValid } from "../data/cache";
 
 // Constants
 const DATE_MODES = {
-  DAY: { days: 1, interval: "hourly", arrayLength: 25 },
+  // Hourly chart has been disabled in the coingecko free api :(
+  // DAY: { days: 1, interval: "hourly", arrayLength: 25 },
   WEEK: { days: 7, interval: "daily", arrayLength: 8 },
   MONTH: { days: 31, interval: "daily", arrayLength: 32 },
   YEAR: { days: 365, interval: "daily", arrayLength: 366 },
@@ -186,6 +187,7 @@ export async function prepareLineChart1() {
       dateModeDays,
       dateModeInterval
     );
+
     if (coinChart.length === 0) {
       limited = true;
       break;
@@ -252,14 +254,14 @@ let dateModeInterval = DATE_MODES.MONTH.interval;
 let dateModeArrayLength = DATE_MODES.MONTH.arrayLength;
 
 // Date Mode Switching
-const toggleDayMode = document.getElementById("toggleDayMode")!;
+// const toggleDayMode = document.getElementById("toggleDayMode")!;
 const toggleWeekMode = document.getElementById("toggleWeekMode")!;
 const toggleMonthMode = document.getElementById("toggleMonthMode")!;
 const toggleYearMode = document.getElementById("toggleYearMode")!;
 const toggleAllMode = document.getElementById("toggleAllMode")!;
 
 [
-  toggleDayMode,
+  // toggleDayMode,
   toggleWeekMode,
   toggleMonthMode,
   toggleYearMode,
@@ -275,7 +277,7 @@ function switchDateMode(e: Event) {
 
   // Remove other active classes
   [
-    toggleDayMode,
+    // toggleDayMode,
     toggleWeekMode,
     toggleMonthMode,
     toggleYearMode,
