@@ -231,7 +231,6 @@ export async function prepareLineChart1() {
     }
 
     const prices = normalizedCoinChart.map((data) => data[1]);
-    console.log('normalizedCoinChart', normalizedCoinChart);
     updateChartData(crypto, prices);
 
     const cacheKey = `getCoinChart_${crypto.id}_${dateModeDays}_${dateModeInterval}`;
