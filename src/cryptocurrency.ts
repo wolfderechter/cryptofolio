@@ -11,17 +11,17 @@ export class CryptoCurrency {
 
   constructor(
     id: string,
-    symbol: string,
-    name: string,
-    thumbnail: string,
+    symbol?: string,
+    name?: string,
+    thumbnail?: string,
     color?: string
   ) {
     this.id = id.toLowerCase(); // Coingecko stores id's as lowercase
-    this.symbol = symbol;
-    this.name = name;
+    this.name = name || id;
+    this.symbol = symbol || id;
     this.transactions = new Array<Transaction>();
-    this.thumbnail = thumbnail;
-    this.color = color ? color : getColor();
+    this.thumbnail = thumbnail || "";
+    this.color = color || getColor();
   }
 
   addTransaction(transaction: Transaction) {
