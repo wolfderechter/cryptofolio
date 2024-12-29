@@ -16,44 +16,48 @@ export function saveData() {
  */
 export async function loadData(input?: string) {
   // Check if there is an input string with the data, else check the localstorage for the data. Parse that data and create the cryptocurrency objects
-  let cryptos;
-  if (input) {
-    cryptos = JSON.parse(input);
-  } else {
-    let cryptosString;
-    if ((cryptosString = localStorage.getItem("assets")))
-      cryptos = JSON.parse(cryptosString);
+  let cryptos: CryptoCurrency[];
+  try {
+    cryptos = JSON.parse(input ?? localStorage.getItem("assets") ?? "null");
+  } catch (error) {
+    console.error("Failed to parse data: ", error);
+    return;
   }
-  if (cryptos == null) return;
 
-  while (cryptocurrencies.length > 0) {
-    cryptocurrencies.pop();
-  }
+  if (cryptos == null || !Array.isArray(cryptos)) return;
+
+  cryptocurrencies.length = 0; // clear the array
 
   // Recreate the objects from JSON
-  cryptos.forEach((crypto: any) => {
-    let newCrypto = new CryptoCurrency(
-      crypto.id,
-      crypto.symbol,
-      crypto.name,
-      crypto.thumbnail,
-      crypto.color
-    );
-
-    crypto.transactions.forEach((transaction: any) => {
-      newCrypto.addTransaction(
-        new Transaction(
-          transaction.type,
-          new Date(transaction.date),
-          transaction.amount,
-          transaction.cost,
-          transaction.uuid
-        )
+  try {
+    cryptos.forEach((crypto: any) => {
+      const newCrypto = new CryptoCurrency(
+        crypto.id,
+        crypto.symbol,
+        crypto.name,
+        crypto.thumbnail,
+        crypto.color,
       );
-    });
 
-    cryptocurrencies.push(newCrypto);
-  });
+      crypto.transactions.forEach((transaction: any) => {
+        newCrypto.addTransaction(
+          new Transaction(
+            transaction.type,
+            new Date(transaction.date),
+            transaction.amount,
+            transaction.cost,
+            transaction.uuid,
+          ),
+        );
+      });
+
+      cryptocurrencies.push(newCrypto);
+    });
+  } catch (error) {
+    console.error("Failed to recreate objects from JSON: ", error);
+    return;
+  }
+
   // SaveData to localstorage if input was used
   if (input) {
     saveData();
@@ -62,38 +66,38 @@ export async function loadData(input?: string) {
 }
 
 /**
- * This function will setup the exportDataBtn to download the cryptocurrencies as a json file on click.
+ * Set up the exportDataBtn to download the cryptocurrencies as a JSON file on click.
  */
 const exportDataBtn = document.getElementById("exportDataBtn")!;
-exportDataBtn.onclick = () => {
-  let data = JSON.stringify(cryptocurrencies, null, 2);
-  exportDataBtn.setAttribute(
-    "href",
-    URL.createObjectURL(new Blob([data], { type: "application/json" }))
-  );
-  exportDataBtn.setAttribute("download", "cryptofolioData.json");
-};
+if (exportDataBtn) {
+  exportDataBtn.addEventListener("click", () => {
+    const data = JSON.stringify(cryptocurrencies, null, 2);
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    exportDataBtn.setAttribute("href", url);
+    exportDataBtn.setAttribute("download", "cryptofolioData.json");
+  });
+}
 
 /**
  * Will import data from a file and call the loadData function with this data.
  */
 export function importData(event: { preventDefault: () => void }) {
-  let input = <HTMLInputElement>document.getElementById("importDataBtn");
-
   // Stop the form from reloading the page
   event.preventDefault();
 
+  const input = document.getElementById("importDataBtn") as HTMLInputElement;
+
   // If there's no file, do nothing
-  if (!input.value.length) return;
+  if (!input?.files?.length) return;
 
-  // Create a new FileReader() object
-  let reader = new FileReader();
-
-  // Read the file
-  if (input.files) reader.readAsText(input.files[0]);
+  // Create a new FileReader() object to read in files
+  const reader = new FileReader();
+  reader.readAsText(input.files[0]);
 
   reader.onload = (e) => {
-    let str = <string>e?.target?.result;
+    let str = e?.target?.result as string;
     loadData(str);
   };
 }
