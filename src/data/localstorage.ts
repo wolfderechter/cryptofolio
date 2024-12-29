@@ -42,7 +42,7 @@ export async function loadData(input?: string) {
       crypto.transactions.forEach((transaction: any) => {
         newCrypto.addTransaction(
           new Transaction(
-            transaction.type,
+            transaction.type.toUpperCase() === "BUY" ? transactionType.Buy : transactionType.Sell,
             new Date(transaction.date),
             transaction.amount,
             transaction.cost,
