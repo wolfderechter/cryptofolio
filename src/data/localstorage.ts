@@ -1,6 +1,6 @@
 import { CryptoCurrency } from "../cryptocurrency";
 import { cryptocurrencies, init } from "../main";
-import { Transaction } from "../transaction";
+import { Transaction, transactionType } from "../transaction";
 
 /**
  * Save cryptocurrencies to localstorage.
@@ -92,6 +92,26 @@ if (exportDataCsvBtn) {
   });
 }
 
+function convertToCsv(data: CryptoCurrency[]): string {
+  const header = ["id", "symbol", "date", "amount", "cost", "transactionType"];
+  let csvContent = header.join(",") + "\n";
+
+  for (let crypto of data) {
+    for (let transaction of crypto.transactions) {
+      const result = [
+        crypto.name,
+        crypto.symbol,
+        transaction.date.toISOString(),
+        transaction.amount,
+        transaction.cost,
+        transaction.type,
+      ];
+      csvContent += result.join(",") + "\n";
+    }
+  }
+  return csvContent;
+}
+
 /**
  * Will import data from a file and call the loadData function with this data.
  */
@@ -114,22 +134,71 @@ export function importData(event: { preventDefault: () => void }) {
   };
 }
 
-function convertToCsv(data: CryptoCurrency[]): string {
-  const header = ["id", "symbol", "date", "amount", "cost", "transactionType"];
-  let csvContent = header.join(",") + "\n";
+export function importCsvData(event: { preventDefault: () => void }) {
+  // Stop the form from reloading the page
+  event.preventDefault();
 
-  for (let crypto of data) {
-    for (let transaction of crypto.transactions) {
-      const result = [
-        crypto.id,
-        crypto.symbol,
-        transaction.date.toISOString(),
-        transaction.amount,
-        transaction.cost,
-        transaction.type,
-      ];
-      csvContent += result.join(",") + "\n";
+  const input = document.getElementById("importDataCsvBtn") as HTMLInputElement;
+
+  // If there's no file, do nothing
+  if (!input?.files?.length) return;
+
+  // Create a new FileReader() object to read in files
+  const reader = new FileReader();
+  reader.readAsText(input.files[0]);
+
+  reader.onload = (e) => {
+    const csvData = e?.target?.result as string;
+    const parsedData = parseCsv(csvData);
+    loadDataFromCsv(parsedData);
+  };
+}
+
+function parseCsv(csvData: string): any[] {
+  const rows = csvData.split("\n").filter((row) => row.trim() !== ""); // split into rows and remove empty lines
+  const header = rows[0].split(",").map((field) => field.trim());
+  const data: any[] = [];
+
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i].split(",");
+    const rowData: any = {};
+
+    for (let j = 0; j < header.length; j++) {
+      rowData[header[j]] = row[j].trim().replace(/^"(.*)"$/, "$1"); // Remove surrounding quotes
     }
+
+    data.push(rowData);
   }
-  return csvContent;
+  return data;
+}
+
+function loadDataFromCsv(parsedData: any[]) {
+  const cryptoMap: { [key: string]: CryptoCurrency } = {};
+
+  for (const row of parsedData) {
+    const { id, symbol, date, amount, cost, transactionType: transactionTypeString } = row;
+
+    const transactionTypeValue = transactionTypeString.toUpperCase() === "BUY" ? transactionType.Buy : transactionType.Sell;
+
+    // Check if cryptocurrency exists, create if not
+    if (!cryptoMap[id]) {
+      cryptoMap[id] = new CryptoCurrency(id, symbol);
+    }
+
+    const transaction = new Transaction(
+      transactionTypeValue,
+      new Date(date),
+      parseFloat(amount),
+      parseFloat(cost),
+    );
+
+    cryptoMap[id].addTransaction(transaction);
+  }
+
+  // Clear existing data and load in new
+  cryptocurrencies.length = 0;
+  Object.values(cryptoMap).forEach((crypto) => cryptocurrencies.push(crypto));
+
+  saveData();
+  init();
 }

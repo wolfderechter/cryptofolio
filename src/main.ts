@@ -3,6 +3,7 @@ import {
   saveData,
   loadData,
   importData,
+  importCsvData,
 } from "./data/localstorage";
 import { getCoinOnDate, getCoins, getCoinsPrices } from "./data/coingecko";
 import { Transaction, transactionType } from "./transaction";
@@ -64,7 +65,10 @@ const ethereumStakingDailyRewards = document.getElementById(
 
 // Import data
 let input = document.getElementById("importDataBtn");
-if (input) input.addEventListener("change", importData);
+input?.addEventListener("change", importData);
+
+let inputCsv = document.getElementById("importDataCsvBtn");
+inputCsv?.addEventListener("change", importCsvData);
 
 // Summary number animations
 let summaryTotalValueContentCountUp = new CountUp(summaryTotalValueContent, 0, {
@@ -791,4 +795,3 @@ export function init() {
 }
 loadData();
 init();
-
