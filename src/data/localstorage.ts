@@ -80,6 +80,18 @@ if (exportDataBtn) {
   });
 }
 
+const exportDataCsvBtn = document.getElementById("exportDataCsvBtn")!;
+if (exportDataCsvBtn) {
+  exportDataCsvBtn.addEventListener("click", () => {
+    const csv = convertToCsv(cryptocurrencies);
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+
+    exportDataCsvBtn.setAttribute("href", url);
+    exportDataCsvBtn.setAttribute("download", "cryptofolioData.csv");
+  });
+}
+
 /**
  * Will import data from a file and call the loadData function with this data.
  */
@@ -100,4 +112,24 @@ export function importData(event: { preventDefault: () => void }) {
     let str = e?.target?.result as string;
     loadData(str);
   };
+}
+
+function convertToCsv(data: CryptoCurrency[]): string {
+  const header = ["id", "symbol", "date", "amount", "cost", "transactionType"];
+  let csvContent = header.join(",") + "\n";
+
+  for (let crypto of data) {
+    for (let transaction of crypto.transactions) {
+      const result = [
+        crypto.id,
+        crypto.symbol,
+        transaction.date.toISOString(),
+        transaction.amount,
+        transaction.cost,
+        transaction.type,
+      ];
+      csvContent += result.join(",") + "\n";
+    }
+  }
+  return csvContent;
 }

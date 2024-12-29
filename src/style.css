@@ -231,7 +231,7 @@ input {
   New Transaction popup
 
 */
-#transactionForm>* {
+#transactionForm > * {
   margin: 10px auto;
 }
 
@@ -297,7 +297,7 @@ input {
   Edit Transaction Popup
 
 */
-#editTransactionForm>* {
+#editTransactionForm > * {
   margin: 10px auto;
 }
 
@@ -410,7 +410,7 @@ input {
   margin: 0;
 }
 
-.summary>* {
+.summary > * {
   margin: 0 10px;
 }
 
@@ -462,11 +462,11 @@ input {
 }
 
 /* Hide the input */
-#exportDataBtn {
+.exportDataBtn {
   cursor: pointer;
 }
 
-#importDataBtn {
+.importDataBtn {
   width: 0.1px;
   height: 0.1px;
   opacity: 0;
@@ -475,10 +475,11 @@ input {
   z-index: -1;
 }
 
-#fileInputLabel {
+.fileInputLabel {
   all: unset;
   cursor: pointer;
   line-height: 24px;
+  margin: 0 10px;
 }
 
 /*
