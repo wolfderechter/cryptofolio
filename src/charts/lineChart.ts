@@ -70,7 +70,10 @@ const generateFullDatesArray = (days: number): Date[] => {
   return dates;
 };
 
-const normalizeCoinChart = (coinChart: [string, number][], dates: Date[]): [string, number][] => {
+const normalizeCoinChart = (
+  coinChart: [string, number][],
+  dates: Date[]
+): [string, number][] => {
   const normalizedChart: [string, number][] = [];
   const coinDataMap = new Map<string, number>();
 
