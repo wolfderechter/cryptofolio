@@ -469,27 +469,86 @@ input {
   border-color: var(--accent-color-1);
 }
 
-/* Hide the input */
-.exportDataBtn {
+/* Import/export */
+/* Dropdown Button */
+.dropbtn {
+  background-color: var(--dark-accent-color);
+  color: rgba(255, 255, 255, 0.87);
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  border: 1px solid transparent;
+  border-radius: var(--border-radius-small);
   cursor: pointer;
+  transition: border-color 0.25s;
 }
 
-.importDataBtn {
-  width: 0.1px;
-  height: 0.1px;
-  opacity: 0;
-  overflow: hidden;
+.dropbtn:hover {
+  border-color: var(--accent-color-1);
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+  margin-right: 10px; /* Add some spacing between the dropdowns */
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
   position: absolute;
-  z-index: -1;
+  background-color: var(--main-color);
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-radius: var(--border-radius-small);
+  overflow: hidden;
+  margin-top: 5px;
 }
 
-.fileInputLabel {
-  all: unset;
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: rgba(255, 255, 255, 0.87);
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
   cursor: pointer;
-  line-height: 24px;
-  margin: 0 10px;
+  margin: 5px;
 }
 
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {
+  background-color: var(--dark-accent-color);
+}
+
+/* Show the dropdown menu when active */
+.dropdown-content.active {
+  display: block;
+}
+
+/* Import/Export buttons */
+.exportDataBtn,
+.importDataBtn {
+  background-color: var(--dark-accent-color);
+  color: rgba(255, 255, 255, 0.87);
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  border: 1px solid transparent;
+  border-radius: var(--border-radius-small);
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+.exportDataBtn:hover,
+.importDataBtn:hover {
+  border-color: var(--accent-color-1);
+}
+
+#importDataBtn, #importDataCsvBtn {
+  display: none;
+}
 /*
 
   Ethereum Staking

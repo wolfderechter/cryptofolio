@@ -69,12 +69,26 @@
         </span>
         <h3>Total gain</h3>
         <span id="summaryTotalPercentage">%</span>
-        <a class="exportDataBtn" id="exportDataBtn">Export data (json)</a>
-        <a class="exportDataBtn" id="exportDataCsvBtn">Export data (csv)</a>
-        <input class="importDataBtn" type="file" accept=".json" id="importDataBtn" placeholder="Import data" />
-        <label class="fileInputLabel" for="importDataBtn"><a>Import data (json)</a></label>
-        <input class="importDataBtn" type="file" accept=".csv" id="importDataCsvBtn" placeholder="Import data" />
-        <label class="fileInputLabel" for="importDataCsvBtn"><a>Import data (csv)</a></label>
+
+        <!-- Export Dropdown -->
+        <div class="dropdown">
+          <button class="dropbtn" id="exportDropdownBtn">Export</button>
+          <div class="dropdown-content" id="exportDropdown">
+            <a class="exportDataBtn" id="exportDataBtn">Export data (JSON)</a>
+            <a class="exportDataBtn" id="exportDataCsvBtn">Export data (CSV)</a>
+          </div>
+        </div>
+
+        <!-- Import Dropdown -->
+        <div class="dropdown">
+          <button class="dropbtn" id="importDropdownBtn">Import</button>
+          <div class="dropdown-content" id="importDropdown">
+            <input type="file" accept=".json" id="importDataBtn" />
+            <label for="importDataBtn"><a class="importDataBtn">Import data (JSON)</a></label>
+            <input type="file" accept=".csv" id="importDataCsvBtn" />
+            <label for="importDataCsvBtn"><a class="importDataBtn">Import data (CSV)</a></label>
+          </div>
+        </div>
       </div>
 
       <div id="ethereumStaking">
@@ -231,10 +245,10 @@
       </div>
     </div>
     <footer>
-        <p>
-          A project by
-          <a href="https://wolfez.dev" rel="noopener">wolfez.dev</a>
-        </p>
+      <p>
+        A project by
+        <a href="https://wolfez.dev" rel="noopener">wolfez.dev</a>
+      </p>
     </footer>
   </div>
 

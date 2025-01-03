@@ -64,6 +64,37 @@ const ethereumStakingDailyRewards = document.getElementById(
 )!;
 
 // Import data
+const exportDropdownBtn = document.getElementById('exportDropdownBtn');
+const exportDropdown = document.getElementById('exportDropdown');
+
+// Handle Import Dropdown
+const importDropdownBtn = document.getElementById('importDropdownBtn');
+const importDropdown = document.getElementById('importDropdown');
+
+// Toggle dropdown visibility on button click
+exportDropdownBtn?.addEventListener('click', () => {
+  exportDropdown?.classList.toggle('active');
+  // Close the other dropdown if open
+  if (importDropdown?.classList.contains('active')) {
+    importDropdown.classList.remove('active');
+  }
+});
+
+importDropdownBtn?.addEventListener('click', () => {
+  importDropdown?.classList.toggle('active');
+  // Close the other dropdown if open
+  if (exportDropdown?.classList.contains('active')) {
+    exportDropdown.classList.remove('active');
+  }
+});
+
+// Close dropdowns and modals when clicking outside
+window.addEventListener('click', (event) => {
+  if (!(event.target as HTMLElement).closest('.dropdown')) {
+    exportDropdown?.classList.remove('active');
+    importDropdown?.classList.remove('active');
+  }
+});
 let input = document.getElementById("importDataBtn");
 input?.addEventListener("change", importData);
 
