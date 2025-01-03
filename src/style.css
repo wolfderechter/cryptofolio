@@ -28,6 +28,14 @@
   --border-radius-big: 20px;
 }
 
+footer {
+  margin-top: 2rem;
+}
+
+footer a {
+  text-decoration: underline;
+}
+
 a {
   font-weight: 500;
   color: var(--accent-color-1);
@@ -231,7 +239,7 @@ input {
   New Transaction popup
 
 */
-#transactionForm > * {
+#transactionForm>* {
   margin: 10px auto;
 }
 
@@ -297,7 +305,7 @@ input {
   Edit Transaction Popup
 
 */
-#editTransactionForm > * {
+#editTransactionForm>* {
   margin: 10px auto;
 }
 
@@ -410,7 +418,7 @@ input {
   margin: 0;
 }
 
-.summary > * {
+.summary>* {
   margin: 0 10px;
 }
 
