@@ -63,36 +63,35 @@ const ethereumStakingDailyRewards = document.getElementById(
   "ethereumStakingDailyRewards"
 )!;
 
-// Import data
-const exportDropdownBtn = document.getElementById('exportDropdownBtn');
-const exportDropdown = document.getElementById('exportDropdown');
+// Import/Export data
+const exportDropdownBtn = document.getElementById("exportDropdownBtn");
+const exportDropdown = document.getElementById("exportDropdown");
 
-// Handle Import Dropdown
-const importDropdownBtn = document.getElementById('importDropdownBtn');
-const importDropdown = document.getElementById('importDropdown');
+const importDropdownBtn = document.getElementById("importDropdownBtn");
+const importDropdown = document.getElementById("importDropdown");
 
 // Toggle dropdown visibility on button click
-exportDropdownBtn?.addEventListener('click', () => {
-  exportDropdown?.classList.toggle('active');
+exportDropdownBtn?.addEventListener("click", () => {
+  exportDropdown?.classList.toggle("active");
   // Close the other dropdown if open
-  if (importDropdown?.classList.contains('active')) {
-    importDropdown.classList.remove('active');
+  if (importDropdown?.classList.contains("active")) {
+    importDropdown.classList.remove("active");
   }
 });
 
-importDropdownBtn?.addEventListener('click', () => {
-  importDropdown?.classList.toggle('active');
+importDropdownBtn?.addEventListener("click", () => {
+  importDropdown?.classList.toggle("active");
   // Close the other dropdown if open
-  if (exportDropdown?.classList.contains('active')) {
-    exportDropdown.classList.remove('active');
+  if (exportDropdown?.classList.contains("active")) {
+    exportDropdown.classList.remove("active");
   }
 });
 
 // Close dropdowns and modals when clicking outside
-window.addEventListener('click', (event) => {
-  if (!(event.target as HTMLElement).closest('.dropdown')) {
-    exportDropdown?.classList.remove('active');
-    importDropdown?.classList.remove('active');
+window.addEventListener("click", (event) => {
+  if (!(event.target as HTMLElement).closest(".dropdown")) {
+    exportDropdown?.classList.remove("active");
+    importDropdown?.classList.remove("active");
   }
 });
 let input = document.getElementById("importDataBtn");
@@ -101,6 +100,34 @@ input?.addEventListener("change", importData);
 let inputCsv = document.getElementById("importDataCsvBtn");
 inputCsv?.addEventListener("change", importCsvData);
 
+const importCsvButton = document.getElementById("importDataCsvBtn")!;
+const csvInstructionsModal = document.getElementById("csvInstructionsModal")!;
+const csvModalCloseBtn = document.getElementById("csv-warning-close");
+
+importCsvButton?.addEventListener("click", () => {
+  if (csvInstructionsModal) {
+    csvInstructionsModal.style.display = "block";
+  }
+});
+csvModalCloseBtn?.addEventListener("click", () => {
+    csvInstructionsModal.style.display = "none";
+});
+// Close the modal when clicking outside of it
+window.addEventListener("click", (event) => {
+  if (event.target === csvInstructionsModal) {
+    csvInstructionsModal.style.display = "none";
+  }
+});
+const downloadSampleCsv = document.getElementById("downloadSampleCsv");
+if (downloadSampleCsv) {
+  downloadSampleCsv.addEventListener("click", () => {
+    const csvContent =
+      "id,symbol,date,amount,cost,transactionType\nbitcoin,BTC,2023-10-01,0.5,25000,BUY";
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    downloadSampleCsv.setAttribute("href", url);
+  });
+}
 // Summary number animations
 let summaryTotalValueContentCountUp = new CountUp(summaryTotalValueContent, 0, {
   decimalPlaces: 2,
