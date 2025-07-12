@@ -105,32 +105,3 @@ export async function getCoinChart(
     return [];
   }
 }
-
-/**
- * Get coin data on a certain date
- * @param coin: the unique crypto identifier string
- * @param date: The date of data snapshot in dd-mm-yyyy eg. 30-12-2022
- */
-export async function getCoinOnDate(
-  coin: string,
-  day: string
-): Promise<string> {
-  try {
-    const cacheKey = `getCoinOnDate_${coin}_${day}`;
-
-    if (isCacheValid(cacheKey)) {
-      return getCache(cacheKey).data;
-    }
-
-    let query =
-      COINGECKO_API + `coins/${coin}/history?date=${day}&localization=false`;
-    const response = await fetch(query);
-    const jsonResult = await response.json();
-
-    const result = jsonResult["market_data"]["current_price"];
-    setCache(cacheKey, result);
-    return result;
-  } catch (error) {
-    return "";
-  }
-}

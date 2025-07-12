@@ -5,7 +5,7 @@ import {
   importData,
   importCsvData,
 } from "./data/localstorage";
-import { getCoinOnDate, getCoins, getCoinsPrices } from "./data/coingecko";
+import { getCoins, getCoinsPrices } from "./data/coingecko";
 import { Transaction, transactionType } from "./transaction";
 import { renderCharts } from "./charts/init";
 import { CountUp } from "countup.js";
