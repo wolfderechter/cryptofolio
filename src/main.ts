@@ -654,7 +654,7 @@ async function populateAssetsTableAndSummary() {
         <td>${asset.name}</td>
         <td>$${asset.averageBuyPrice.toFixed(2)}</td>
         <td>${asset.totalAmount} ${asset.symbol}</td>
-        <td>$${asset.totalCost > 0 ? asset.totalCost : 0}</td>
+        <td>$${asset.totalCost > 0 ? asset.totalCost.toFixed(2) : 0}</td>
         <td>$${cryptoValue.toFixed(2)}</td>
         <td>${gainInPercentage.toFixed(2)}%</td>
         <td class="assetsTableBtns">
