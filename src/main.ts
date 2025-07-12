@@ -97,7 +97,7 @@ importCsvButton?.addEventListener("click", () => {
   }
 });
 csvModalCloseBtn?.addEventListener("click", () => {
-    csvInstructionsModal.style.display = "none";
+  csvInstructionsModal.style.display = "none";
 });
 // Close the modal when clicking outside of it
 window.addEventListener("click", (event) => {
@@ -599,7 +599,13 @@ async function populateAssetsTableAndSummary() {
   let cryptoBuyCostSum = 0;
   let cryptoSellCostSum = 0;
 
-  cryptocurrencies.forEach((asset) => {
+  const sortedCryptocurrencies = cryptocurrencies.sort((a, b) => {
+    const cryptoValueA = parseFloat(coinPrices[a.id]["usd"]) * a.totalAmount;
+    const cryptoValueB = parseFloat(coinPrices[b.id]["usd"]) * b.totalAmount;
+    return cryptoValueB - cryptoValueA; // Sort by value descending
+  });
+
+  sortedCryptocurrencies.forEach((asset) => {
     const cryptoValue =
       parseFloat(coinPrices[asset.id]["usd"]) * asset.totalAmount;
     const gain = cryptoValue + asset.totalSellCost - asset.totalBuyCost;
@@ -611,23 +617,11 @@ async function populateAssetsTableAndSummary() {
 
     let tr = document.createElement("tr");
 
-    // When we sold everything
-    if (asset.totalAmount === 0) {
-      tr.innerHTML = `
-      <td>${asset.name}</td>
-      <td>$${asset.averageBuyPrice.toFixed(2)}</td>
-      <td>${asset.totalAmount} ${asset.symbol}</td>
-      <td>-</td>
-      <td>-</td>
-      <td>-</td>
-      <td class="assetsTableBtns">
-          <button id="assetsTableAdd" class="fa fa-plus iconBtn"></button>
-          <button id="assetsTableManage" class="fa-solid fa-pen-to-square iconBtn"></button>
-      </td>
-    `;
-    } else {
-      // If the totalCost < 0 just show 0 => we made all our investments back by selling.
-      tr.innerHTML = `
+    // When we have no current holdings, skip coin
+    if (asset.totalAmount === 0) return;
+
+    // If the totalCost < 0 just show 0 => we made all our investments back by selling.
+    tr.innerHTML = `
         <td>${asset.name}</td>
         <td>$${asset.averageBuyPrice.toFixed(2)}</td>
         <td>${asset.totalAmount} ${asset.symbol}</td>
@@ -639,7 +633,6 @@ async function populateAssetsTableAndSummary() {
             <button id="assetsTableManage" class="fa-solid fa-pen-to-square iconBtn"></button>
         </td>
       `;
-    }
 
     const addButton = tr.querySelector<HTMLButtonElement>("#assetsTableAdd");
     if (addButton) {
