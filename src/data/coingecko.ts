@@ -49,7 +49,7 @@ export async function getCoinsPrices(coins: string[]): Promise<string[]> {
     }
 
     // Add the currency in which it should be returned (usd)
-    query += "&vs_currencies=usd%2Ceth";
+    query += "&vs_currencies=usd";
 
     const response = await fetch(COINGECKO_API + query);
     const result = await response.json();
