@@ -39,7 +39,7 @@ export class CryptoCurrency {
     let indexToRemove = this.transactions.findIndex(
       (t) => t.uuid === transaction.uuid
     );
-    this.transactions.splice(indexToRemove);
+    this.transactions.splice(indexToRemove, 1);
   }
 
   /*
