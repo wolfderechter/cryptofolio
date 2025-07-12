@@ -549,54 +549,6 @@ input {
 #importDataBtn, #importDataCsvBtn {
   display: none;
 }
-/*
-
-  Ethereum Staking
-
-*/
-#ethereumStaking {
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-  background-color: var(--main-color);
-  border-radius: var(--border-radius-big);
-  white-space: nowrap;
-  width: 30%;
-
-  padding-left: 1.5rem;
-  text-align: left;
-  flex-grow: 1;
-}
-
-#ethereumStakingTitle {
-  font-weight: 500;
-  font-size: 18px;
-}
-
-#ethereumStakedAmount {
-  font-weight: 600;
-  font-size: 19px;
-  opacity: 0.5;
-}
-
-.ethereumStakingTotalRewards {
-  font-weight: 400;
-  font-size: 15px;
-}
-
-#ethereumStakingTotalRewards {
-  opacity: 0.5;
-  cursor: pointer;
-}
-
-.ethereumStakingDailyRewards {
-  font-weight: 400;
-  font-size: 15px;
-}
-
-#ethereumStakingDailyRewards {
-  opacity: 0.5;
-}
 
 /*
 

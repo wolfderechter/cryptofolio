@@ -50,19 +50,6 @@ const summaryTotalPercentage = document.getElementById(
   "summaryTotalPercentage"
 )!;
 
-// Staking
-const ethereumStaking = document.getElementById("ethereumStaking")!;
-const ethereumStakedAmount = document.getElementById("ethereumStakedAmount")!;
-const ethereumStakingTotalRewards = document.getElementById(
-  "ethereumStakingTotalRewards"
-)!;
-const ethereumStakingTotalRewardsContent = document.getElementById(
-  "ethereumStakingTotalRewardsContent"
-)!;
-const ethereumStakingDailyRewards = document.getElementById(
-  "ethereumStakingDailyRewards"
-)!;
-
 // Import/Export data
 const exportDropdownBtn = document.getElementById("exportDropdownBtn");
 const exportDropdown = document.getElementById("exportDropdown");
@@ -133,16 +120,6 @@ let summaryTotalValueContentCountUp = new CountUp(summaryTotalValueContent, 0, {
   decimalPlaces: 2,
   duration: 1,
 });
-
-// Staking rewards animations
-let ethereumStakingTotalRewardsCountUp = new CountUp(
-  ethereumStakingTotalRewardsContent,
-  0,
-  {
-    decimalPlaces: 4,
-    duration: 1,
-  }
-);
 
 //
 // Search modal -----------------------------------
@@ -708,148 +685,10 @@ async function populateAssetsTableAndSummary() {
 // ToDO: make the x minutes configurable? with a minimum amount of 1 minute to not overload the coingecko API
 setInterval(populateAssetsTableAndSummary, 900000);
 
-/*
-  Staking rewards for ethereum can be defined as the gain in USD since buying the LSD rETH/...
-
-  => added staking value can be calculated by comparing the conversion rate at the time of buying to the current conversion rate*
-  => Added staking value = ((eth/reth conversion rate now) - (eth/reth conversion rate at time of buying)) * amount of rETH held
-    -> This should be calculated for each transaction individually and summed up
-
-  *Assumes the conversion rate only goes up, but as we know it fluctuates so short-term it might be negative, in which case we show 0 rewards
-   Long term it should be positive and upwards
-
-  **In case of sales: calculate the rewards for the reth amount up until the sale, calculate the remaining reth rewards up until the next sale or until now.
-     => use FIFO basically
-     => can be simplified by starting at the beginning and checking for each transaction if a sale is coming
-        - if a sale is coming calculate the rewards up until the sale for the whole amount
-        - calculate the rewards for the remaining amount from after the sale up until the next sale or until now
-
-  Additional Remarks:
-    Tracking eth staking only makes sense by comparing the peg of date of staking and current date. The difference in the peg tells us the rewards.
-    Since the peg is between reth/eth we need to know how much eth we are essentially staking into reth.
-    -If we know the eth amount, easy
-      => Need to support ETH as the transaction currency for staking
-    -If we don't know the eth amount, we can look it up for the date but it needs to be precise so exact timestamp (including hour/minutes).
-
-    Also we need to be aware of fees when swapping, possibly we could store these in the transactions.
-*/
-const STAKED_ETH_COINS = ["rocket-pool-eth", "wrapped-steth"];
-async function calculateStakingRewards() {
-  // let totalRewardsETH = 0;
-  let totalRewardsUSD = 0;
-  let totalStakedUSD = 0;
-  let stakedETH = false;
-
-  // In case no cryptocurrencies are present (anymore) we set the boolean to false and exit
-  if (cryptocurrencies.length < 1) stakedETH = false;
-  let limited = false;
-
-  for (const cc of cryptocurrencies) {
-    if (STAKED_ETH_COINS.includes(cc.id)) {
-      stakedETH = true;
-      let coinPrice = await getCoinsPrices([cc.id, "ethereum"]); // the prices of the staked eth LSD and ethereum to use later on
-      if (coinPrice.length === 0) {
-        limited = true;
-        break;
-      }
-
-      let currentValue = coinPrice[cc.id]["usd"]; // the value of the staked eth LSD in USD for ease of access
-
-      // Add the current dollar value staked to the total
-      totalStakedUSD += cc.totalAmount * currentValue;
-
-      // Loop through the transactions and calculate the rewards for each BUY transaction individually
-      for (const transaction of cc.transactions) {
-        // Fetch the coin price on the date of the purchase
-        let coinOnPurchaseDate = await getCoinOnDate(
-          cc.id,
-          transaction.date.toLocaleDateString("NL") // using .toLocaleDateString("NL") because it outputs the string in dd-mm-yyyy format
-        );
-        let ethOnPurchaseDate = await getCoinOnDate(
-          "ethereum",
-          transaction.date.toLocaleDateString("NL") // using .toLocaleDateString("NL") because it outputs the string in dd-mm-yyyy format
-        );
-        if (coinOnPurchaseDate.length === 0) {
-          limited = true;
-          break;
-        }
-        // Calculates the conversion rate based on the amount received and total cost so the actual conversion rate is calculated including the premium present (and fees)
-        let conversionRateOnDate =
-          transaction.cost / (transaction.amount * ethOnPurchaseDate["usd"]);
-
-        // Calculate the reward by multiplying the transaction amount with the delta of conversion rate from date of purchase vs now
-        let rewardETH =
-          transaction.amount * (coinPrice[cc.id]["eth"] - conversionRateOnDate);
-        let rewardUSD = rewardETH * coinPrice["ethereum"]["usd"]; // convert the eth rewards to usd by multiplying by the price of ETH now
-
-        // Alternatively, calculate use the official conversion rate on the day of staking
-        // This isn't always accurate since there can be premiums
-        // let rewardETH = transaction.amount * (coinPrice[cc.id]["eth"] - parseFloat(coinOnPurchaseDate["eth"]));
-        // let rewardUSD = rewardETHV1 * coinPrice["ethereum"]["usd"];
-
-        // if (rewardETH > 0) totalRewardsETH += rewardETH;
-        if (rewardUSD > 0) totalRewardsUSD += rewardUSD;
-      }
-    }
-  }
-  // If we are being rate limited, exit
-  if (limited) return;
-
-  // Hide the staked ethereum card if no staked eth is found
-  if (!stakedETH) {
-    ethereumStaking.style.display = "none";
-  } else {
-    ethereumStaking.style.display = "flex";
-  }
-
-  if (
-    ethereumStakedAmount &&
-    ethereumStakingTotalRewards &&
-    ethereumStakingDailyRewards
-  ) {
-    ethereumStakedAmount.textContent = `${totalStakedUSD.toFixed(2)} USD`;
-    // ethereumStakingTotalRewards.textContent = `${totalRewardsUSD.toFixed(4)} USD`;
-    ethereumStakingTotalRewardsCountUp.update(totalRewardsUSD);
-
-    /*
-      Eth staking rewards of the last 24h can be calculated with:
-        1) multiply the total staked eth with the apr for 24h
-        2) calculate the rewards between yesterday and now for each holding and sum it up
-           => can be unreliable because reth can change quite a bit daily and is better for long term
-    */
-    //  ToDo: change hardcoded eth staking apy to something dynamic
-    let dailyRewardsUSD = (totalStakedUSD * 0.045) / 365;
-    ethereumStakingDailyRewards.textContent = `${dailyRewardsUSD.toFixed(
-      4
-    )} USD`;
-
-    let stakingInterval: ReturnType<typeof setInterval> | undefined;
-    ethereumStakingTotalRewards.onmouseenter = () => {
-      // Increase the decimal places and duration while hovering
-      ethereumStakingTotalRewardsCountUp.options!.decimalPlaces = 10;
-      ethereumStakingTotalRewardsCountUp.options!.duration = 2.5;
-
-      let value = totalRewardsUSD;
-      stakingInterval = setInterval(() => {
-        // ToDO: Convert the hardcoded APY of reth/wstETH to something better
-        value += value * (0.043 / 365 / 24 / 60 / 60);
-        ethereumStakingTotalRewardsCountUp.update(value);
-      }, 1000);
-    };
-    ethereumStakingTotalRewards.onmouseleave = () => {
-      // Decrease the decimal places and duration when leaving
-      ethereumStakingTotalRewardsCountUp.options!.decimalPlaces = 4;
-      ethereumStakingTotalRewardsCountUp.options!.duration = 1;
-
-      clearInterval(stakingInterval!);
-    };
-  }
-}
-
 export function init() {
   populateAssetsTableAndSummary();
   renderCharts();
-  calculateStakingRewards();
 }
+
 loadData();
 init();
