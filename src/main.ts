@@ -12,7 +12,7 @@ import { CountUp } from "countup.js";
 
 export const cryptocurrencies: CryptoCurrency[] = [];
 // Used for sleeping after API requests to prevent being rate limited. In ms.
-export let SLEEP_TIME = 2500;
+export let SLEEP_TIME = 1000;
 
 const addCryptoBtn = document.querySelector<HTMLButtonElement>("#addCrypto");
 

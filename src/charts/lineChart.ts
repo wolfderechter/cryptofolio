@@ -214,6 +214,11 @@ export async function prepareLineChart1() {
   const fullDates = generateFullDatesArray(dateModeDays);
 
   for (const [index, crypto] of cryptocurrencies.entries()) {
+    const cacheKey = `getCoinChart_${crypto.id}_${dateModeDays}_${dateModeInterval}`;
+    if (!isCacheValid(cacheKey) && index > 0) {
+      await sleep(index * SLEEP_TIME + 750);
+    }
+
     const coinChart = await getCoinChart(
       crypto.id,
       dateModeDays,
@@ -235,11 +240,6 @@ export async function prepareLineChart1() {
 
     const prices = normalizedCoinChart.map((data) => data[1]);
     updateChartData(crypto, prices);
-
-    const cacheKey = `getCoinChart_${crypto.id}_${dateModeDays}_${dateModeInterval}`;
-    if (!isCacheValid(cacheKey)) {
-      await sleep(index * SLEEP_TIME + 750);
-    }
   }
 
   // If we are being rate limited, stop what we are doing since the data is incomplete
