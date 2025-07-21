@@ -387,6 +387,9 @@ input {
   /* ToDO: Figure out the optimal padding for ALL tables */
   padding: 5px 10px;
 }
+#manageTransactionsTable td, th {
+  padding: 0px 10px;
+}
 
 .assetsTableBtns {
   display: block;

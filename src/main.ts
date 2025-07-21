@@ -449,7 +449,7 @@ function refreshManageTransactions(crypto: CryptoCurrency) {
     tr.innerHTML = `
       <td>${transaction.date.toLocaleDateString()}</td>
       <td>${transactionType[transaction.type]}</td>
-      <td>${transaction.amount} ${crypto.symbol}</td>
+      <td title="${transaction.amount}">${humanReadableNumber(transaction.amount)} ${crypto.symbol}</td>
       <td>${transaction.cost.toFixed(2)} USD</td>
       <td class="assetsTableBtns">
           <button id="manageTransactionsTableEditBtn" class="fa-solid fa-pen-to-square iconBtn"></button>
@@ -620,13 +620,12 @@ async function populateAssetsTableAndSummary() {
     // When we have no current holdings, skip coin
     if (asset.totalAmount === 0) return;
 
-    // If the totalCost < 0 just show 0 => we made all our investments back by selling.
     tr.innerHTML = `
         <td>${asset.name}</td>
         <td>$${asset.averageBuyPrice.toFixed(2)}</td>
-        <td>${asset.totalAmount} ${asset.symbol}</td>
-        <td>$${asset.totalCost > 0 ? asset.totalCost.toFixed(2) : 0}</td>
-        <td>$${cryptoValue.toFixed(2)}</td>
+        <td title="${asset.totalAmount}">${humanReadableNumber(asset.totalAmount)} ${asset.symbol}</td>
+        <td>$${humanReadableNumber(asset.totalCost)}</td>
+        <td>$${humanReadableNumber(cryptoValue)}</td>
         <td>${gainInPercentage.toFixed(2)}%</td>
         <td class="assetsTableBtns">
             <button id="assetsTableAdd" class="fa fa-plus-minus iconBtn"></button>
@@ -681,6 +680,16 @@ setInterval(populateAssetsTableAndSummary, 900000);
 export function init() {
   populateAssetsTableAndSummary();
   renderCharts();
+}
+
+export function humanReadableNumber(value: number): string {
+  if (value >= 100){
+    return value.toFixed(0);
+  } else if (value >= 1) {
+    return value.toFixed(2);
+  } else {
+    return value.toFixed(4);
+  }
 }
 
 loadData();
