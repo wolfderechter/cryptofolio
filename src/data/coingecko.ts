@@ -99,7 +99,7 @@ export async function getCoinChart(
 
     // api supports 'prices' 'market_caps' and 'total_volumes' but we only need prices currently
     const result = jsonResult["prices"];
-    setCache(cacheKey, result);
+    setCache(cacheKey, result, 24 * 60 * 60 * 1000); // cache chart for 24 hours since it's more demanding
     return result;
   } catch (error) {
     return [];

@@ -216,7 +216,7 @@ export async function prepareLineChart1() {
   for (const [index, crypto] of cryptocurrencies.entries()) {
     const cacheKey = `getCoinChart_${crypto.id}_${dateModeDays}_${dateModeInterval}`;
     if (!isCacheValid(cacheKey) && index > 0) {
-      await sleep(index * SLEEP_TIME + 750);
+      await sleep(Math.min(index * SLEEP_TIME, 60_000));
     }
 
     const coinChart = await getCoinChart(

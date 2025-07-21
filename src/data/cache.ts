@@ -23,5 +23,11 @@ export function setCache(
 
 export function isCacheValid(key: string): boolean {
   const cachedData = getCache(key);
-  return cachedData && cachedData.expiry > Date.now();
+  const isCacheValid = cachedData && cachedData.expiry > Date.now();
+
+  // Remove stale cache items to keep localStorage clean
+  if (!isCacheValid)
+    localStorage.removeItem(key);
+
+  return isCacheValid;
 }
