@@ -389,7 +389,8 @@ input {
 }
 
 .assetsTableBtns {
-  display: inline;
+  display: block;
+  width: 100%
 }
 
 .iconBtn {
@@ -409,7 +410,6 @@ input {
   border-radius: var(--border-radius-big);
   justify-content: center;
   flex-grow: 1;
-  width: 100%;
 }
 
 .summary h3 {

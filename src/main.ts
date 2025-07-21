@@ -444,13 +444,13 @@ function refreshManageTransactions(crypto: CryptoCurrency) {
     let tr = document.createElement("tr");
 
     /*
-        ToDO: Remove button will show a cancel/confirm button first before removing
+        TODO: Remove button will show a cancel/confirm button first before removing
     */
     tr.innerHTML = `
       <td>${transaction.date.toLocaleDateString()}</td>
       <td>${transactionType[transaction.type]}</td>
       <td>${transaction.amount} ${crypto.symbol}</td>
-      <td>${transaction.cost} USD</td>
+      <td>${transaction.cost.toFixed(2)} USD</td>
       <td class="assetsTableBtns">
           <button id="manageTransactionsTableEditBtn" class="fa-solid fa-pen-to-square iconBtn"></button>
           <button id="manageTransactionsTableRemoveBtn" class="fa-solid fa-trash-can iconBtn"></button>
