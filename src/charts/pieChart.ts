@@ -14,9 +14,9 @@ let data2: number[] = [];
 
 let colors: string[] = [];
 
-/* 
+/*
 
-    First pie chart that displays the initial values 
+    First pie chart that displays the initial values
 
 */
 export function preparePieChart1() {
@@ -68,12 +68,17 @@ export function preparePieChart1() {
             },
             footer: function (context) {
               if (context[0] !== null) {
-                let totalSum = context[0].dataset.data.reduce((sum, current) => sum + current, 0);
+                let totalSum = context[0].dataset.data.reduce(
+                  (sum, current) => sum + current,
+                  0
+                );
                 let percentageValue = (context[0].parsed / totalSum) * 100;
 
                 // Percentages smaller than 1 will display 2 decimals, smaller than 10 will display 1 decimal, others will display 0 decimals
-                if (percentageValue < 1) return `${percentageValue.toFixed(2)}%`;
-                if (percentageValue < 10) return `${percentageValue.toFixed(1)}%`;
+                if (percentageValue < 1)
+                  return `${percentageValue.toFixed(2)}%`;
+                if (percentageValue < 10)
+                  return `${percentageValue.toFixed(1)}%`;
 
                 return `${percentageValue.toFixed(0)}%`;
               }
@@ -81,14 +86,20 @@ export function preparePieChart1() {
             },
           },
         },
+        legend: {
+          position: "right",
+          labels: {
+            boxWidth: 12, // legend box size
+          },
+        },
       },
     },
   });
 }
 
-/* 
+/*
 
-    Second pie chart that displays the current values 
+    Second pie chart that displays the current values
 
 */
 let coinPrices: string[] = [];
@@ -146,17 +157,28 @@ export async function preparePieChart2() {
             },
             footer: function (context) {
               if (context[0] !== null) {
-                let totalSum = context[0].dataset.data.reduce((sum, current) => sum + current, 0);
+                let totalSum = context[0].dataset.data.reduce(
+                  (sum, current) => sum + current,
+                  0
+                );
                 let percentageValue = (context[0].parsed / totalSum) * 100;
 
                 // Percentages smaller than 1 will display 2 decimals, smaller than 10 will display 1 decimal, others will display 0 decimals
-                if (percentageValue < 1) return `${percentageValue.toFixed(2)}%`;
-                if (percentageValue < 10) return `${percentageValue.toFixed(1)}%`;
+                if (percentageValue < 1)
+                  return `${percentageValue.toFixed(2)}%`;
+                if (percentageValue < 10)
+                  return `${percentageValue.toFixed(1)}%`;
 
                 return `${percentageValue.toFixed(0)}%`;
               }
               return "";
             },
+          },
+        },
+        legend: {
+          position: "right",
+          labels: {
+            boxWidth: 12,
           },
         },
       },

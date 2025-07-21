@@ -441,6 +441,7 @@ input {
   justify-content: space-between;
   margin: 10px auto;
   gap: 10px;
+  width: 100%;
 }
 
 /*
