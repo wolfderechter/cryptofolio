@@ -17,12 +17,12 @@ export let SLEEP_TIME = 10_000;
 const addCryptoBtn = document.querySelector<HTMLButtonElement>("#addCrypto");
 
 // Modals
-const searchModal = document.getElementById("seach-modal")!;
-const transactionModal = document.getElementById("transaction-modal")!;
-const manageTransactionsModal = document.getElementById(
+const searchModal = <HTMLDialogElement> document.getElementById("seach-modal")!;
+const transactionModal = <HTMLDialogElement> document.getElementById("transaction-modal")!;
+const manageTransactionsModal = <HTMLDialogElement> document.getElementById(
   "manage-transactions-modal"
 )!;
-const editTransactionModal = document.getElementById("edit-transaction-modal")!;
+const editTransactionModal = <HTMLDialogElement> document.getElementById("edit-transaction-modal")!;
 
 // Close Btns
 const searchModalCloseBtn = document.getElementById("search-modal-close");
@@ -88,22 +88,16 @@ let inputCsv = document.getElementById("importDataCsvBtn");
 inputCsv?.addEventListener("change", importCsvData);
 
 const importCsvButton = document.getElementById("importDataCsvBtn")!;
-const csvInstructionsModal = document.getElementById("csvInstructionsModal")!;
+const csvInstructionsModal = <HTMLDialogElement> document.getElementById("csvInstructionsModal")!;
 const csvModalCloseBtn = document.getElementById("csv-warning-close");
 
 importCsvButton?.addEventListener("click", () => {
   if (csvInstructionsModal) {
-    csvInstructionsModal.style.display = "block";
+    csvInstructionsModal.showModal();
   }
 });
 csvModalCloseBtn?.addEventListener("click", () => {
-  csvInstructionsModal.style.display = "none";
-});
-// Close the modal when clicking outside of it
-window.addEventListener("click", (event) => {
-  if (event.target === csvInstructionsModal) {
-    csvInstructionsModal.style.display = "none";
-  }
+  csvInstructionsModal.close();
 });
 const downloadSampleCsv = document.getElementById("downloadSampleCsv");
 if (downloadSampleCsv) {
@@ -127,22 +121,12 @@ let summaryTotalValueContentCountUp = new CountUp(summaryTotalValueContent, 0, {
 const openSearchModal = () => {
   if (!searchModal) return;
 
+  searchModal.showModal();
+
   // Clear the crypto list
   const cryptoListDiv = document.getElementById("cryptoList");
   if (cryptoListDiv) {
     cryptoListDiv.innerHTML = "";
-  }
-
-  // Show modal
-  searchModal.style.display = "block";
-
-  // Add escape key listener
-  window.addEventListener("keydown", handleEscapeKeySearchModal);
-};
-
-const handleEscapeKeySearchModal = (e: KeyboardEvent) => {
-  if (e.key === "Escape") {
-    closeSearchModal();
   }
 };
 
@@ -154,12 +138,8 @@ searchModalCloseBtn?.addEventListener("click", (e) => {
 function closeSearchModal() {
   if (!searchModal || !searchForm) return;
 
-  // Hide modal and reset form to clean state
-  searchModal.style.display = "none";
+  searchModal.close();
   searchForm.reset();
-
-  // Remove escape key listener
-  window.removeEventListener("keydown", handleEscapeKeySearchModal);
 }
 
 // Event listeners
@@ -179,21 +159,6 @@ searchModalCloseBtn?.addEventListener("click", (e) => {
 //
 // Transaction Modal-------------------------------------------------------------
 //
-const handleEscapeKeyTransactionModal = (e: KeyboardEvent) => {
-  if (e.key === "Escape") {
-    closeTransactionModal();
-  }
-};
-const handleEscapeKeyManageTransactionModal = (e: KeyboardEvent) => {
-  if (e.key === "Escape") {
-    closeManageTransactionsModal();
-  }
-};
-const handleEscapeKeyEditTransactionModal = (e: KeyboardEvent) => {
-  if (e.key === "Escape") {
-    closeEditTransactionModal();
-  }
-};
 
 transactionModalCloseBtn?.addEventListener("click", (e) => {
   e.preventDefault();
@@ -212,30 +177,18 @@ editTransactionModalCloseBtn?.addEventListener("click", (e) => {
 
 function closeTransactionModal() {
   if (!transactionModal || !transactionForm) return;
-
-  transactionModal.style.display = "none";
   transactionForm.reset();
-
-  // Remove escape key listener
-  window.removeEventListener("keydown", handleEscapeKeyTransactionModal);
+  transactionModal.close();
 }
 
 function closeManageTransactionsModal() {
   if (!manageTransactionsModal) return;
-
-  manageTransactionsModal.style.display = "none";
-
-  // Remove escape key listener
-  window.removeEventListener("keydown", handleEscapeKeyManageTransactionModal);
+  manageTransactionsModal.close();
 }
 
 function closeEditTransactionModal() {
   if (!editTransactionModal) return;
-
-  editTransactionModal.style.display = "none";
-
-  // Remove escape key listener
-  window.removeEventListener("keydown", handleEscapeKeyEditTransactionModal);
+  editTransactionModal.close();
 }
 
 document.getElementById("searchForm")?.addEventListener("submit", (e) => {
@@ -285,10 +238,7 @@ function searchCrypto() {
 
 function startTransaction(coin: Coin) {
   // Switch the modal popup to the transaction popup
-  transactionModal.style.display = "block";
-
-  // Add escape key listener
-  window.addEventListener("keydown", handleEscapeKeyTransactionModal);
+  transactionModal.showModal();
 
   const toggleTransactionType = document.getElementById(
     "toggleTransactionType"
@@ -412,9 +362,7 @@ function startTransaction(coin: Coin) {
 }
 function manageTransactions(coin: Coin) {
   // Switch the modal popup to the transaction popup
-  manageTransactionsModal.style.display = "block";
-
-  window.addEventListener("keydown", handleEscapeKeyManageTransactionModal);
+  manageTransactionsModal.showModal();
 
   const manageTransactionsTitle = document.getElementById(
     "manageTransactionsModalTitle"
@@ -495,9 +443,7 @@ function refreshManageTransactions(crypto: CryptoCurrency) {
 }
 
 function editTransaction(crypto: CryptoCurrency, transaction: Transaction) {
-  editTransactionModal.style.display = "block";
-
-  window.addEventListener("keydown", handleEscapeKeyEditTransactionModal);
+  editTransactionModal.showModal();
 
   const editTransactionTitle = document.getElementById(
     "editTransactionModalTitle"
