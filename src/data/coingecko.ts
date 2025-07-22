@@ -31,7 +31,8 @@ export async function getCoins(input: string): Promise<string[][]> {
  * @param coins[]: array of unique crypto identifier strings
  */
 export async function getCoinsPrices(coins: string[]): Promise<string[]> {
-  const cacheKey = `getCoinsPrices_${coins.join(",")}`;
+  const sortedCoins = coins.sort();
+  const cacheKey = `getCoinsPrices_${sortedCoins.join(",")}`;
 
   if (isCacheValid(cacheKey)) {
     return getCache(cacheKey).data;
