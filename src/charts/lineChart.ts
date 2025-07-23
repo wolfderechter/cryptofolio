@@ -34,17 +34,17 @@ const loader = document.getElementById("loader") as HTMLDivElement;
 // Chart and Data
 let lineChart1: Chart<"line", { x: Date; y: number }[], unknown>;
 let data1: { x: Date; y: number }[] = [];
-let allData: Map<string, any[]> = new Map();
+const allData: Map<string, any[]> = new Map();
 let dates: Date[] = [];
 let netInvested: number[] = [];
 
 // Initialize Gradient
 const totalValueGradient = canvas1
-  .getContext("2d")
-  ?.createLinearGradient(0, 25, 0, 300)!;
-totalValueGradient.addColorStop(0, colors.purple.half);
-totalValueGradient.addColorStop(0.5, colors.purple.quarter);
-totalValueGradient.addColorStop(1, colors.purple.zero);
+  ?.getContext("2d")
+  ?.createLinearGradient(0, 25, 0, 300);
+totalValueGradient?.addColorStop(0, colors.purple.half);
+totalValueGradient?.addColorStop(0.5, colors.purple.quarter);
+totalValueGradient?.addColorStop(1, colors.purple.zero);
 
 // Helper Functions
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -62,7 +62,7 @@ const generateFullDatesArray = (days: number): Date[] => {
   const startDate = new Date();
   startDate.setDate(endDate.getDate() - (days - 1));
 
-  let currentDate = new Date(startDate);
+  const currentDate = new Date(startDate);
   while (currentDate <= endDate) {
     dates.push(new Date(currentDate));
     currentDate.setDate(currentDate.getDate() + 1);
@@ -289,13 +289,13 @@ let dateModeInterval = DATE_MODES.MONTH.interval;
 
 // Date Mode Switching
 // const toggleDayMode = document.getElementById("toggleDayMode")!;
-const toggleWeekMode = document.getElementById("toggleWeekMode")!;
-const toggleMonthMode = document.getElementById("toggleMonthMode")!;
-const toggleYearMode = document.getElementById("toggleYearMode")!;
+const toggleWeekMode = document.getElementById("toggleWeekMode");
+const toggleMonthMode = document.getElementById("toggleMonthMode");
+const toggleYearMode = document.getElementById("toggleYearMode");
 // const toggleAllMode = document.getElementById("toggleAllMode")!;
 
 [toggleWeekMode, toggleMonthMode, toggleYearMode].forEach((element) => {
-  element.addEventListener("click", switchDateMode);
+  element?.addEventListener("click", switchDateMode);
 });
 
 function switchDateMode(e: Event) {
@@ -305,7 +305,7 @@ function switchDateMode(e: Event) {
 
   // Remove other active classes
   [toggleWeekMode, toggleMonthMode, toggleYearMode].forEach((element) =>
-    element.classList.remove("active")
+    element?.classList.remove("active")
   );
 
   target.classList.add("active");
@@ -314,7 +314,7 @@ function switchDateMode(e: Event) {
   if (mode === "ALL") {
     const earliestDate = calculateEarliestDate();
     dateModeDays = Math.ceil(
-      (new Date().getTime() - earliestDate.getTime()) / (1000 * 60 * 60 * 24)
+      (Date.now() - earliestDate.getTime()) / (1000 * 60 * 60 * 24)
     );
     dateModeInterval = DATE_MODES.ALL.interval;
   } else {

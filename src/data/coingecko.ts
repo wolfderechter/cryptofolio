@@ -18,10 +18,11 @@ export async function getCoins(input: string): Promise<string[][]> {
     const res = await fetch(COINGECKO_API + query);
     const jsonResult = await res.json();
 
-    const result = jsonResult["coins"];
+    const result = jsonResult.coins;
     setCache(cacheKey, result);
     return result;
   } catch (error) {
+    console.error("Error fetching coins:", error);
     return [];
   }
 }
@@ -44,7 +45,7 @@ export async function getCoinsPrices(coins: string[]): Promise<string[]> {
       query += coins[i];
 
       // Add '&2c after every coin, unless it's the last one
-      if (i != coins.length - 1) {
+      if (i !== coins.length - 1) {
         query += "%2C";
       }
     }
@@ -58,6 +59,7 @@ export async function getCoinsPrices(coins: string[]): Promise<string[]> {
     setCache(cacheKey, result);
     return result;
   } catch (error) {
+    console.error("Error fetching coin prices:", error);
     return [];
   }
 }
@@ -92,17 +94,18 @@ export async function getCoinChart(
       return getCache(cacheKey).data;
     }
 
-    let query =
+    const query =
       COINGECKO_API +
       `coins/${coin}/market_chart?vs_currency=usd&days=${days}&interval=${interval}`;
     const res = await fetch(query);
     const jsonResult = await res.json();
 
     // api supports 'prices' 'market_caps' and 'total_volumes' but we only need prices currently
-    const result = jsonResult["prices"];
+    const result = jsonResult.prices;
     setCache(cacheKey, result, 24 * 60 * 60 * 1000); // cache chart for 24 hours since it's more demanding
     return result;
   } catch (error) {
+    console.error("Error fetching coin chart data:", error);
     return [];
   }
 }

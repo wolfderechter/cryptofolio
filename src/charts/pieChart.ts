@@ -2,9 +2,9 @@ import { cryptocurrencies } from "../main";
 import { Chart } from "chart.js/auto";
 import { getCoinsPrices } from "../data/coingecko";
 
-let canvas1 = <HTMLCanvasElement>document.getElementById("pieChart1");
+const canvas1 = <HTMLCanvasElement>document.getElementById("pieChart1");
 let pieChart1: Chart<"pie", number[], string>;
-let canvas2 = <HTMLCanvasElement>document.getElementById("pieChart2");
+const canvas2 = <HTMLCanvasElement>document.getElementById("pieChart2");
 let pieChart2: Chart<"pie", number[], string>;
 let labels1: string[] = [];
 let data1: number[] = [];
@@ -54,7 +54,7 @@ export function preparePieChart1() {
       plugins: {
         tooltip: {
           callbacks: {
-            label: function (context) {
+            label: (context) => {
               let label = context.dataset.label || "";
 
               label += " ";
@@ -66,13 +66,13 @@ export function preparePieChart1() {
               }
               return label;
             },
-            footer: function (context) {
+            footer: (context) => {
               if (context[0] !== null) {
-                let totalSum = context[0].dataset.data.reduce(
+                const totalSum = context[0].dataset.data.reduce(
                   (sum, current) => sum + current,
                   0
                 );
-                let percentageValue = (context[0].parsed / totalSum) * 100;
+                const percentageValue = (context[0].parsed / totalSum) * 100;
 
                 // Percentages smaller than 1 will display 2 decimals, smaller than 10 will display 1 decimal, others will display 0 decimals
                 if (percentageValue < 1)
@@ -123,7 +123,7 @@ export async function preparePieChart2() {
 
   cryptocurrencies.forEach((crypto) => {
     labels2.push(crypto.symbol);
-    data2.push(parseFloat(coinPrices[crypto.id]["usd"]) * crypto.totalAmount);
+    data2.push(parseFloat(coinPrices[crypto.id].usd) * crypto.totalAmount);
     colors.push(crypto.color);
   });
 
@@ -143,7 +143,7 @@ export async function preparePieChart2() {
       plugins: {
         tooltip: {
           callbacks: {
-            label: function (context) {
+            label: (context) => {
               let label = context.dataset.label || "";
 
               label += " ";
@@ -155,13 +155,13 @@ export async function preparePieChart2() {
               }
               return label;
             },
-            footer: function (context) {
+            footer: (context) => {
               if (context[0] !== null) {
-                let totalSum = context[0].dataset.data.reduce(
+                const totalSum = context[0].dataset.data.reduce(
                   (sum, current) => sum + current,
                   0
                 );
-                let percentageValue = (context[0].parsed / totalSum) * 100;
+                const percentageValue = (context[0].parsed / totalSum) * 100;
 
                 // Percentages smaller than 1 will display 2 decimals, smaller than 10 will display 1 decimal, others will display 0 decimals
                 if (percentageValue < 1)

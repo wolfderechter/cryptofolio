@@ -1,5 +1,5 @@
 import { getColor } from "./charts/colors";
-import { Transaction, transactionType } from "./transaction";
+import { type Transaction, transactionType } from "./transaction";
 
 export class CryptoCurrency {
   public transactions: Transaction[];
@@ -12,7 +12,7 @@ export class CryptoCurrency {
     this.id = id.toLowerCase(); // Coingecko stores id's as lowercase
     this.name = name || id;
     this.symbol = symbol || id;
-    this.transactions = new Array<Transaction>();
+    this.transactions = [] as Transaction[];
     this.color = color || getColor();
   }
 
@@ -21,14 +21,14 @@ export class CryptoCurrency {
   }
 
   editTransaction(transaction: Transaction) {
-    let indexToEdit = this.transactions.findIndex(
+    const indexToEdit = this.transactions.findIndex(
       (t) => t.uuid === transaction.uuid
     );
     this.transactions[indexToEdit] = transaction;
   }
 
   removeTransaction(transaction: Transaction) {
-    let indexToRemove = this.transactions.findIndex(
+    const indexToRemove = this.transactions.findIndex(
       (t) => t.uuid === transaction.uuid
     );
     this.transactions.splice(indexToRemove, 1);

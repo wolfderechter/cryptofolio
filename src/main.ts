@@ -1,4 +1,4 @@
-import { Coin, CryptoCurrency } from "./cryptocurrency";
+import { type Coin, CryptoCurrency } from "./cryptocurrency";
 import {
   saveData,
   loadData,
@@ -12,20 +12,20 @@ import { CountUp } from "countup.js";
 
 export const cryptocurrencies: CryptoCurrency[] = [];
 // Used for sleeping after API requests to prevent being rate limited. In ms.
-export let SLEEP_TIME = 10_000;
+export const SLEEP_TIME = 10_000;
 
 const addCryptoBtn = document.querySelector<HTMLButtonElement>("#addCrypto");
 
 // Modals
-const searchModal = <HTMLDialogElement>document.getElementById("seach-modal")!;
+const searchModal = <HTMLDialogElement>document.getElementById("seach-modal");
 const transactionModal = <HTMLDialogElement>(
-  document.getElementById("transaction-modal")!
+  document.getElementById("transaction-modal")
 );
 const manageTransactionsModal = <HTMLDialogElement>(
-  document.getElementById("manage-transactions-modal")!
+  document.getElementById("manage-transactions-modal")
 );
 const editTransactionModal = <HTMLDialogElement>(
-  document.getElementById("edit-transaction-modal")!
+  document.getElementById("edit-transaction-modal")
 );
 
 // Close Btns
@@ -46,7 +46,7 @@ const transactionForm =
   document.querySelector<HTMLFormElement>("#transactionForm");
 
 // Summary
-const summaryTotalValue = document.getElementById("summaryTotalValue")!;
+const summaryTotalValue = document.getElementById("summaryTotalValue");
 const summaryTotalValueContent = document.getElementById(
   "summaryTotalValueContent"
 )!;
@@ -85,10 +85,10 @@ window.addEventListener("click", (event) => {
     importDropdown?.classList.remove("active");
   }
 });
-let inputJson = document.getElementById("importDataJsonBtn");
+const inputJson = document.getElementById("importDataJsonBtn");
 inputJson?.addEventListener("change", importJsonData);
 
-let inputCsv = document.getElementById("importDataCsvBtn");
+const inputCsv = document.getElementById("importDataCsvBtn");
 inputCsv?.addEventListener("change", importCsvData);
 
 const importCsvButton = document.getElementById("importDataCsvBtn")!;
@@ -116,7 +116,7 @@ if (downloadSampleCsv) {
   });
 }
 // Summary number animations
-let summaryTotalValueContentCountUp = new CountUp(summaryTotalValueContent, 0, {
+const summaryTotalValueContentCountUp = new CountUp(summaryTotalValueContent, 0, {
   decimalPlaces: 2,
   duration: 1,
 });
@@ -217,17 +217,17 @@ function searchCrypto() {
       return;
     }
 
-    for (let c in data) {
-      let coinDiv = document.createElement("div");
-      let thumbnail = document.createElement("img");
+    for (const c in data) {
+      const coinDiv = document.createElement("div");
+      const thumbnail = document.createElement("img");
       thumbnail.src = data[c]["large"];
-      let name = document.createElement("p");
+      const name = document.createElement("p");
       name.textContent = data[c]["name"];
       coinDiv.appendChild(thumbnail);
       coinDiv.appendChild(name);
 
       // When selecting a certain coin, clear the popup and continue with the coin selected
-      coinDiv.onclick = function (e) {
+      coinDiv.onclick = (e) => {
         e.preventDefault();
         closeSearchModal();
         startTransaction({
@@ -278,7 +278,7 @@ function startTransaction(coin: Coin) {
   transactionAmount.removeAttribute("max");
 
   // Check if the crypto is present in our holdings, otherwise we disable toggling between buy/sell
-  let foundCrypto = cryptocurrencies.find((c) => c.id === coin.id);
+  const foundCrypto = cryptocurrencies.find((c) => c.id === coin.id);
   if (foundCrypto !== undefined) {
     sellTransactionBtn.style.opacity = "1";
 
@@ -324,8 +324,8 @@ function startTransaction(coin: Coin) {
     }
 
     // Create the cryptocurrency object
-    let resultCrypto = cryptocurrencies.find((c) => c.id === coin.id);
-    let selectedTransactionType = buyTransactionBtn.classList.contains("active")
+    const resultCrypto = cryptocurrencies.find((c) => c.id === coin.id);
+    const selectedTransactionType = buyTransactionBtn.classList.contains("active")
       ? transactionType.Buy
       : transactionType.Sell;
     // If crypto was already present, add new transaction
@@ -340,7 +340,7 @@ function startTransaction(coin: Coin) {
       );
     } else {
       // If crypto was not yet present, create it and add new transaction
-      let newCrypto = new CryptoCurrency(coin.id, coin.symbol, coin.name);
+      const newCrypto = new CryptoCurrency(coin.id, coin.symbol, coin.name);
       cryptocurrencies.push(newCrypto);
 
       newCrypto.addTransaction(
@@ -369,7 +369,7 @@ function manageTransactions(coin: Coin) {
   )!;
   manageTransactionsTitle.textContent = coin.name;
 
-  let crypto = cryptocurrencies.find((c) => c.id === coin.id);
+  const crypto = cryptocurrencies.find((c) => c.id === coin.id);
   if (crypto) {
     refreshManageTransactions(crypto);
   }
@@ -389,7 +389,7 @@ function refreshManageTransactions(crypto: CryptoCurrency) {
   }
 
   for (const transaction of crypto.transactions) {
-    let tr = document.createElement("tr");
+    const tr = document.createElement("tr");
 
     /*
         TODO: Remove button will show a cancel/confirm button first before removing
@@ -488,8 +488,8 @@ function editTransaction(crypto: CryptoCurrency, transaction: Transaction) {
     e.preventDefault();
 
     // let selectedTransactionType = buyTransactionBtn.classList.contains("active") ? transactionType.Buy : transactionType.Sell;
-    let currentCrypto = cryptocurrencies.find((c) => c.id === crypto.id);
-    let selectedTransactionType = buyTransactionBtn.classList.contains("active")
+    const currentCrypto = cryptocurrencies.find((c) => c.id === crypto.id);
+    const selectedTransactionType = buyTransactionBtn.classList.contains("active")
       ? transactionType.Buy
       : transactionType.Sell;
 
@@ -561,7 +561,7 @@ async function populateAssetsTableAndSummary() {
     cryptoBuyCostSum += asset.totalBuyCost;
     cryptoSellCostSum += asset.totalSellCost;
 
-    let tr = document.createElement("tr");
+    const tr = document.createElement("tr");
 
     // When we have no current holdings, skip coin
     if (asset.totalAmount === 0) return;

@@ -15,7 +15,7 @@ const PREDEFINED_COLORS = [
   "#D81B60CC", // Crimson Drive (80% opacity)
 ]; // Add more colors as needed
 
-export function getColor(existingColors?: Set<String>): string {
+export function getColor(existingColors?: Set<string>): string {
   // Get the existing colors
   if (!existingColors)
     existingColors = new Set(cryptocurrencies.map((c) => c.color));
@@ -31,5 +31,5 @@ export function getColor(existingColors?: Set<String>): string {
   }
 
   // If all predefined colors are used, return a random color
-  return "#" + (((1 << 24) * Math.random()) | 0).toString(16).padStart(6, "0");
+  return `#${(((1 << 24) * Math.random()) | 0).toString(16).padStart(6, "0")}`;
 }

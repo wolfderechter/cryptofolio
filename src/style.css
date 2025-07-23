@@ -23,7 +23,6 @@
   --accent-color-1: #646cff;
 
   --scrollbar-color: #4d4d4d;
-  --scrollbar-color: #4d4d4d;
   --border-radius-small: 8px;
   --border-radius-big: 20px;
 }
@@ -563,9 +562,6 @@ Loader
 */
 .loader {
   border: 5px solid #f3f3f3;
-  border-top-color: rgb(243, 243, 243);
-  border-top-style: solid;
-  border-top-width: 5px;
   -webkit-animation: spin 1s linear infinite;
   animation: spin 1s linear infinite;
   border-top: 5px solid #555;

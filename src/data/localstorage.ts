@@ -70,7 +70,7 @@ export async function loadData(input?: string) {
 /**
  * Set up the exportDataBtn to download the cryptocurrencies as a JSON file on click.
  */
-const exportDataBtn = document.getElementById("exportDataBtn")!;
+const exportDataBtn = document.getElementById("exportDataBtn");
 if (exportDataBtn) {
   exportDataBtn.addEventListener("click", () => {
     const data = JSON.stringify(cryptocurrencies, null, 2);
@@ -82,7 +82,7 @@ if (exportDataBtn) {
   });
 }
 
-const exportDataCsvBtn = document.getElementById("exportDataCsvBtn")!;
+const exportDataCsvBtn = document.getElementById("exportDataCsvBtn");
 if (exportDataCsvBtn) {
   exportDataCsvBtn.addEventListener("click", () => {
     const csv = convertToCsv(cryptocurrencies);
@@ -104,10 +104,10 @@ function convertToCsv(data: CryptoCurrency[]): string {
     "Coingecko id",
     "Symbol",
   ];
-  let csvContent = header.join(",") + "\n";
+  let csvContent = `${header.join(",")}\n`;
 
-  for (let crypto of data) {
-    for (let transaction of crypto.transactions) {
+  for (const crypto of data) {
+    for (const transaction of crypto.transactions) {
       const result = [
         transaction.date.toISOString(),
         transaction.type,
@@ -117,7 +117,7 @@ function convertToCsv(data: CryptoCurrency[]): string {
         crypto.name,
         crypto.symbol,
       ];
-      csvContent += result.join(",") + "\n";
+      csvContent += `${result.join(",")}\n`;
     }
   }
   return csvContent;
@@ -142,7 +142,7 @@ export function importJsonData(event: { preventDefault: () => void }) {
   reader.readAsText(input.files[0]);
 
   reader.onload = (e) => {
-    let str = e?.target?.result as string;
+    const str = e?.target?.result as string;
     loadData(str);
   };
 }
@@ -192,24 +192,26 @@ function loadDataFromCsv(parsedData: any[]) {
   const cryptoMap: { [key: string]: CryptoCurrency } = {};
 
   for (const row of parsedData) {
-    const { Date, Way } = row;
+    const Way = row.Way;
+    const transactionDate = new Date(row.Date);
     const transactionTypeValue =
       Way.toUpperCase() === "BUY" ? transactionType.Buy : transactionType.Sell;
-    let id, symbol;
+    let id: string, symbol: string;
 
     // If csv is coming from delta, map the base currency name to coingecko standard first
     if (row["Base currency (name)"] !== undefined) {
       const mapping = mapCurrency(row["Base currency (name)"]);
       id = mapping.id;
       symbol = mapping.symbol;
-    } else if (row["Coingecko id"] !== null && row["symbol"] !== null) {
+    } else if (row["Coingecko id"] !== null && row.Symbol !== null) {
       id = row["Coingecko id"];
-      symbol = row["Symbol"];
+      symbol = row.Symbol;
     } else {
       console.error(
         "Could not map currency for row, please make the csv conform with the example",
         row
       );
+      return;
     }
 
     // Check if cryptocurrency exists, create if not
@@ -227,7 +229,7 @@ function loadDataFromCsv(parsedData: any[]) {
 
     const transaction = new Transaction(
       transactionTypeValue,
-      Date,
+      transactionDate,
       parseFloat(row["Base amount"]), // amount of tokens
       parseFloat(row["Quote amount"]) // cost in eur/usd
     );
