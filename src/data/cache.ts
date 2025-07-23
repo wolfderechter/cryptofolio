@@ -12,7 +12,7 @@ export function getCache(key: string): any | null {
 export function setCache(
   key: string,
   data: any,
-  ttl: number = 60 * 60 * 1000,
+  ttl: number = 60 * 60 * 1000
 ): void {
   const cacheData = {
     data,
@@ -26,8 +26,7 @@ export function isCacheValid(key: string): boolean {
   const isCacheValid = cachedData && cachedData.expiry > Date.now();
 
   // Remove stale cache items to keep localStorage clean
-  if (!isCacheValid)
-    localStorage.removeItem(key);
+  if (!isCacheValid) localStorage.removeItem(key);
 
   return isCacheValid;
 }

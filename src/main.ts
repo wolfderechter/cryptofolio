@@ -17,12 +17,16 @@ export let SLEEP_TIME = 10_000;
 const addCryptoBtn = document.querySelector<HTMLButtonElement>("#addCrypto");
 
 // Modals
-const searchModal = <HTMLDialogElement> document.getElementById("seach-modal")!;
-const transactionModal = <HTMLDialogElement> document.getElementById("transaction-modal")!;
-const manageTransactionsModal = <HTMLDialogElement> document.getElementById(
-  "manage-transactions-modal"
-)!;
-const editTransactionModal = <HTMLDialogElement> document.getElementById("edit-transaction-modal")!;
+const searchModal = <HTMLDialogElement>document.getElementById("seach-modal")!;
+const transactionModal = <HTMLDialogElement>(
+  document.getElementById("transaction-modal")!
+);
+const manageTransactionsModal = <HTMLDialogElement>(
+  document.getElementById("manage-transactions-modal")!
+);
+const editTransactionModal = <HTMLDialogElement>(
+  document.getElementById("edit-transaction-modal")!
+);
 
 // Close Btns
 const searchModalCloseBtn = document.getElementById("search-modal-close");
@@ -88,7 +92,9 @@ let inputCsv = document.getElementById("importDataCsvBtn");
 inputCsv?.addEventListener("change", importCsvData);
 
 const importCsvButton = document.getElementById("importDataCsvBtn")!;
-const csvInstructionsModal = <HTMLDialogElement> document.getElementById("csvInstructionsModal")!;
+const csvInstructionsModal = <HTMLDialogElement>(
+  document.getElementById("csvInstructionsModal")!
+);
 const csvModalCloseBtn = document.getElementById("csv-warning-close");
 
 importCsvButton?.addEventListener("click", () => {
@@ -334,11 +340,7 @@ function startTransaction(coin: Coin) {
       );
     } else {
       // If crypto was not yet present, create it and add new transaction
-      let newCrypto = new CryptoCurrency(
-        coin.id,
-        coin.symbol,
-        coin.name,
-      );
+      let newCrypto = new CryptoCurrency(coin.id, coin.symbol, coin.name);
       cryptocurrencies.push(newCrypto);
 
       newCrypto.addTransaction(
@@ -625,7 +627,7 @@ export function init() {
 }
 
 export function humanReadableNumber(value: number): string {
-  if (value >= 100){
+  if (value >= 100) {
     return value.toFixed(0);
   } else if (value >= 1) {
     return value.toFixed(2);

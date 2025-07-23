@@ -8,12 +8,7 @@ export class CryptoCurrency {
   public symbol: string;
   public name: string;
 
-  constructor(
-    id: string,
-    symbol?: string,
-    name?: string,
-    color?: string
-  ) {
+  constructor(id: string, symbol?: string, name?: string, color?: string) {
     this.id = id.toLowerCase(); // Coingecko stores id's as lowercase
     this.name = name || id;
     this.symbol = symbol || id;

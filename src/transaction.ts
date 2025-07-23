@@ -8,7 +8,7 @@ export class Transaction {
     public date: Date,
     public amount: number,
     public cost: number,
-    uuid?: string,
+    uuid?: string
   ) {
     this.uuid = uuid || uuidv4();
   }

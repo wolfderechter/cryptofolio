@@ -230,7 +230,7 @@ input {
   New Transaction popup
 
 */
-#transactionForm>* {
+#transactionForm > * {
   margin: 10px auto;
 }
 
@@ -296,7 +296,7 @@ input {
   Edit Transaction Popup
 
 */
-#editTransactionForm>* {
+#editTransactionForm > * {
   margin: 10px auto;
 }
 
@@ -378,13 +378,14 @@ input {
   /* ToDO: Figure out the optimal padding for ALL tables */
   padding: 5px 10px;
 }
-#manageTransactionsTable td, th {
+#manageTransactionsTable td,
+th {
   padding: 0px 10px;
 }
 
 .assetsTableBtns {
   display: block;
-  width: 100%
+  width: 100%;
 }
 
 .iconBtn {
@@ -412,7 +413,7 @@ input {
   margin: 0;
 }
 
-.summary>* {
+.summary > * {
   margin: 0 10px;
 }
 
@@ -541,7 +542,8 @@ input {
   border-color: var(--accent-color-1);
 }
 
-#importDataJsonBtn, #importDataCsvBtn {
+#importDataJsonBtn,
+#importDataCsvBtn {
   display: none;
 }
 
