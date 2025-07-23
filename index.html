@@ -95,14 +95,14 @@
           <div class="modal-content">
             <span id="csv-warning-close" class="close">&times;</span>
             <h3>CSV File Structure</h3>
-            <p>Your CSV file must have the following columns:</p>
+            <p>The CSV file structure is compatible with the Delta CSV export. If you want to import a custom CSV file, it must have the following columns:</p>
             <ul>
-              <li><strong>id</strong>: The unique identifier of the cryptocurrency (as used by <a href="https://docs.coingecko.com/reference/coins-id">coingecko</a>).</li>
-              <li><strong>symbol</strong>: The symbol of the cryptocurrency (e.g., BTC).</li>
-              <li><strong>date</strong>: The date of the transaction (e.g., YYYY-MM-DD).</li>
-              <li><strong>amount</strong>: The amount of cryptocurrency transacted.</li>
-              <li><strong>cost</strong>: The cost of the transaction.</li>
-              <li><strong>transactionType</strong>: The type of transaction, BUY or SELL (case insensitive).</li>
+              <li><strong>Date</strong>: The date of the transaction (YYYY-MM-DD)</li>
+              <li><strong>Way</strong>: The type of transaction, BUY or SELL</li>
+              <li><strong>Base amount</strong>: The amount of cryptocurrency transacted</li>
+              <li><strong>Quote amount</strong>: The cost of the transaction (in USD)</li>
+              <li><strong>Coingecko id</strong>: The unique identifier of the cryptocurrency (as used by <a href="https://docs.coingecko.com/reference/coins-id">coingecko</a>)</li>
+              <li><strong>symbol</strong>: The symbol of the cryptocurrency (e.g., BTC)</li>
             </ul>
             <div>
               <a id="downloadSampleCsv" href="#" download="sample.csv">Download Sample CSV</a>
