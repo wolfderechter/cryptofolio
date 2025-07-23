@@ -1,3 +1,4 @@
+import { getColor } from '../charts/colors';
 import { CryptoCurrency } from "../cryptocurrency";
 import { cryptocurrencies, init } from "../main";
 import { Transaction, transactionType } from "../transaction";
@@ -35,7 +36,6 @@ export async function loadData(input?: string) {
         crypto.id,
         crypto.symbol,
         crypto.name,
-        crypto.thumbnail,
         crypto.color,
       );
 
@@ -115,11 +115,11 @@ function convertToCsv(data: CryptoCurrency[]): string {
 /**
  * Will import data from a file and call the loadData function with this data.
  */
-export function importData(event: { preventDefault: () => void }) {
+export function importJsonData(event: { preventDefault: () => void }) {
   // Stop the form from reloading the page
   event.preventDefault();
 
-  const input = document.getElementById("importDataBtn") as HTMLInputElement;
+  const input = document.getElementById("importDataJsonBtn") as HTMLInputElement;
 
   // If there's no file, do nothing
   if (!input?.files?.length) return;
