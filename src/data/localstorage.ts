@@ -1,4 +1,4 @@
-import { getColor } from '../charts/colors';
+import { getColor } from "../charts/colors";
 import { CryptoCurrency } from "../cryptocurrency";
 import { cryptocurrencies, init } from "../main";
 import { Transaction, transactionType } from "../transaction";
@@ -36,18 +36,20 @@ export async function loadData(input?: string) {
         crypto.id,
         crypto.symbol,
         crypto.name,
-        crypto.color,
+        crypto.color
       );
 
       crypto.transactions.forEach((transaction: any) => {
         newCrypto.addTransaction(
           new Transaction(
-            transaction.type.toUpperCase() === "BUY" ? transactionType.Buy : transactionType.Sell,
+            transaction.type.toUpperCase() === "BUY"
+              ? transactionType.Buy
+              : transactionType.Sell,
             new Date(transaction.date),
             transaction.amount,
             transaction.cost,
-            transaction.uuid,
-          ),
+            transaction.uuid
+          )
         );
       });
 
@@ -93,7 +95,15 @@ if (exportDataCsvBtn) {
 }
 
 function convertToCsv(data: CryptoCurrency[]): string {
-  const header = ["Date", "Way", "Base amount", "Quote amount", "Quote currency", "Coingecko id", "Symbol"];
+  const header = [
+    "Date",
+    "Way",
+    "Base amount",
+    "Quote amount",
+    "Quote currency",
+    "Coingecko id",
+    "Symbol",
+  ];
   let csvContent = header.join(",") + "\n";
 
   for (let crypto of data) {
@@ -120,7 +130,9 @@ export function importJsonData(event: { preventDefault: () => void }) {
   // Stop the form from reloading the page
   event.preventDefault();
 
-  const input = document.getElementById("importDataJsonBtn") as HTMLInputElement;
+  const input = document.getElementById(
+    "importDataJsonBtn"
+  ) as HTMLInputElement;
 
   // If there's no file, do nothing
   if (!input?.files?.length) return;
@@ -157,7 +169,9 @@ export function importCsvData(event: { preventDefault: () => void }) {
 
 function parseCsv(csvData: string): any[] {
   const rows = csvData.split("\n").filter((row) => row.trim() !== ""); // split into rows and remove empty lines
-  const header = rows[0].split(",").map((field) => field.trim().replace(/^"(.*)"$/, "$1")); // Remove quotes from headers too
+  const header = rows[0]
+    .split(",")
+    .map((field) => field.trim().replace(/^"(.*)"$/, "$1")); // Remove quotes from headers too
   const data: any[] = [];
 
   for (let i = 1; i < rows.length; i++) {
@@ -179,11 +193,12 @@ function loadDataFromCsv(parsedData: any[]) {
 
   for (const row of parsedData) {
     const { Date, Way } = row;
-    const transactionTypeValue = Way.toUpperCase() === "BUY" ? transactionType.Buy : transactionType.Sell;
+    const transactionTypeValue =
+      Way.toUpperCase() === "BUY" ? transactionType.Buy : transactionType.Sell;
     let id, symbol;
 
     // If csv is coming from delta, map the base currency name to coingecko standard first
-    if(row["Base currency (name)"] !== undefined) {
+    if (row["Base currency (name)"] !== undefined) {
       const mapping = mapCurrency(row["Base currency (name)"]);
       id = mapping.id;
       symbol = mapping.symbol;
@@ -191,21 +206,30 @@ function loadDataFromCsv(parsedData: any[]) {
       id = row["Coingecko id"];
       symbol = row["Symbol"];
     } else {
-      console.error("Could not map currency for row, please make the csv conform with the example", row);
+      console.error(
+        "Could not map currency for row, please make the csv conform with the example",
+        row
+      );
     }
 
     // Check if cryptocurrency exists, create if not
     if (!cryptoMap[id]) {
-      cryptoMap
-      const existingColors = new Set(Object.values(cryptoMap).map((c) => c.color));
-      cryptoMap[id] = new CryptoCurrency(id, symbol, id, getColor(existingColors));
+      const existingColors = new Set(
+        Object.values(cryptoMap).map((c) => c.color)
+      );
+      cryptoMap[id] = new CryptoCurrency(
+        id,
+        symbol,
+        id,
+        getColor(existingColors)
+      );
     }
 
     const transaction = new Transaction(
       transactionTypeValue,
       Date,
       parseFloat(row["Base amount"]), // amount of tokens
-      parseFloat(row["Quote amount"]), // cost in eur/usd
+      parseFloat(row["Quote amount"]) // cost in eur/usd
     );
 
     cryptoMap[id].addTransaction(transaction);
@@ -257,15 +281,20 @@ const currencyMapping = {
   "USDT (Tether)": { id: "tether", symbol: "USDT" },
   "WETH (Wrapped Ether)": { id: "weth", symbol: "WETH" },
   "XMR (Monero)": { id: "monero", symbol: "XMR" },
-  "XRP (XRP)": { id: "ripple", symbol: "XRP" }
+  "XRP (XRP)": { id: "ripple", symbol: "XRP" },
 };
 
 function mapCurrency(baseCurrencyName) {
-  if(!currencyMapping[baseCurrencyName])
+  if (!currencyMapping[baseCurrencyName])
     console.log("basecurrencymapping not found", baseCurrencyName);
 
-  return currencyMapping[baseCurrencyName] || {
-    id: baseCurrencyName.match(/\(([^)]+)\)/)[1].toLowerCase().replace(/\s+/g, '-'), // fallback: extract the name in parentheses and convert to lowercase with hyphens
-    symbol: baseCurrencyName.split(' ')[0].replace(/\*+/g, '') // fallback: extract first part and remove asterisks
-  };
+  return (
+    currencyMapping[baseCurrencyName] || {
+      id: baseCurrencyName
+        .match(/\(([^)]+)\)/)[1]
+        .toLowerCase()
+        .replace(/\s+/g, "-"), // fallback: extract the name in parentheses and convert to lowercase with hyphens
+      symbol: baseCurrencyName.split(" ")[0].replace(/\*+/g, ""), // fallback: extract first part and remove asterisks
+    }
+  );
 }
