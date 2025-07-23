@@ -2,7 +2,7 @@ import { Coin, CryptoCurrency } from "./cryptocurrency";
 import {
   saveData,
   loadData,
-  importData,
+  importJsonData,
   importCsvData,
 } from "./data/localstorage";
 import { getCoins, getCoinsPrices } from "./data/coingecko";
@@ -81,8 +81,8 @@ window.addEventListener("click", (event) => {
     importDropdown?.classList.remove("active");
   }
 });
-let input = document.getElementById("importDataBtn");
-input?.addEventListener("change", importData);
+let inputJson = document.getElementById("importDataJsonBtn");
+inputJson?.addEventListener("change", importJsonData);
 
 let inputCsv = document.getElementById("importDataCsvBtn");
 inputCsv?.addEventListener("change", importCsvData);
