@@ -541,7 +541,7 @@ input {
   border-color: var(--accent-color-1);
 }
 
-#importDataBtn, #importDataCsvBtn {
+#importDataJsonBtn, #importDataCsvBtn {
   display: none;
 }
 

@@ -7,20 +7,17 @@ export class CryptoCurrency {
   public id: string;
   public symbol: string;
   public name: string;
-  public thumbnail: string;
 
   constructor(
     id: string,
     symbol?: string,
     name?: string,
-    thumbnail?: string,
     color?: string
   ) {
     this.id = id.toLowerCase(); // Coingecko stores id's as lowercase
     this.name = name || id;
     this.symbol = symbol || id;
     this.transactions = new Array<Transaction>();
-    this.thumbnail = thumbnail || "";
     this.color = color || getColor();
   }
 
@@ -117,5 +114,5 @@ export interface Coin {
   id: string;
   name: string;
   symbol: string;
-  thumbnail: string;
+  thumbnail?: string;
 }
