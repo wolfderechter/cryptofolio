@@ -4,14 +4,7 @@ import { getCoinChart } from "../data/coingecko";
 import "chartjs-adapter-date-fns";
 import { isCacheValid } from "../data/cache";
 
-// Constants
-const DATE_MODES = {
-  WEEK: { days: 7, interval: "daily" },
-  MONTH: { days: 31, interval: "daily" },
-  YEAR: { days: 365, interval: "daily" },
-  ALL: { days: 0, interval: "daily" }, // Special case
-};
-
+let dateModeDays = 30;
 const colors = {
   purple: {
     default: "rgba(149, 76, 233, 1)",
@@ -48,13 +41,6 @@ totalValueGradient?.addColorStop(1, colors.purple.zero);
 
 // Helper Functions
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
-// Returns the max amount of days, based on the earliest transaction date
-const calculateEarliestDate = () => {
-  return cryptocurrencies
-    .map((c) => c.transactionDates)
-    .reduce((a, b) => (a > b ? a : b))[0];
-};
 
 const generateFullDatesArray = (days: number): Date[] => {
   const dates: Date[] = [];
@@ -130,7 +116,7 @@ const createChart = () => {
         x: {
           type: "time",
           time: {
-            unit: dateModeInterval === "hourly" ? "hour" : "day",
+            unit: "day",
           },
         },
         y: {
@@ -214,16 +200,13 @@ export async function prepareLineChart1() {
   const fullDates = generateFullDatesArray(dateModeDays);
 
   for (const [index, crypto] of cryptocurrencies.entries()) {
-    const cacheKey = `getCoinChart_${crypto.id}_${dateModeDays}_${dateModeInterval}`;
+    const cacheKey = `getCoinChart_${crypto.id}_daily`;
     if (!isCacheValid(cacheKey) && index > 0) {
       await sleep(Math.min(index * SLEEP_TIME, 60_000));
     }
 
-    const coinChart = await getCoinChart(
-      crypto.id,
-      dateModeDays,
-      dateModeInterval
-    );
+    const coinChartFull = await getCoinChart(crypto.id);
+    const coinChart = coinChartFull.slice(coinChartFull.length - dateModeDays - 1); // get the last N days of data, based on selected dateMode
 
     if (coinChart.length === 0) {
       limited = true;
@@ -283,16 +266,11 @@ export async function prepareLineChart1() {
   lineChart1.data.datasets.push(netInvestDataSet);
   lineChart1.update();
 }
-// Date Mode Variables
-let dateModeDays = DATE_MODES.MONTH.days;
-let dateModeInterval = DATE_MODES.MONTH.interval;
 
 // Date Mode Switching
-// const toggleDayMode = document.getElementById("toggleDayMode")!;
 const toggleWeekMode = document.getElementById("toggleWeekMode");
 const toggleMonthMode = document.getElementById("toggleMonthMode");
 const toggleYearMode = document.getElementById("toggleYearMode");
-// const toggleAllMode = document.getElementById("toggleAllMode")!;
 
 [toggleWeekMode, toggleMonthMode, toggleYearMode].forEach((element) => {
   element?.addEventListener("click", switchDateMode);
@@ -311,17 +289,19 @@ function switchDateMode(e: Event) {
   target.classList.add("active");
 
   const mode = target.value.toUpperCase();
-  if (mode === "ALL") {
-    const earliestDate = calculateEarliestDate();
-    dateModeDays = Math.ceil(
-      (Date.now() - earliestDate.getTime()) / (1000 * 60 * 60 * 24)
-    );
-    dateModeInterval = DATE_MODES.ALL.interval;
-  } else {
-    const { days, interval } = DATE_MODES[mode];
-    dateModeDays = days;
-    dateModeInterval = interval;
-  }
 
+  switch (mode) {
+    case "WEEK":
+      dateModeDays = 7;
+      break;
+    case "MONTH":
+      dateModeDays = 30;
+      break;
+    case "YEAR":
+      dateModeDays = 365;
+      break;
+    default:
+      dateModeDays = 30;
+  }
   prepareLineChart1();
 }

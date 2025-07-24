@@ -82,13 +82,9 @@ export async function getCoinsPrices(coins: string[]): Promise<string[]> {
  * @param days: How many days back to fetch data
  * @param interval: granularity of the data (hourly, daily...)
  */
-export async function getCoinChart(
-  coin: string,
-  days: number,
-  interval: string
-): Promise<[string, number][]> {
+export async function getCoinChart(coin: string): Promise<[string, number][]> {
   try {
-    const cacheKey = `getCoinChart_${coin}_${days}_${interval}`;
+    const cacheKey = `getCoinChart_${coin}_daily`;
 
     if (isCacheValid(cacheKey)) {
       return getCache(cacheKey).data;
@@ -96,7 +92,7 @@ export async function getCoinChart(
 
     const query =
       COINGECKO_API +
-      `coins/${coin}/market_chart?vs_currency=usd&days=${days}&interval=${interval}`;
+      `coins/${coin}/market_chart?vs_currency=usd&days=365&interval=daily`;
     const res = await fetch(query);
     const jsonResult = await res.json();
 
