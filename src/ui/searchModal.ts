@@ -1,5 +1,5 @@
 import { getCoins } from "../data/coingecko";
-import { startTransaction } from "../main";
+import { startTransaction } from "./transactionModal";
 
 export function initSearchModal() {
   const searchModal = document.getElementById(
