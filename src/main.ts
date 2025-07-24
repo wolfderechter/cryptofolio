@@ -9,6 +9,7 @@ import { getCoins, getCoinsPrices } from "./data/coingecko";
 import { Transaction, transactionType } from "./transaction";
 import { renderCharts } from "./charts/init";
 import { CountUp } from "countup.js";
+import { humanReadableNumber } from "./helpers";
 
 export const cryptocurrencies: CryptoCurrency[] = [];
 // Used for sleeping after API requests to prevent being rate limited. In ms.
@@ -624,16 +625,6 @@ setInterval(populateAssetsTableAndSummary, 900000);
 export function init() {
   populateAssetsTableAndSummary();
   renderCharts();
-}
-
-export function humanReadableNumber(value: number): string {
-  if (value >= 100) {
-    return value.toFixed(0);
-  } else if (value >= 1) {
-    return value.toFixed(2);
-  } else {
-    return value.toFixed(4);
-  }
 }
 
 loadData();
