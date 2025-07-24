@@ -5,20 +5,18 @@ import {
   importJsonData,
   importCsvData,
 } from "./data/localstorage";
-import { getCoins, getCoinsPrices } from "./data/coingecko";
+import { getCoinsPrices } from "./data/coingecko";
 import { Transaction, transactionType } from "./transaction";
 import { renderCharts } from "./charts/init";
 import { CountUp } from "countup.js";
 import { humanReadableNumber } from "./helpers";
+import { initSearchModal } from "./ui/searchModal";
 
 export const cryptocurrencies: CryptoCurrency[] = [];
 // Used for sleeping after API requests to prevent being rate limited. In ms.
 export const SLEEP_TIME = 10_000;
 
-const addCryptoBtn = document.querySelector<HTMLButtonElement>("#addCrypto");
-
 // Modals
-const searchModal = <HTMLDialogElement>document.getElementById("seach-modal");
 const transactionModal = <HTMLDialogElement>(
   document.getElementById("transaction-modal")
 );
@@ -30,7 +28,6 @@ const editTransactionModal = <HTMLDialogElement>(
 );
 
 // Close Btns
-const searchModalCloseBtn = document.getElementById("search-modal-close");
 const transactionModalCloseBtn = document.getElementById(
   "transaction-modal-close"
 );
@@ -42,7 +39,6 @@ const editTransactionModalCloseBtn = document.getElementById(
 );
 
 // Forms
-const searchForm = document.querySelector<HTMLFormElement>("#searchForm");
 const transactionForm =
   document.querySelector<HTMLFormElement>("#transactionForm");
 
@@ -117,48 +113,15 @@ if (downloadSampleCsv) {
   });
 }
 // Summary number animations
-const summaryTotalValueContentCountUp = new CountUp(summaryTotalValueContent, 0, {
-  decimalPlaces: 2,
-  duration: 1,
-});
-
-//
-// Search modal -----------------------------------
-//
-const openSearchModal = () => {
-  if (!searchModal) return;
-
-  searchModal.showModal();
-
-  // Clear the crypto list
-  const cryptoListDiv = document.getElementById("cryptoList");
-  if (cryptoListDiv) {
-    cryptoListDiv.innerHTML = "";
+const summaryTotalValueContentCountUp = new CountUp(
+  summaryTotalValueContent,
+  0,
+  {
+    decimalPlaces: 2,
+    duration: 1,
   }
-};
+);
 
-searchModalCloseBtn?.addEventListener("click", (e) => {
-  e?.preventDefault();
-  closeSearchModal();
-});
-
-function closeSearchModal() {
-  if (!searchModal || !searchForm) return;
-
-  searchModal.close();
-  searchForm.reset();
-}
-
-// Event listeners
-addCryptoBtn?.addEventListener("click", (e) => {
-  e.preventDefault();
-  openSearchModal();
-});
-
-searchModalCloseBtn?.addEventListener("click", (e) => {
-  e.preventDefault();
-  closeSearchModal();
-});
 //
 // -------------------------------------------------------------
 //
@@ -198,51 +161,7 @@ function closeEditTransactionModal() {
   editTransactionModal.close();
 }
 
-document.getElementById("searchForm")?.addEventListener("submit", (e) => {
-  e.preventDefault();
-  searchCrypto();
-});
-
-function searchCrypto() {
-  const input = document.querySelector<HTMLInputElement>(
-    "#crypto-search-input"
-  )!;
-  const cryptoListDiv = document.getElementById("cryptoList")!;
-  // Clear the list when entering a new search
-  cryptoListDiv.innerHTML = "";
-
-  // Do a search request to coingecko, passing the searchterm
-  // take the coins section returned and display it
-  getCoins(input.value).then((data) => {
-    if (data.length === 0) {
-      return;
-    }
-
-    for (const c in data) {
-      const coinDiv = document.createElement("div");
-      const thumbnail = document.createElement("img");
-      thumbnail.src = data[c]["large"];
-      const name = document.createElement("p");
-      name.textContent = data[c]["name"];
-      coinDiv.appendChild(thumbnail);
-      coinDiv.appendChild(name);
-
-      // When selecting a certain coin, clear the popup and continue with the coin selected
-      coinDiv.onclick = (e) => {
-        e.preventDefault();
-        closeSearchModal();
-        startTransaction({
-          id: data[c]["id"],
-          symbol: data[c]["symbol"],
-          name: data[c]["name"],
-        });
-      };
-      cryptoListDiv.appendChild(coinDiv);
-    }
-  });
-}
-
-function startTransaction(coin: Coin) {
+export function startTransaction(coin: Coin) {
   // Switch the modal popup to the transaction popup
   transactionModal.showModal();
 
@@ -326,7 +245,9 @@ function startTransaction(coin: Coin) {
 
     // Create the cryptocurrency object
     const resultCrypto = cryptocurrencies.find((c) => c.id === coin.id);
-    const selectedTransactionType = buyTransactionBtn.classList.contains("active")
+    const selectedTransactionType = buyTransactionBtn.classList.contains(
+      "active"
+    )
       ? transactionType.Buy
       : transactionType.Sell;
     // If crypto was already present, add new transaction
@@ -398,7 +319,9 @@ function refreshManageTransactions(crypto: CryptoCurrency) {
     tr.innerHTML = `
       <td>${transaction.date.toLocaleDateString()}</td>
       <td>${transactionType[transaction.type]}</td>
-      <td title="${transaction.amount}">${humanReadableNumber(transaction.amount)} ${crypto.symbol}</td>
+      <td title="${transaction.amount}">${humanReadableNumber(
+      transaction.amount
+    )} ${crypto.symbol}</td>
       <td>${transaction.cost.toFixed(2)} USD</td>
       <td class="assetsTableBtns">
           <button id="manageTransactionsTableEditBtn" class="fa-solid fa-pen-to-square iconBtn"></button>
@@ -490,7 +413,9 @@ function editTransaction(crypto: CryptoCurrency, transaction: Transaction) {
 
     // let selectedTransactionType = buyTransactionBtn.classList.contains("active") ? transactionType.Buy : transactionType.Sell;
     const currentCrypto = cryptocurrencies.find((c) => c.id === crypto.id);
-    const selectedTransactionType = buyTransactionBtn.classList.contains("active")
+    const selectedTransactionType = buyTransactionBtn.classList.contains(
+      "active"
+    )
       ? transactionType.Buy
       : transactionType.Sell;
 
@@ -570,7 +495,9 @@ async function populateAssetsTableAndSummary() {
     tr.innerHTML = `
         <td>${asset.name}</td>
         <td>$${asset.averageBuyPrice.toFixed(2)}</td>
-        <td title="${asset.totalAmount}">${humanReadableNumber(asset.totalAmount)} ${asset.symbol}</td>
+        <td title="${asset.totalAmount}">${humanReadableNumber(
+      asset.totalAmount
+    )} ${asset.symbol}</td>
         <td>$${humanReadableNumber(asset.totalCost)}</td>
         <td>$${humanReadableNumber(cryptoValue)}</td>
         <td>${gainInPercentage.toFixed(2)}%</td>
@@ -625,6 +552,7 @@ setInterval(populateAssetsTableAndSummary, 900000);
 export function init() {
   populateAssetsTableAndSummary();
   renderCharts();
+  initSearchModal();
 }
 
 loadData();
