@@ -1,13 +1,14 @@
 import { getColor } from "../charts/colors";
-import { CryptoCurrency } from "../cryptocurrency";
-import { cryptocurrencies, init } from "../main";
+import { Cryptocurrency } from "../cryptocurrency";
+import { init } from "../main";
 import { Transaction, transactionType } from "../transaction";
+import * as store from './store';
 
 /**
  * Save cryptocurrencies to localstorage.
  */
 export function saveData() {
-  localStorage.setItem("assets", JSON.stringify(cryptocurrencies));
+  localStorage.setItem("assets", JSON.stringify(store.getAssets()));
 }
 
 /**
@@ -17,7 +18,7 @@ export function saveData() {
  */
 export async function loadData(input?: string) {
   // Check if there is an input string with the data, else check the localstorage for the data. Parse that data and create the cryptocurrency objects
-  let cryptos: CryptoCurrency[];
+  let cryptos: Cryptocurrency[];
   try {
     cryptos = JSON.parse(input ?? localStorage.getItem("assets") ?? "null");
   } catch (error) {
@@ -27,12 +28,12 @@ export async function loadData(input?: string) {
 
   if (cryptos == null || !Array.isArray(cryptos)) return;
 
-  cryptocurrencies.length = 0; // clear the array
+  store.clearAssets();
 
   // Recreate the objects from JSON
   try {
     cryptos.forEach((crypto: any) => {
-      const newCrypto = new CryptoCurrency(
+      const newCrypto = new Cryptocurrency(
         crypto.id,
         crypto.symbol,
         crypto.name,
@@ -53,7 +54,7 @@ export async function loadData(input?: string) {
         );
       });
 
-      cryptocurrencies.push(newCrypto);
+      store.addAsset(newCrypto);
     });
   } catch (error) {
     console.error("Failed to recreate objects from JSON: ", error);
@@ -73,7 +74,7 @@ export async function loadData(input?: string) {
 const exportDataBtn = document.getElementById("exportDataBtn");
 if (exportDataBtn) {
   exportDataBtn.addEventListener("click", () => {
-    const data = JSON.stringify(cryptocurrencies, null, 2);
+    const data = JSON.stringify(store.getAssets, null, 2);
     const blob = new Blob([data], { type: "application/json" });
     const url = URL.createObjectURL(blob);
 
@@ -85,7 +86,7 @@ if (exportDataBtn) {
 const exportDataCsvBtn = document.getElementById("exportDataCsvBtn");
 if (exportDataCsvBtn) {
   exportDataCsvBtn.addEventListener("click", () => {
-    const csv = convertToCsv(cryptocurrencies);
+    const csv = convertToCsv(store.getAssets());
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
 
@@ -94,7 +95,7 @@ if (exportDataCsvBtn) {
   });
 }
 
-function convertToCsv(data: CryptoCurrency[]): string {
+function convertToCsv(data: Cryptocurrency[]): string {
   const header = [
     "Date",
     "Way",
@@ -189,7 +190,7 @@ function parseCsv(csvData: string): any[] {
 
 // Based on the delta csv export format
 function loadDataFromCsv(parsedData: any[]) {
-  const cryptoMap: { [key: string]: CryptoCurrency } = {};
+  const cryptoMap: { [key: string]: Cryptocurrency } = {};
 
   for (const row of parsedData) {
     const Way = row.Way;
@@ -219,7 +220,7 @@ function loadDataFromCsv(parsedData: any[]) {
       const existingColors = new Set(
         Object.values(cryptoMap).map((c) => c.color)
       );
-      cryptoMap[id] = new CryptoCurrency(
+      cryptoMap[id] = new Cryptocurrency(
         id,
         symbol,
         id,
@@ -238,8 +239,8 @@ function loadDataFromCsv(parsedData: any[]) {
   }
 
   // Clear existing data and load in new
-  cryptocurrencies.length = 0;
-  Object.values(cryptoMap).forEach((crypto) => cryptocurrencies.push(crypto));
+  store.clearAssets();
+  Object.values(cryptoMap).forEach((crypto) => store.addAsset(crypto));
 
   saveData();
   init();

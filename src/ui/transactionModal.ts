@@ -1,8 +1,9 @@
-import { Coin, CryptoCurrency } from "../cryptocurrency";
+import { Coin, Cryptocurrency } from "../cryptocurrency";
 import { saveData } from "../data/localstorage";
 import { humanReadableNumber } from "../helpers";
-import { cryptocurrencies, init } from "../main";
+import { init } from "../main";
 import { Transaction, transactionType } from "../transaction";
+import * as store from '../data/store';
 
 export function initTransactionModal() {
   const transactionModal = document.getElementById(
@@ -104,7 +105,7 @@ export function startTransaction(coin: Coin) {
   transactionAmount.removeAttribute("max");
 
   // Check if the crypto is present in our holdings, otherwise we disable toggling between buy/sell
-  const foundCrypto = cryptocurrencies.find((c) => c.id === coin.id);
+  const foundCrypto = store.getAssetById(coin.id);
   if (foundCrypto !== undefined) {
     sellTransactionBtn.style.opacity = "1";
 
@@ -150,7 +151,7 @@ export function startTransaction(coin: Coin) {
     }
 
     // Create the cryptocurrency object
-    const resultCrypto = cryptocurrencies.find((c) => c.id === coin.id);
+    const resultCrypto = store.getAssetById(coin.id);
     const selectedTransactionType = buyTransactionBtn.classList.contains(
       "active"
     )
@@ -168,8 +169,8 @@ export function startTransaction(coin: Coin) {
       );
     } else {
       // If crypto was not yet present, create it and add new transaction
-      const newCrypto = new CryptoCurrency(coin.id, coin.symbol, coin.name);
-      cryptocurrencies.push(newCrypto);
+      const newCrypto = new Cryptocurrency(coin.id, coin.symbol, coin.name);
+      store.addAsset(newCrypto);
 
       newCrypto.addTransaction(
         new Transaction(
@@ -201,13 +202,13 @@ export function manageTransactions(coin: Coin) {
   )!;
   manageTransactionsTitle.textContent = coin.name;
 
-  const crypto = cryptocurrencies.find((c) => c.id === coin.id);
+  const crypto = store.getAssetById(coin.id);
   if (crypto) {
     refreshManageTransactions(crypto);
   }
 }
 
-function refreshManageTransactions(crypto: CryptoCurrency) {
+function refreshManageTransactions(crypto: Cryptocurrency) {
   const transactionModal = document.getElementById(
     "transaction-modal"
   ) as HTMLDialogElement;
@@ -251,12 +252,12 @@ function refreshManageTransactions(crypto: CryptoCurrency) {
 
         crypto.removeTransaction(transaction);
 
-        // If after removing the transactio the crypto has no transactions left, remove the crypto
+        // If after removing the transaction the crypto has no transactions left, remove the crypto
         if (
           crypto.amountOfTransactions < 1 ||
           crypto.amountOfTransactions === undefined
         ) {
-          cryptocurrencies.splice(cryptocurrencies.indexOf(crypto), 1);
+          store.removeAsset(crypto.id);
         }
 
         // Persist the data
@@ -277,7 +278,7 @@ function refreshManageTransactions(crypto: CryptoCurrency) {
   }
 }
 
-function editTransaction(crypto: CryptoCurrency, transaction: Transaction) {
+function editTransaction(crypto: Cryptocurrency, transaction: Transaction) {
   const editTransactionModal = document.getElementById(
     "edit-transaction-modal"
   ) as HTMLDialogElement;
@@ -326,7 +327,7 @@ function editTransaction(crypto: CryptoCurrency, transaction: Transaction) {
     e.preventDefault();
 
     // let selectedTransactionType = buyTransactionBtn.classList.contains("active") ? transactionType.Buy : transactionType.Sell;
-    const currentCrypto = cryptocurrencies.find((c) => c.id === crypto.id);
+    const currentCrypto = store.getAssetById(crypto.id);
     const selectedTransactionType = buyTransactionBtn.classList.contains(
       "active"
     )

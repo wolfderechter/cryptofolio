@@ -1,6 +1,6 @@
-import { cryptocurrencies } from "../main";
 import { Chart } from "chart.js/auto";
 import { getCoinsPrices } from "../data/coingecko";
+import * as store from '../data/store';
 
 const canvas1 = <HTMLCanvasElement>document.getElementById("pieChart1");
 let pieChart1: Chart<"pie", number[], string>;
@@ -20,7 +20,7 @@ let colors: string[] = [];
 
 */
 export function preparePieChart1() {
-  if (cryptocurrencies.length === 0) {
+  if (store.getAssetsSize() === 0) {
     pieChart1?.destroy();
     return;
   }
@@ -32,7 +32,7 @@ export function preparePieChart1() {
   data1 = [];
   colors = [];
 
-  cryptocurrencies.forEach((crypto) => {
+  store.getAssets().forEach((crypto) => {
     labels1.push(crypto.symbol);
     data1.push(crypto.totalCost);
     colors.push(crypto.color); //colors array is used to have consistent colors over all the charts
@@ -104,12 +104,12 @@ export function preparePieChart1() {
 */
 let coinPrices: string[] = [];
 export async function preparePieChart2() {
-  if (cryptocurrencies.length === 0) {
+  if (store.getAssetsSize() === 0) {
     pieChart2?.destroy();
     return;
   }
   // First try to get the new prices
-  coinPrices = await getCoinsPrices(cryptocurrencies.map((c) => c.id));
+  coinPrices = await getCoinsPrices(store.getAssets().map((c) => c.id));
   // If we run into issues we stop what we are doing and don't refresh the charts
   if (coinPrices.length === 0) {
     return;
@@ -121,7 +121,7 @@ export async function preparePieChart2() {
   data2 = [];
   colors = [];
 
-  cryptocurrencies.forEach((crypto) => {
+  store.getAssets().forEach((crypto) => {
     labels2.push(crypto.symbol);
     data2.push(parseFloat(coinPrices[crypto.id].usd) * crypto.totalAmount);
     colors.push(crypto.color);

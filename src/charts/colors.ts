@@ -1,4 +1,4 @@
-import { cryptocurrencies } from "../main";
+import * as store from '../data/store';
 
 const PREDEFINED_COLORS = [
   "#29B6F6CC", // Electric Blue (80% opacity)
@@ -18,7 +18,7 @@ const PREDEFINED_COLORS = [
 export function getColor(existingColors?: Set<string>): string {
   // Get the existing colors
   if (!existingColors)
-    existingColors = new Set(cryptocurrencies.map((c) => c.color));
+    existingColors = new Set(store.getAssets().map((c) => c.color));
 
   // Find the first predefined color that hasn't been used yet
   const availableColor = PREDEFINED_COLORS.find(

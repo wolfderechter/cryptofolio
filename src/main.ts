@@ -1,4 +1,3 @@
-import { CryptoCurrency } from "./cryptocurrency";
 import { loadData, importJsonData, importCsvData } from "./data/localstorage";
 import { getCoinsPrices } from "./data/coingecko";
 import { renderCharts } from "./charts/init";
@@ -6,6 +5,7 @@ import { CountUp } from "countup.js";
 import { humanReadableNumber } from "./helpers";
 import { initSearchModal } from "./ui/searchModal";
 import { initTransactionModal, manageTransactions, startTransaction } from './ui/transactionModal';
+import * as store from './data/store';
 
 // Summary
 const summaryTotalValue = document.getElementById("summaryTotalValue");
@@ -90,14 +90,14 @@ const summaryTotalValueContentCountUp = new CountUp(
 async function populateAssetsTableAndSummary() {
   const tableBody = document.getElementById("assetsTableBody")!;
 
-  if (cryptocurrencies.length === 0) {
+  if (store.getAssetsSize() === 0) {
     summaryTotalValueContent.textContent = ``;
     summaryTotalPercentage.textContent = `%`;
     tableBody.replaceChildren();
     return;
   }
 
-  const coinPrices = await getCoinsPrices(cryptocurrencies.map((c) => c.id));
+  const coinPrices = await getCoinsPrices(store.getAssets().map((c) => c.id));
   // When we overload the coingecko api, we get a 429 and empty objects back
   // In this case we stop what we are doing and tell the user to slow down
   if (coinPrices.length === 0) {
@@ -109,7 +109,7 @@ async function populateAssetsTableAndSummary() {
   let cryptoBuyCostSum = 0;
   let cryptoSellCostSum = 0;
 
-  const sortedCryptocurrencies = cryptocurrencies.sort((a, b) => {
+  const sortedCryptocurrencies = store.getAssets().sort((a, b) => {
     const cryptoValueA = parseFloat(coinPrices[a.id].usd) * a.totalAmount;
     const cryptoValueB = parseFloat(coinPrices[b.id].usd) * b.totalAmount;
     return cryptoValueB - cryptoValueA; // Sort by value descending

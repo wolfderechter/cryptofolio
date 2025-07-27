@@ -1,7 +1,7 @@
 import { getColor } from "./charts/colors";
 import { type Transaction, transactionType } from "./transaction";
 
-export class CryptoCurrency {
+export class Cryptocurrency {
   public transactions: Transaction[];
   public color: string;
   public id: string;
@@ -10,8 +10,8 @@ export class CryptoCurrency {
 
   constructor(id: string, symbol?: string, name?: string, color?: string) {
     this.id = id.toLowerCase(); // Coingecko stores id's as lowercase
-    this.name = name || id;
     this.symbol = symbol || id;
+    this.name = name || id;
     this.transactions = [] as Transaction[];
     this.color = color || getColor();
   }

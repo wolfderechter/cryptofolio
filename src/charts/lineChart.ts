@@ -3,6 +3,7 @@ import { Chart } from "chart.js/auto";
 import { getCoinChart } from "../data/coingecko";
 import "chartjs-adapter-date-fns";
 import { isCacheValid } from "../data/cache";
+import * as store from '../data/store';
 
 let dateModeDays = 30;
 const colors = {
@@ -176,7 +177,7 @@ const createChart = () => {
 
 // Main Function
 export async function prepareLineChart1() {
-  if (cryptocurrencies.length === 0) {
+  if (store.getAssetsSize() === 0) {
     loader.classList.add("disabled");
     rateLimiting.classList.add("disabled");
     toggleDate.style.display = "none";
@@ -196,7 +197,7 @@ export async function prepareLineChart1() {
   // Generate the full dates array for the selected date mode
   const fullDates = generateFullDatesArray(dateModeDays);
 
-  for (const [index, crypto] of cryptocurrencies.entries()) {
+  for (const [index, crypto] of store.getAssets().entries()) {
     const cacheKey = `getCoinChart_${crypto.id}_daily`;
     if (!isCacheValid(cacheKey) && index > 0) {
       await sleep(Math.min(index * SLEEP_TIME, 60_000));
@@ -230,12 +231,12 @@ export async function prepareLineChart1() {
 
   if (lineChart1) lineChart1.destroy();
   loader.classList.add("disabled");
-  if (cryptocurrencies.length > 0) canvas1Parent.style.display = "block";
+  if (store.getAssetsSize() > 0) canvas1Parent.style.display = "block";
 
   lineChart1 = createChart();
 
   for (const [key, value] of allData) {
-    const color = cryptocurrencies.find((c) => c.id === key)?.color;
+    const color = store.getAssetById(key)?.color;
     const newDataSet = {
       data: value.map((d, i) => ({ x: dates[i], y: d })),
       label: key,
@@ -274,7 +275,7 @@ const toggleYearMode = document.getElementById("toggleYearMode");
 });
 
 function switchDateMode(e: Event) {
-  if (cryptocurrencies.length === 0) return;
+  if (store.getAssetsSize() === 0) return;
 
   const target = e.target as HTMLButtonElement;
 
