@@ -48,7 +48,11 @@ export function initSearchModal() {
   });
 }
 
-function renderResults(results: any[], cryptoListDiv: HTMLElement, searchModal: HTMLDialogElement) {
+function renderResults(
+  results: any[],
+  cryptoListDiv: HTMLElement,
+  searchModal: HTMLDialogElement
+) {
   cryptoListDiv.replaceChildren();
 
   if (results.length === 0) {

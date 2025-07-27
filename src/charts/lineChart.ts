@@ -3,7 +3,7 @@ import { Chart } from "chart.js/auto";
 import { getCoinChart } from "../data/coingecko";
 import "chartjs-adapter-date-fns";
 import { isCacheValid } from "../data/cache";
-import * as store from '../data/store';
+import * as store from "../data/store";
 
 let dateModeDays = 30;
 const colors = {
@@ -206,7 +206,9 @@ export async function prepareLineChart1() {
     }
 
     const coinChartFull = await getCoinChart(crypto.id);
-    const coinChart = coinChartFull.slice(coinChartFull.length - dateModeDays - 1); // get the last N days of data, based on selected dateMode
+    const coinChart = coinChartFull.slice(
+      coinChartFull.length - dateModeDays - 1
+    ); // get the last N days of data, based on selected dateMode
 
     if (coinChart.length === 0) {
       limited = true;

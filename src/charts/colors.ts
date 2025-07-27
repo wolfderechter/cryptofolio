@@ -1,4 +1,4 @@
-import * as store from '../data/store';
+import * as store from "../data/store";
 
 const PREDEFINED_COLORS = [
   "#29B6F6CC", // Electric Blue (80% opacity)

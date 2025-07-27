@@ -93,13 +93,13 @@ export function initImportExportButtons() {
 
   // Close dropdowns when clicking outside
   window.addEventListener("click", (event) => {
-  // Cast the event target to an HTML Element
-  const target = event.target as HTMLElement;
-  // The .closest() method checks if the clicked element or any of its parents
-  // has the class 'dropdown'. If not, it means the click was outside.
-  if (!target.closest(".dropdown")) {
-    importDropdown.classList.remove("active");
-    exportDropdown.classList.remove("active");
-  }
-});
+    // Cast the event target to an HTML Element
+    const target = event.target as HTMLElement;
+    // The .closest() method checks if the clicked element or any of its parents
+    // has the class 'dropdown'. If not, it means the click was outside.
+    if (!target.closest(".dropdown")) {
+      importDropdown.classList.remove("active");
+      exportDropdown.classList.remove("active");
+    }
+  });
 }

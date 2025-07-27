@@ -3,7 +3,7 @@ import { saveData } from "../data/localstorage";
 import { humanReadableNumber } from "../helpers";
 import { init } from "../main";
 import { Transaction, transactionType } from "../transaction";
-import * as store from '../data/store';
+import * as store from "../data/store";
 
 export function initTransactionModal() {
   const transactionModal = document.getElementById(
@@ -232,8 +232,8 @@ function refreshManageTransactions(crypto: Cryptocurrency) {
       <td>${transaction.date.toLocaleDateString()}</td>
       <td>${transactionType[transaction.type]}</td>
       <td title="${transaction.amount}">${humanReadableNumber(
-      transaction.amount
-    )} ${crypto.symbol}</td>
+        transaction.amount
+      )} ${crypto.symbol}</td>
       <td>${transaction.cost.toFixed(2)} USD</td>
       <td class="assetsTableBtns">
           <button id="manageTransactionsTableEditBtn" class="fa-solid fa-pen-to-square iconBtn"></button>

@@ -1,9 +1,9 @@
 import { getColor } from "../charts/colors";
 import { Cryptocurrency } from "../cryptocurrency";
-import { mapCurrency } from '../helpers';
+import { mapCurrency } from "../helpers";
 import { init } from "../main";
 import { Transaction, transactionType } from "../transaction";
-import * as store from './store';
+import * as store from "./store";
 
 /**
  * Save cryptocurrencies to localstorage.
@@ -97,7 +97,6 @@ export function convertToCsv(data: Cryptocurrency[]): string {
   }
   return csvContent;
 }
-
 
 export function parseCsv(csvData: string): any[] {
   const rows = csvData.split("\n").filter((row) => row.trim() !== ""); // split into rows and remove empty lines

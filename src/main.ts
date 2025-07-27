@@ -78,8 +78,8 @@ async function populateAssetsTableAndSummary() {
         <td>${asset.name}</td>
         <td>$${asset.averageBuyPrice.toFixed(2)}</td>
         <td title="${asset.totalAmount}">${humanReadableNumber(
-      asset.totalAmount
-    )} ${asset.symbol}</td>
+          asset.totalAmount
+        )} ${asset.symbol}</td>
         <td>$${humanReadableNumber(asset.totalCost)}</td>
         <td>$${humanReadableNumber(cryptoValue)}</td>
         <td>${gainInPercentage.toFixed(2)}%</td>
