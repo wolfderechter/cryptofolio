@@ -75,19 +75,27 @@ async function populateAssetsTableAndSummary() {
     if (asset.totalAmount === 0) return;
 
     tr.innerHTML = `
-        <td>${asset.name}</td>
-        <td>$${asset.averageBuyPrice.toFixed(2)}</td>
-        <td title="${asset.totalAmount}">${humanReadableNumber(
-          asset.totalAmount
-        )} ${asset.symbol}</td>
-        <td>$${humanReadableNumber(asset.totalCost)}</td>
-        <td>$${humanReadableNumber(cryptoValue)}</td>
-        <td>${gainInPercentage.toFixed(2)}%</td>
-        <td class="assetsTableBtns">
-            <button id="assetsTableAdd" class="fa fa-plus-minus iconBtn"></button>
-            <button id="assetsTableManage" class="fa-solid fa-pen-to-square iconBtn"></button>
-        </td>
+      <td class="openCryptocurrencyModal" style="cursor:pointer">${asset.name}</td>
+      <td>$${asset.averageBuyPrice.toFixed(2)}</td>
+      <td title="${asset.totalAmount}">${humanReadableNumber(
+      asset.totalAmount
+      )} ${asset.symbol}</td>
+      <td>$${humanReadableNumber(asset.totalCost)}</td>
+      <td>$${humanReadableNumber(cryptoValue)}</td>
+      <td>${gainInPercentage.toFixed(2)}%</td>
+      <td class="assetsTableBtns">
+      <button id="assetsTableAdd" class="fa fa-plus-minus iconBtn"></button>
+      <button title="Edit transactions" id="assetsTableManage" class="fa-solid fa-pen-to-square iconBtn"></button>
+      </td>
       `;
+
+    // Make the asset name cell clickable to open the asset edit popup
+    const assets = tr.querySelectorAll<HTMLTableCellElement>(".openCryptocurrencyModal");
+    assets.forEach((assetCell) => {
+      assetCell.onclick = () => {
+        openCryptocurrencyModal(asset.id);
+      };
+    });
 
     const addButton = tr.querySelector<HTMLButtonElement>("#assetsTableAdd");
     if (addButton) {
