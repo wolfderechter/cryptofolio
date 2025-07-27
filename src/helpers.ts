@@ -8,7 +8,7 @@ export function humanReadableNumber(value: number): string {
   }
 }
 
-export const SLEEP_TIME = 10_000;
+export const SLEEP_TIME = 5_000;
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // Extend this mapping as needed, based on the provided delta csv export while consulting the id/symbol from coingecko

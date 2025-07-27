@@ -196,11 +196,13 @@ export async function prepareLineChart1() {
 
   // Generate the full dates array for the selected date mode
   const fullDates = generateFullDatesArray(dateModeDays);
+  let cacheMisses = 0;
 
   for (const [index, crypto] of store.getAssets().entries()) {
     const cacheKey = `getCoinChart_${crypto.id}_daily`;
-    if (!isCacheValid(cacheKey) && index > 0) {
-      await sleep(Math.min(index * SLEEP_TIME, 60_000));
+    if (!isCacheValid(cacheKey) && cacheMisses > 0) {
+      cacheMisses++;
+      await sleep(Math.min(cacheMisses * SLEEP_TIME, 60_000));
     }
 
     const coinChartFull = await getCoinChart(crypto.id);
