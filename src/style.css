@@ -39,6 +39,7 @@ a {
   font-weight: 500;
   color: var(--accent-color-1);
   text-decoration: inherit;
+  outline: none;
 }
 
 a:hover {
@@ -407,6 +408,11 @@ input {
   font-weight: 600;
 }
 
+.assetsTable table td:first-child,
+.assetsTable table th:first-child {
+  text-align: left;
+}
+
 .table {
   display: inline;
 }
@@ -419,6 +425,16 @@ input {
 #manageTransactionsTable td,
 th {
   padding: 0px 10px;
+}
+.openCryptocurrencyModal {
+  cursor: pointer;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.openCryptocurrencyModal:hover {
+  color: var(--accent-color-1);
+  text-decoration: underline;
 }
 
 .assetsTableBtns {

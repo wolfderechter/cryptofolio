@@ -11,6 +11,7 @@ import {
 } from "./ui/transactionModal";
 import * as store from "./data/store";
 import { initImportExportButtons } from "./ui/importExport";
+import { openCryptocurrencyModal } from './ui/cryptocurrencyModal';
 
 // Summary
 const summaryTotalValue = document.getElementById("summaryTotalValue");
