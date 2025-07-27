@@ -7,10 +7,6 @@ import { humanReadableNumber } from "./helpers";
 import { initSearchModal } from "./ui/searchModal";
 import { initTransactionModal, manageTransactions, startTransaction } from './ui/transactionModal';
 
-export const cryptocurrencies: CryptoCurrency[] = [];
-// Used for sleeping after API requests to prevent being rate limited. In ms.
-export const SLEEP_TIME = 10_000;
-
 // Summary
 const summaryTotalValue = document.getElementById("summaryTotalValue");
 const summaryTotalValueContent = document.getElementById(

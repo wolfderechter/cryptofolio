@@ -1,4 +1,4 @@
-import { cryptocurrencies, SLEEP_TIME } from "../main";
+import { sleep, SLEEP_TIME } from "../helpers";
 import { Chart } from "chart.js/auto";
 import { getCoinChart } from "../data/coingecko";
 import "chartjs-adapter-date-fns";
@@ -38,9 +38,6 @@ const totalValueGradient = canvas1
 totalValueGradient?.addColorStop(0, colors.purple.half);
 totalValueGradient?.addColorStop(0.5, colors.purple.quarter);
 totalValueGradient?.addColorStop(1, colors.purple.zero);
-
-// Helper Functions
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 const generateFullDatesArray = (days: number): Date[] => {
   const dates: Date[] = [];

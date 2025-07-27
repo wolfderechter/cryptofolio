@@ -8,3 +8,6 @@ export function humanReadableNumber(value: number): string {
     return value.toFixed(4);
   }
 }
+
+export const SLEEP_TIME = 10_000;
+export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
