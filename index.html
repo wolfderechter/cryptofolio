@@ -95,13 +95,15 @@
           <div class="modal-content">
             <span id="csv-warning-close" class="close">&times;</span>
             <h3>CSV File Structure</h3>
-            <p>The CSV file structure is compatible with the Delta CSV export. If you want to import a custom CSV file, it must have the following columns:</p>
+            <p>The CSV file structure is compatible with the Delta CSV export. If you want to import a custom CSV file,
+              it must have the following columns:</p>
             <ul>
               <li><strong>Date</strong>: The date of the transaction (YYYY-MM-DD)</li>
               <li><strong>Way</strong>: The type of transaction, BUY or SELL</li>
               <li><strong>Base amount</strong>: The amount of cryptocurrency transacted</li>
               <li><strong>Quote amount</strong>: The cost of the transaction (in USD)</li>
-              <li><strong>Coingecko id</strong>: The unique identifier of the cryptocurrency (as used by <a href="https://docs.coingecko.com/reference/coins-id">coingecko</a>)</li>
+              <li><strong>Coingecko id</strong>: The unique identifier of the cryptocurrency (as used by <a
+                  href="https://docs.coingecko.com/reference/coins-id">coingecko</a>)</li>
               <li><strong>symbol</strong>: The symbol of the cryptocurrency (e.g., BTC)</li>
             </ul>
             <div>
@@ -111,150 +113,181 @@
         </dialog>
       </div>
 
-    <div class="chart mainChart lineChart">
-      <span>
-        <h2 class="totalValueTitle">Total value over time</h2>
-        <div id="toggleDate" class="toggleDate">
-          <button id="toggleWeekMode" class="toggleDateModes" value="week" type="button">
-            7D
-          </button>
-          <button id="toggleMonthMode" class="toggleDateModes active" value="month" type="button">
-            1M
-          </button>
-          <button id="toggleYearMode" class="toggleDateModes" value="year" type="button">
-            1Y
-          </button>
+      <div class="chart mainChart lineChart">
+        <span>
+          <h2 class="totalValueTitle">Total value over time</h2>
+          <div id="toggleDate" class="toggleDate">
+            <button id="toggleWeekMode" class="toggleDateModes" value="week" type="button">
+              7D
+            </button>
+            <button id="toggleMonthMode" class="toggleDateModes active" value="month" type="button">
+              1M
+            </button>
+            <button id="toggleYearMode" class="toggleDateModes" value="year" type="button">
+              1Y
+            </button>
+          </div>
+        </span>
+        <div id="loader">
+          Calculating with some delay to prevent being rate limited.
+          <div class="loader"></div>
         </div>
-      </span>
-      <div id="loader">
-        Calculating with some delay to prevent being rate limited.
-        <div class="loader"></div>
+        <div id="rateLimiting">Too many data calls. Wait a few minutes and continue.</div>
+        <div id="lineChart1Parent">
+          <canvas id="lineChart1"></canvas>
+        </div>
       </div>
-      <div id="rateLimiting">Too many data calls. Wait a few minutes and continue.</div>
-      <div id="lineChart1Parent">
-        <canvas id="lineChart1"></canvas>
+
+      <div class="row">
+        <div class="chart pieChart">
+          <h2>Total invested</h2>
+          <canvas id="pieChart1"></canvas>
+        </div>
+
+        <div class="chart pieChart">
+          <h2>Current value</h2>
+          <canvas id="pieChart2"></canvas>
+        </div>
       </div>
+
+      <!-- Search Popup modal -->
+      <dialog id="search-modal" class="modal">
+        <div class="modal-content">
+          <span class="close" id="search-modal-close">&times;</span>
+          <div class="inner-modal-content" id="inner-search-modal-content">
+            <form id="searchForm">
+              <input id="crypto-search-input" type="text" placeholder="Search.." />
+              <button><i class="fa fa-search"></i></button>
+            </form>
+            <div id="cryptoList"></div>
+          </div>
+        </div>
+      </dialog>
+
+      <!-- Asset modal to edit existing assets-->
+      <dialog id="cryptocurrency-modal" class="modal">
+        <div class="modal-content">
+          <span class="close" id="cryptocurrency-modal-close">&times;</span>
+          <div class="inner-modal-content">
+            <form id="cryptocurrencyForm">
+              <h2 id="cryptocurrencyModalTitle">Edit cryptocurrency</h2>
+              <div>
+                <!-- text -->
+                <label for="cryptocurrencyId" style="display: flex; flex-direction: column;">
+                  Coingecko id
+                  <a href="https://www.coingecko.com/" target="_blank" style="opacity: 0.8;">find on
+                    coingecko.com</a>
+                </label>
+                <input id="cryptocurrencyId" type="text" placeholder="coingecko id" autocomplete="off" />
+              </div>
+              <div>
+                <label for="cryptocurrencySymbol">Symbol</label>
+                <input id="cryptocurrencySymbol" type="text" placeholder="symbol (e.g. BTC)" autocomplete="off" />
+              </div>
+              <div>
+                <label for="cryptocurrencyName">Displayname</label>
+                <input id="cryptocurrencyName" type="text" placeholder="displayname" autocomplete="off" />
+              </div>
+              <div id="cryptocurrencyModalError" style="color: red; display: none;"></div>
+              <button id="saveCryptocurrencyBtn" type="submit">Save</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
+
+      <!-- New Transaction modal -->
+      <dialog id="transaction-modal" class="modal">
+        <div class="modal-content">
+          <span class="close" id="transaction-modal-close">&times;</span>
+          <div class="inner-modal-content">
+            <h2>
+              New transaction for <span id="transactionModalTitle"></span>
+            </h2>
+            <form id="transactionForm">
+              <div class="button" id="toggleTransactionType">
+                <p class="active" id="buyTransactionBtn">Buy</p>
+                <p class="" id="sellTransactionBtn">Sell</p>
+              </div>
+              <div>
+                <input id="transactionDate" type="date" />
+              </div>
+              <div class="availableAmountDiv">
+                <span id="availableAmount"></span>
+                <input id="transactionAmount" type="number" step="any" placeholder="Amount of coins" min="0" />
+              </div>
+              <div>
+                <input id="transactionCost" type="number" step="any" placeholder="Total cost ($)" min="0" />
+              </div>
+              <button id="addTransactionBtn">Add transaction</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
+
+      <!-- Manage Transactions modal -->
+      <dialog id="manage-transactions-modal" class="modal">
+        <div class="modal-content manage-transactions-modal-content">
+          <span class="close" id="manage-transactions-modal-close">&times;</span>
+          <h2>
+            Manage <span id="manageTransactionsModalTitle"></span> transactions
+          </h2>
+          <div class="inner-modal-content" id="inner-manage-transactions-modal-content">
+            <table class="table" id="manageTransactionsTable">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>type</th>
+                  <th>Amount</th>
+                  <th>Cost</th>
+                </tr>
+              </thead>
+              <tbody id="manageTransactionsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </dialog>
+
+      <!-- Edit Transaction modal -->
+      <dialog id="edit-transaction-modal" class="modal">
+        <div class="modal-content">
+          <span class="close" id="edit-transaction-modal-close">&times;</span>
+          <div class="inner-modal-content">
+            <h2>
+              Edit <span id="editTransactionModalTitle"></span> transaction
+            </h2>
+            <form id="editTransactionForm">
+              <div class="button" id="editToggleTransactionType">
+                <p class="" id="editBuyTransactionBtn">Buy</p>
+                <p class="" id="editSellTransactionBtn">Sell</p>
+              </div>
+              <div>
+                <input id="editTransactionDate" type="date" />
+              </div>
+              <div>
+                <input id="editTransactionAmount" type="number" step="any" placeholder="Amount of coins" min="0" />
+              </div>
+              <div>
+                <input id="editTransactionCost" type="number" step="any" placeholder="Total cost ($)" min="0" />
+              </div>
+              <button id="editTransactionBtn">Edit transaction</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
+      <footer>
+        <p>
+          A project by
+          <a href="https://wolfez.dev" rel="noopener">wolfez.dev</a>
+        </p>
+      </footer>
     </div>
 
-    <div class="row">
-      <div class="chart pieChart">
-        <h2>Total invested</h2>
-        <canvas id="pieChart1"></canvas>
-      </div>
-
-      <div class="chart pieChart">
-        <h2>Current value</h2>
-        <canvas id="pieChart2"></canvas>
-      </div>
-    </div>
-
-    <!-- Search Popup modal -->
-    <dialog id="search-modal" class="modal">
-      <div class="modal-content">
-        <span class="close" id="search-modal-close">&times;</span>
-        <div class="inner-modal-content" id="inner-search-modal-content">
-          <form id="searchForm">
-            <input id="crypto-search-input" type="text" placeholder="Search.." />
-            <button><i class="fa fa-search"></i></button>
-          </form>
-          <div id="cryptoList"></div>
-        </div>
-      </div>
-    </dialog>
-
-    <!-- New Transaction modal -->
-    <dialog id="transaction-modal" class="modal">
-      <div class="modal-content">
-        <span class="close" id="transaction-modal-close">&times;</span>
-        <div class="inner-modal-content">
-          <h2>
-            New transaction for <span id="transactionModalTitle"></span>
-          </h2>
-          <form id="transactionForm">
-            <div class="button" id="toggleTransactionType">
-              <p class="active" id="buyTransactionBtn">Buy</p>
-              <p class="" id="sellTransactionBtn">Sell</p>
-            </div>
-            <div>
-              <input id="transactionDate" type="date" />
-            </div>
-            <div class="availableAmountDiv">
-              <span id="availableAmount"></span>
-              <input id="transactionAmount" type="number" step="any" placeholder="Amount of coins" min="0" />
-            </div>
-            <div>
-              <input id="transactionCost" type="number" step="any" placeholder="Total cost ($)" min="0" />
-            </div>
-            <button id="addTransactionBtn">Add transaction</button>
-          </form>
-        </div>
-      </div>
-    </dialog>
-
-    <!-- Manage Transactions modal -->
-    <dialog id="manage-transactions-modal" class="modal">
-      <div class="modal-content manage-transactions-modal-content">
-        <span class="close" id="manage-transactions-modal-close">&times;</span>
-        <h2>
-          Manage <span id="manageTransactionsModalTitle"></span> transactions
-        </h2>
-        <div class="inner-modal-content" id="inner-manage-transactions-modal-content">
-          <table class="table" id="manageTransactionsTable">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>type</th>
-                <th>Amount</th>
-                <th>Cost</th>
-              </tr>
-            </thead>
-            <tbody id="manageTransactionsTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </dialog>
-
-    <!-- Edit Transaction modal -->
-    <dialog id="edit-transaction-modal" class="modal">
-      <div class="modal-content">
-        <span class="close" id="edit-transaction-modal-close">&times;</span>
-        <div class="inner-modal-content">
-          <h2>
-            Edit <span id="editTransactionModalTitle"></span> transaction
-          </h2>
-          <form id="editTransactionForm">
-            <div class="button" id="editToggleTransactionType">
-              <p class="" id="editBuyTransactionBtn">Buy</p>
-              <p class="" id="editSellTransactionBtn">Sell</p>
-            </div>
-            <div>
-              <input id="editTransactionDate" type="date" />
-            </div>
-            <div>
-              <input id="editTransactionAmount" type="number" step="any" placeholder="Amount of coins" min="0" />
-            </div>
-            <div>
-              <input id="editTransactionCost" type="number" step="any" placeholder="Total cost ($)" min="0" />
-            </div>
-            <button id="editTransactionBtn">Edit transaction</button>
-          </form>
-        </div>
-      </div>
-    </dialog>
-    <footer>
-      <p>
-        A project by
-        <a href="https://wolfez.dev" rel="noopener">wolfez.dev</a>
-      </p>
-    </footer>
-  </div>
-
-  <script type="module" src="/src/main.ts"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script
-    src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
-  <script defer src="https://umami.wolfez.dev/script.js"
-    data-website-id="c08875fb-7cbc-48eb-b3f1-a6eeb3e57773"></script>
+    <script type="module" src="/src/main.ts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script defer src="https://umami.wolfez.dev/script.js"
+      data-website-id="c08875fb-7cbc-48eb-b3f1-a6eeb3e57773"></script>
 </body>
 
 </html>

@@ -1,3 +1,4 @@
+import { openCryptocurrencyModal } from '../ui/cryptocurrencyModal';
 import { getCache, setCache, isCacheValid } from "./cache";
 
 const COINGECKO_API = "https://api.coingecko.com/api/v3/";
@@ -56,6 +57,18 @@ export async function getCoinsPrices(coins: string[]): Promise<string[]> {
     const response = await fetch(COINGECKO_API + query);
     const result = await response.json();
 
+    if (Object.entries(result).length !== coins.length) {
+      console.log("Error fetching coin prices: Mismatch in expected number of coins likely caused by a wrong coingecko id for one or more of the cryptocurrencies");
+      for(const coin of coins) {
+        // open the first coin that is not mapped correctly, let user fix which will run init again
+        if (!result[coin]) {
+          openCryptocurrencyModal(coin);
+          break;
+        }
+      };
+      return [];
+    }
+
     setCache(cacheKey, result);
     return result;
   } catch (error) {
@@ -95,6 +108,11 @@ export async function getCoinChart(coin: string): Promise<[string, number][]> {
       `coins/${coin}/market_chart?vs_currency=usd&days=365&interval=daily`;
     const res = await fetch(query);
     const jsonResult = await res.json();
+    if (!res.ok) {
+      if(jsonResult.error === "coin not found")
+        openCryptocurrencyModal(coin);
+      throw new Error();
+    }
 
     // api supports 'prices' 'market_caps' and 'total_volumes' but we only need prices currently
     const result = jsonResult.prices;
