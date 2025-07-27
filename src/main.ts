@@ -139,6 +139,17 @@ export function init() {
   initSearchModal();
   initTransactionModal();
   initImportExportButtons();
+
+  // Setup clicking outside dialogs to close for all dialogs
+  const allDialogs = document.querySelectorAll<HTMLDialogElement>("dialog");
+  // Attach a click listener to each one
+  allDialogs.forEach((dialog) => {
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) {
+        dialog.close();
+      }
+    });
+  });
 }
 
 init();
