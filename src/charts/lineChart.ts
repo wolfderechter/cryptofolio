@@ -200,7 +200,8 @@ export async function prepareLineChart1() {
 
   for (const [index, crypto] of store.getAssets().entries()) {
     const cacheKey = `getCoinChart_${crypto.id}_daily`;
-    if (!isCacheValid(cacheKey) && cacheMisses > 0) {
+
+    if (!isCacheValid(cacheKey) && index > 0) {
       cacheMisses++;
       await sleep(Math.min(cacheMisses * SLEEP_TIME, 60_000));
     }
