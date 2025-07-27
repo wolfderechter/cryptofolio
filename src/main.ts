@@ -1,11 +1,16 @@
-import { loadData, importJsonData, importCsvData } from "./data/localstorage";
+import { loadDataFromJson } from "./data/localstorage";
 import { getCoinsPrices } from "./data/coingecko";
 import { renderCharts } from "./charts/init";
 import { CountUp } from "countup.js";
 import { humanReadableNumber } from "./helpers";
 import { initSearchModal } from "./ui/searchModal";
-import { initTransactionModal, manageTransactions, startTransaction } from './ui/transactionModal';
-import * as store from './data/store';
+import {
+  initTransactionModal,
+  manageTransactions,
+  startTransaction,
+} from "./ui/transactionModal";
+import * as store from "./data/store";
+import { initImportExportButtons } from "./ui/importExport";
 
 // Summary
 const summaryTotalValue = document.getElementById("summaryTotalValue");
@@ -16,67 +21,6 @@ const summaryTotalPercentage = document.getElementById(
   "summaryTotalPercentage"
 )!;
 
-// Import/Export data
-const exportDropdownBtn = document.getElementById("exportDropdownBtn");
-const exportDropdown = document.getElementById("exportDropdown");
-
-const importDropdownBtn = document.getElementById("importDropdownBtn");
-const importDropdown = document.getElementById("importDropdown");
-
-// Toggle dropdown visibility on button click
-exportDropdownBtn?.addEventListener("click", () => {
-  exportDropdown?.classList.toggle("active");
-  // Close the other dropdown if open
-  if (importDropdown?.classList.contains("active")) {
-    importDropdown.classList.remove("active");
-  }
-});
-
-importDropdownBtn?.addEventListener("click", () => {
-  importDropdown?.classList.toggle("active");
-  // Close the other dropdown if open
-  if (exportDropdown?.classList.contains("active")) {
-    exportDropdown.classList.remove("active");
-  }
-});
-
-// Close dropdowns and modals when clicking outside
-window.addEventListener("click", (event) => {
-  if (!(event.target as HTMLElement).closest(".dropdown")) {
-    exportDropdown?.classList.remove("active");
-    importDropdown?.classList.remove("active");
-  }
-});
-const inputJson = document.getElementById("importDataJsonBtn");
-inputJson?.addEventListener("change", importJsonData);
-
-const inputCsv = document.getElementById("importDataCsvBtn");
-inputCsv?.addEventListener("change", importCsvData);
-
-const importCsvButton = document.getElementById("importDataCsvBtn")!;
-const csvInstructionsModal = <HTMLDialogElement>(
-  document.getElementById("csvInstructionsModal")!
-);
-const csvModalCloseBtn = document.getElementById("csv-warning-close");
-
-importCsvButton?.addEventListener("click", () => {
-  if (csvInstructionsModal) {
-    csvInstructionsModal.showModal();
-  }
-});
-csvModalCloseBtn?.addEventListener("click", () => {
-  csvInstructionsModal.close();
-});
-const downloadSampleCsv = document.getElementById("downloadSampleCsv");
-if (downloadSampleCsv) {
-  downloadSampleCsv.addEventListener("click", () => {
-    const csvContent =
-      "id,symbol,date,amount,cost,transactionType\nbitcoin,BTC,2023-10-01,0.5,25000,BUY";
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    downloadSampleCsv.setAttribute("href", url);
-  });
-}
 // Summary number animations
 const summaryTotalValueContentCountUp = new CountUp(
   summaryTotalValueContent,
@@ -188,11 +132,13 @@ async function populateAssetsTableAndSummary() {
 setInterval(populateAssetsTableAndSummary, 900000);
 
 export function init() {
+  loadDataFromJson(); // Load initial data from localStorage
+
   populateAssetsTableAndSummary();
   renderCharts();
   initSearchModal();
   initTransactionModal();
+  initImportExportButtons();
 }
 
-loadData();
 init();

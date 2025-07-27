@@ -17,7 +17,7 @@ export function saveData() {
  * Will clear out the current cryptocurrencies object and fill up with the new data.
  * @param input: optional string of cryptocurrency objects in jsom format
  */
-export async function loadData(input?: string) {
+export async function loadDataFromJson(input?: string) {
   // Check if there is an input string with the data, else check the localstorage for the data. Parse that data and create the cryptocurrency objects
   let cryptos: Cryptocurrency[];
   try {
@@ -69,34 +69,7 @@ export async function loadData(input?: string) {
   }
 }
 
-/**
- * Set up the exportDataBtn to download the cryptocurrencies as a JSON file on click.
- */
-const exportDataBtn = document.getElementById("exportDataBtn");
-if (exportDataBtn) {
-  exportDataBtn.addEventListener("click", () => {
-    const data = JSON.stringify(store.getAssets, null, 2);
-    const blob = new Blob([data], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-
-    exportDataBtn.setAttribute("href", url);
-    exportDataBtn.setAttribute("download", "cryptofolioData.json");
-  });
-}
-
-const exportDataCsvBtn = document.getElementById("exportDataCsvBtn");
-if (exportDataCsvBtn) {
-  exportDataCsvBtn.addEventListener("click", () => {
-    const csv = convertToCsv(store.getAssets());
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-
-    exportDataCsvBtn.setAttribute("href", url);
-    exportDataCsvBtn.setAttribute("download", "cryptofolioData.csv");
-  });
-}
-
-function convertToCsv(data: Cryptocurrency[]): string {
+export function convertToCsv(data: Cryptocurrency[]): string {
   const header = [
     "Date",
     "Way",
@@ -125,51 +98,8 @@ function convertToCsv(data: Cryptocurrency[]): string {
   return csvContent;
 }
 
-/**
- * Will import data from a file and call the loadData function with this data.
- */
-export function importJsonData(event: { preventDefault: () => void }) {
-  // Stop the form from reloading the page
-  event.preventDefault();
 
-  const input = document.getElementById(
-    "importDataJsonBtn"
-  ) as HTMLInputElement;
-
-  // If there's no file, do nothing
-  if (!input?.files?.length) return;
-
-  // Create a new FileReader() object to read in files
-  const reader = new FileReader();
-  reader.readAsText(input.files[0]);
-
-  reader.onload = (e) => {
-    const str = e?.target?.result as string;
-    loadData(str);
-  };
-}
-
-export function importCsvData(event: { preventDefault: () => void }) {
-  // Stop the form from reloading the page
-  event.preventDefault();
-
-  const input = document.getElementById("importDataCsvBtn") as HTMLInputElement;
-
-  // If there's no file, do nothing
-  if (!input?.files?.length) return;
-
-  // Create a new FileReader() object to read in files
-  const reader = new FileReader();
-  reader.readAsText(input.files[0]);
-
-  reader.onload = (e) => {
-    const csvData = e?.target?.result as string;
-    const parsedData = parseCsv(csvData);
-    loadDataFromCsv(parsedData);
-  };
-}
-
-function parseCsv(csvData: string): any[] {
+export function parseCsv(csvData: string): any[] {
   const rows = csvData.split("\n").filter((row) => row.trim() !== ""); // split into rows and remove empty lines
   const header = rows[0]
     .split(",")
@@ -190,7 +120,7 @@ function parseCsv(csvData: string): any[] {
 }
 
 // Based on the delta csv export format
-function loadDataFromCsv(parsedData: any[]) {
+export function loadDataFromCsv(parsedData: any[]) {
   const cryptoMap: { [key: string]: Cryptocurrency } = {};
 
   for (const row of parsedData) {

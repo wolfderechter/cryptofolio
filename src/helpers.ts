@@ -67,3 +67,19 @@ export function mapCurrency(baseCurrencyName) {
     }
   );
 }
+
+export function getFileContent(event: Event): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file) {
+      return reject(new Error("No file selected."));
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => resolve(e.target?.result as string);
+    reader.onerror = (e) => reject(new Error("Failed to read file."));
+    reader.readAsText(file);
+  });
+}

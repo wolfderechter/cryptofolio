@@ -2,7 +2,7 @@ import { saveData } from '../data/localstorage';
 import * as store from '../data/store';
 import { init } from '../main';
 
-export async function openCryptocurrencyModal(assetId: string) {
+export function openCryptocurrencyModal(assetId: string) {
   const cryptocurrencyModal = document.getElementById("cryptocurrency-modal") as HTMLDialogElement;
   const cryptocurrencyModalCloseBtn = document.getElementById("cryptocurrency-modal-close");
   const cryptocurrencyForm = document.getElementById("cryptocurrencyForm") as HTMLFormElement;
@@ -70,6 +70,7 @@ export async function openCryptocurrencyModal(assetId: string) {
     errorDiv.textContent = '';
   };
 
+  // Remove previous event listeners to avoid duplicates
   cryptocurrencyForm.removeEventListener("submit", handleSubmit);
   cryptocurrencyModalCloseBtn.removeEventListener("click", handleClose);
   cryptocurrencyForm.addEventListener("submit", handleSubmit);
@@ -82,27 +83,3 @@ export async function openCryptocurrencyModal(assetId: string) {
     }
   });
 }
-// export function openCryptocurrencyModal(assetId: string) {
-//   const cryptocurrencyModal = document.getElementById("cryptocurrency-modal") as HTMLDialogElement;
-//   const cryptocurrencyModalCloseBtn = document.getElementById("cryptocurrency-modal-close");
-//   const cryptocurrencyForm = document.getElementById("cryptocurrencyForm") as HTMLFormElement;
-
-//   if (!cryptocurrencyModal || !cryptocurrencyModalCloseBtn || !cryptocurrencyForm) {
-//     console.error("Cryptocurrency modal or its elements not found.");
-//     return;
-//   }
-
-//   cryptocurrencyModal.showModal();
-//   // populate the form with the asset data
-//   const asset = store.getAssetById(assetId);
-//   if (asset) {
-//     (document.getElementById("cryptocurrencyId") as HTMLInputElement).value = asset.id;
-//     (document.getElementById("cryptocurrencySymbol") as HTMLInputElement).value = asset.symbol;
-//     (document.getElementById("cryptocurrencyName") as HTMLInputElement).value = asset.name;
-//   }
-
-//   cryptocurrencyModalCloseBtn.addEventListener("click", () => {
-//     cryptocurrencyModal.close();
-//     cryptocurrencyForm.reset();
-//   });
-// }
