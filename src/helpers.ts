@@ -79,7 +79,7 @@ export function getFileContent(event: Event): Promise<string> {
 
     const reader = new FileReader();
     reader.onload = (e) => resolve(e.target?.result as string);
-    reader.onerror = (e) => reject(new Error("Failed to read file."));
+    reader.onerror = () => reject(new Error("Failed to read file."));
     reader.readAsText(file);
   });
 }
