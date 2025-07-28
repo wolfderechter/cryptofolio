@@ -32,7 +32,11 @@ export function preparePieChart1() {
   data1 = [];
   colors = [];
 
-  store.getAssets().forEach((crypto) => {
+  // Sort this pie chart legend by total invested
+  const sortedCryptocurrencies = store
+    .getAssets()
+    .sort((a, b) => b.totalCost - a.totalCost);
+  sortedCryptocurrencies.forEach((crypto) => {
     labels1.push(crypto.symbol);
     data1.push(crypto.totalCost);
     colors.push(crypto.color); //colors array is used to have consistent colors over all the charts
@@ -121,7 +125,14 @@ export async function preparePieChart2() {
   data2 = [];
   colors = [];
 
-  store.getAssets().forEach((crypto) => {
+  // Sort this pie chart legend by current value
+  const sortedCryptocurrencies = store.getAssets().sort((a, b) => {
+    const cryptoValueA = parseFloat(coinPrices[a.id].usd) * a.totalAmount;
+    const cryptoValueB = parseFloat(coinPrices[b.id].usd) * b.totalAmount;
+    return cryptoValueB - cryptoValueA; // Sort by value descending
+  });
+
+  sortedCryptocurrencies.forEach((crypto) => {
     labels2.push(crypto.symbol);
     data2.push(parseFloat(coinPrices[crypto.id].usd) * crypto.totalAmount);
     colors.push(crypto.color);

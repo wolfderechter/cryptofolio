@@ -198,7 +198,9 @@ export async function prepareLineChart1() {
   const fullDates = generateFullDatesArray(dateModeDays);
   let cacheMisses = 0;
 
-  for (const [index, crypto] of store.getAssets().entries()) {
+  // Sort the linechart legend by total cost
+  const sortedCryptocurrencies = store.getAssets().sort((a, b) => b.totalCost - a.totalCost);
+  for (const [index, crypto] of sortedCryptocurrencies.entries()) {
     const cacheKey = `getCoinChart_${crypto.id}_daily`;
 
     if (!isCacheValid(cacheKey) && index > 0) {
