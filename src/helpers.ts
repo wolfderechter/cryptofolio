@@ -11,6 +11,16 @@ export function humanReadableNumber(value: number): string {
 export const SLEEP_TIME = 5_000;
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+export function getMillisecondsUntilMidnight(): number {
+  const now = new Date();
+  const tomorrow = new Date(now);
+
+  tomorrow.setDate(now.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0); // Set to midnight
+
+  return tomorrow.getTime() - now.getTime();
+}
+
 // Extend this mapping as needed, based on the provided delta csv export while consulting the id/symbol from coingecko
 const currencyMapping = {
   "AVAIL (Avail)": { id: "avail", symbol: "AVAIL" },

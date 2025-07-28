@@ -1,3 +1,4 @@
+import { getMillisecondsUntilMidnight } from "../helpers";
 import { openCryptocurrencyModal } from "../ui/cryptocurrencyModal";
 import { getCache, setCache, isCacheValid } from "./cache";
 
@@ -117,7 +118,7 @@ export async function getCoinChart(coin: string): Promise<[string, number][]> {
 
     // api supports 'prices' 'market_caps' and 'total_volumes' but we only need prices currently
     const result = jsonResult.prices;
-    setCache(cacheKey, result, 24 * 60 * 60 * 1000); // cache chart for 24 hours since it's more demanding
+    setCache(cacheKey, result, getMillisecondsUntilMidnight()); // cache until midnight so the chart data is updated daily
     return result;
   } catch (error) {
     console.error("Error fetching coin chart data:", error);
