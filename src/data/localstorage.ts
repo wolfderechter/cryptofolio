@@ -123,10 +123,13 @@ export function loadDataFromCsv(parsedData: any[]) {
   const cryptoMap: { [key: string]: Cryptocurrency } = {};
 
   for (const row of parsedData) {
-    const Way = row.Way;
+    const baseType = row["Base type"];
+    if (baseType && baseType.toUpperCase() !== "CRYPTO") continue; // only import cryptocurrencies, if column is present (delta export should have this)
+
+    const way = row.Way;
     const transactionDate = new Date(row.Date);
     const transactionTypeValue =
-      Way.toUpperCase() === "BUY" ? transactionType.Buy : transactionType.Sell;
+      way.toUpperCase() === "BUY" ? transactionType.Buy : transactionType.Sell;
     let id: string, symbol: string;
 
     // If csv is coming from delta, map the base currency name to coingecko standard first
@@ -142,7 +145,7 @@ export function loadDataFromCsv(parsedData: any[]) {
         "Could not map currency for row, please make the csv conform with the example",
         row
       );
-      return;
+      continue;
     }
 
     // Check if cryptocurrency exists, create if not
