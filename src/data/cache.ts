@@ -1,7 +1,5 @@
-const CACHE_PREFIX = "coingecko_cache_";
-
 export function getCache(key: string): any | null {
-  const cachedData = localStorage.getItem(CACHE_PREFIX + key);
+  const cachedData = localStorage.getItem(key);
   if (cachedData) {
     return JSON.parse(cachedData);
   }
@@ -18,7 +16,7 @@ export function setCache(
     data,
     expiry: Date.now() + ttl,
   };
-  localStorage.setItem(CACHE_PREFIX + key, JSON.stringify(cacheData));
+  localStorage.setItem(key, JSON.stringify(cacheData));
 }
 
 export function isCacheValid(key: string): boolean {
