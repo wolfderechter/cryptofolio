@@ -1,9 +1,9 @@
-import { Coin, Cryptocurrency } from "../cryptocurrency";
+import { type Coin, Cryptocurrency } from "../cryptocurrency";
 import { saveData } from "../data/localstorage";
+import * as store from "../data/store";
 import { humanReadableNumber } from "../helpers";
 import { init } from "../main";
 import { Transaction, transactionType } from "../transaction";
-import * as store from "../data/store";
 
 export function initTransactionModal() {
   const transactionModal = document.getElementById(

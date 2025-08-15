@@ -1,4 +1,4 @@
-import { Cryptocurrency } from "../cryptocurrency";
+import type { Cryptocurrency } from "../cryptocurrency";
 
 const cryptocurrencies = new Map<string, Cryptocurrency>();
 

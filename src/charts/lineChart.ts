@@ -1,6 +1,6 @@
-import { sleep, SLEEP_TIME } from "../helpers";
 import { Chart } from "chart.js/auto";
 import { getCoinChart } from "../data/coingecko";
+import { SLEEP_TIME, sleep } from "../helpers";
 import "chartjs-adapter-date-fns";
 import { isCacheValid } from "../data/cache";
 import * as store from "../data/store";

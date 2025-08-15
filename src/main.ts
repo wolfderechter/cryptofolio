@@ -1,17 +1,17 @@
-import { loadDataFromJson } from "./data/localstorage";
-import { getCoinsPrices } from "./data/coingecko";
-import { renderCharts } from "./charts/init";
 import { CountUp } from "countup.js";
+import { renderCharts } from "./charts/init";
+import { getCoinsPrices } from "./data/coingecko";
+import { loadDataFromJson } from "./data/localstorage";
+import * as store from "./data/store";
 import { humanReadableNumber } from "./helpers";
+import { openCryptocurrencyModal } from "./ui/cryptocurrencyModal";
+import { initImportExportButtons } from "./ui/importExport";
 import { initSearchModal } from "./ui/searchModal";
 import {
   initTransactionModal,
   manageTransactions,
   startTransaction,
 } from "./ui/transactionModal";
-import * as store from "./data/store";
-import { initImportExportButtons } from "./ui/importExport";
-import { openCryptocurrencyModal } from './ui/cryptocurrencyModal';
 
 // Summary
 const summaryTotalValue = document.getElementById("summaryTotalValue");
@@ -76,11 +76,13 @@ async function populateAssetsTableAndSummary() {
     if (asset.totalAmount === 0) return;
 
     tr.innerHTML = `
-      <td class="openCryptocurrencyModal" style="cursor:pointer">${asset.name}</td>
+      <td class="openCryptocurrencyModal" style="cursor:pointer">${
+        asset.name
+      }</td>
       <td>$${asset.averageBuyPrice.toFixed(2)}</td>
       <td title="${asset.totalAmount}">${humanReadableNumber(
       asset.totalAmount
-      )} ${asset.symbol}</td>
+    )} ${asset.symbol}</td>
       <td>$${humanReadableNumber(asset.totalCost)}</td>
       <td>$${humanReadableNumber(cryptoValue)}</td>
       <td>${gainInPercentage.toFixed(2)}%</td>
@@ -91,7 +93,9 @@ async function populateAssetsTableAndSummary() {
       `;
 
     // Make the asset name cell clickable to open the asset edit popup
-    const assets = tr.querySelectorAll<HTMLTableCellElement>(".openCryptocurrencyModal");
+    const assets = tr.querySelectorAll<HTMLTableCellElement>(
+      ".openCryptocurrencyModal"
+    );
     assets.forEach((assetCell) => {
       assetCell.onclick = () => {
         openCryptocurrencyModal(asset.id);

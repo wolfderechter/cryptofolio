@@ -1,6 +1,6 @@
 import { getMillisecondsUntilMidnight } from "../helpers";
 import { openCryptocurrencyModal } from "../ui/cryptocurrencyModal";
-import { getCache, setCache, isCacheValid } from "./cache";
+import { getCache, isCacheValid, setCache } from "./cache";
 
 const COINGECKO_API = "https://api.coingecko.com/api/v3/";
 
