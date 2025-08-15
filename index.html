@@ -213,10 +213,10 @@
               </div>
               <div class="availableAmountDiv">
                 <span id="availableAmount"></span>
-                <input id="transactionAmount" type="number" step="any" placeholder="Amount of coins" min="0" />
+                <input id="transactionAmount" type="number" step="any" placeholder="Amount of coins" min="0" required />
               </div>
               <div>
-                <input id="transactionCost" type="number" step="any" placeholder="Total cost ($)" min="0" />
+                <input id="transactionCost" type="number" step="any" placeholder="Total cost ($)" min="0" required />
               </div>
               <button id="addTransactionBtn">Add transaction</button>
             </form>
@@ -264,10 +264,12 @@
                 <input id="editTransactionDate" type="date" />
               </div>
               <div>
-                <input id="editTransactionAmount" type="number" step="any" placeholder="Amount of coins" min="0" />
+                <input id="editTransactionAmount" type="number" step="any" placeholder="Amount of coins" min="0"
+                  required />
               </div>
               <div>
-                <input id="editTransactionCost" type="number" step="any" placeholder="Total cost ($)" min="0" />
+                <input id="editTransactionCost" type="number" step="any" placeholder="Total cost ($)" min="0"
+                  required />
               </div>
               <button id="editTransactionBtn">Edit transaction</button>
             </form>

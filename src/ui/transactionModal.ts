@@ -77,8 +77,11 @@ export function startTransaction(coin: Coin) {
   const transactionCost = <HTMLInputElement>(
     document.getElementById("transactionCost")
   );
+  const transactionForm =
+    document.querySelector<HTMLFormElement>("#transactionForm");
   if (
     !transactionModal ||
+    !transactionForm ||
     !toggleTransactionType ||
     !buyTransactionBtn ||
     !sellTransactionBtn ||
@@ -116,7 +119,7 @@ export function startTransaction(coin: Coin) {
       // If it's a Sell transaction, fill in the available amount
       if (sellTransactionBtn.classList.contains("active")) {
         transactionAmount.max = String(foundCrypto?.totalAmount);
-        availableAmount.textContent = `${foundCrypto?.totalAmount} ${foundCrypto?.symbol} available`;
+        availableAmount.textContent = `${transactionAmount.max} ${foundCrypto?.symbol} available`;
       } else {
         availableAmount.textContent = "";
         transactionAmount.removeAttribute("max");
@@ -135,52 +138,28 @@ export function startTransaction(coin: Coin) {
 
   addTransactionBtn.onclick = (e) => {
     e.preventDefault();
-
-    // Validate the form
-    if (
-      Number(transactionAmount.value) <= 0 ||
-      Number(transactionCost.value) <= 0 ||
-      (transactionAmount.hasAttribute("max") &&
-        Number(transactionAmount.max) < Number(transactionAmount.value))
-    ) {
-      // Show an error animation on the add transaction button
-      addTransactionBtn.style.animation = "shake 0.2s ease-in-out 0s 2";
-      addTransactionBtn.style.boxShadow = "0 0 0.6rem #ff0000";
-
-      return;
-    }
+    if (!transactionForm.reportValidity()) return;
 
     // Create the cryptocurrency object
-    const resultCrypto = store.getAssetById(coin.id);
+    let resultCrypto = store.getAssetById(coin.id);
     const selectedTransactionType = buyTransactionBtn.classList.contains(
       "active"
     )
       ? transactionType.Buy
       : transactionType.Sell;
-    // If crypto was already present, add new transaction
-    if (resultCrypto) {
-      resultCrypto.addTransaction(
-        new Transaction(
-          selectedTransactionType,
-          new Date(transactionDate.value),
-          Number(transactionAmount.value),
-          Number(transactionCost.value)
-        )
-      );
-    } else {
-      // If crypto was not yet present, create it and add new transaction
-      const newCrypto = new Cryptocurrency(coin.id, coin.symbol, coin.name);
-      store.addAsset(newCrypto);
-
-      newCrypto.addTransaction(
-        new Transaction(
-          selectedTransactionType,
-          new Date(transactionDate.value),
-          Number(transactionAmount.value),
-          Number(transactionCost.value)
-        )
-      );
+    const newTransaction = new Transaction(
+      selectedTransactionType,
+      new Date(transactionDate.value),
+      Number(transactionAmount.value),
+      Number(transactionCost.value)
+    );
+    // If crypto was not yet present, create it
+    if (!resultCrypto) {
+      resultCrypto = new Cryptocurrency(coin.id, coin.symbol, coin.name);
+      store.addAsset(resultCrypto);
     }
+
+    resultCrypto.addTransaction(newTransaction);
     // Persist the data
     saveData();
 
@@ -209,9 +188,6 @@ export function manageTransactions(coin: Coin) {
 }
 
 function refreshManageTransactions(crypto: Cryptocurrency) {
-  const transactionModal = document.getElementById(
-    "transaction-modal"
-  ) as HTMLDialogElement;
   const manageTransactionsModal = document.getElementById(
     "manage-transactions-modal"
   ) as HTMLDialogElement;
@@ -225,26 +201,23 @@ function refreshManageTransactions(crypto: Cryptocurrency) {
   for (const transaction of crypto.transactions) {
     const tr = document.createElement("tr");
 
-    /*
-        TODO: Remove button will show a cancel/confirm button first before removing
-    */
     tr.innerHTML = `
       <td>${transaction.date.toLocaleDateString()}</td>
       <td>${transactionType[transaction.type]}</td>
       <td title="${transaction.amount}">${humanReadableNumber(
-        transaction.amount
-      )} ${crypto.symbol}</td>
+      transaction.amount
+    )} ${crypto.symbol}</td>
       <td>${transaction.cost.toFixed(2)} USD</td>
       <td class="assetsTableBtns">
-          <button id="manageTransactionsTableEditBtn" class="fa-solid fa-pen-to-square iconBtn"></button>
-          <button id="manageTransactionsTableRemoveBtn" class="fa-solid fa-trash-can iconBtn"></button>
+          <button class="edit-transaction-btn fa-solid fa-pen-to-square iconBtn"></button>
+          <button class="remove-transaction-btn fa-solid fa-trash-can iconBtn"></button>
       </td>
     `;
     const editBtn = tr.querySelector<HTMLButtonElement>(
-      "#manageTransactionsTableEditBtn"
+      ".edit-transaction-btn"
     );
     const removeBtn = tr.querySelector<HTMLButtonElement>(
-      "#manageTransactionsTableRemoveBtn"
+      ".remove-transaction-btn"
     );
     if (removeBtn) {
       removeBtn.onclick = () => {
@@ -258,20 +231,19 @@ function refreshManageTransactions(crypto: Cryptocurrency) {
           crypto.amountOfTransactions === undefined
         ) {
           store.removeAsset(crypto.id);
+          manageTransactionsModal.close();
+        } else {
+          refreshManageTransactions(crypto);
         }
 
         // Persist the data
         saveData();
-
-        manageTransactionsModal.close();
         init();
       };
     }
     if (editBtn) {
       editBtn.onclick = () => {
-        if (!crypto) return;
-        transactionModal.close();
-        editTransaction(crypto, transaction);
+        if (crypto) editTransaction(crypto, transaction);
       };
     }
     manageTransactionsTableBody?.appendChild(tr);
@@ -289,6 +261,9 @@ function editTransaction(crypto: Cryptocurrency, transaction: Transaction) {
   )!;
   const toggleTransactionType = document.getElementById(
     "editToggleTransactionType"
+  )!;
+  const editTransactionForm = document.querySelector<HTMLFormElement>(
+    "#editTransactionForm"
   )!;
   const buyTransactionBtn = document.getElementById("editBuyTransactionBtn")!;
   const sellTransactionBtn = document.getElementById("editSellTransactionBtn")!;
@@ -322,11 +297,11 @@ function editTransaction(crypto: Cryptocurrency, transaction: Transaction) {
   transactionAmount.value = String(transaction.amount);
   transactionCost.value = String(transaction.cost);
 
-  // Add btn listener on save where the values get updated
   editTransactionBtn.onclick = (e) => {
     e.preventDefault();
 
-    // let selectedTransactionType = buyTransactionBtn.classList.contains("active") ? transactionType.Buy : transactionType.Sell;
+    if (!editTransactionForm.reportValidity()) return;
+
     const currentCrypto = store.getAssetById(crypto.id);
     const selectedTransactionType = buyTransactionBtn.classList.contains(
       "active"
@@ -335,7 +310,6 @@ function editTransaction(crypto: Cryptocurrency, transaction: Transaction) {
       : transactionType.Sell;
 
     if (currentCrypto) {
-      // selectedTransactionType, new Date(transactionDate.value), Number(transactionAmount.value), Number(transactionCost.value)
       currentCrypto.editTransaction(
         new Transaction(
           selectedTransactionType,
