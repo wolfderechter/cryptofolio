@@ -9,9 +9,9 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.1.2",
-    "typescript": "^5.8.3",
-    "vite": "^7.0.5"
+    "@biomejs/biome": "2.2.0",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.2"
   },
   "dependencies": {
     "@types/uuid": "^10.0.0",
