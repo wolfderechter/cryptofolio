@@ -199,7 +199,9 @@ export async function prepareLineChart1() {
   let cacheMisses = 0;
 
   // Sort the linechart legend by total cost
-  const sortedCryptocurrencies = store.getAssets().sort((a, b) => b.totalCost - a.totalCost);
+  const sortedCryptocurrencies = store
+    .getAssets()
+    .sort((a, b) => b.totalCost - a.totalCost);
   for (const [index, crypto] of sortedCryptocurrencies.entries()) {
     const cacheKey = `getCoinChart_${crypto.id}_daily`;
 
@@ -287,9 +289,9 @@ function switchDateMode(e: Event) {
   const target = e.target as HTMLButtonElement;
 
   // Remove other active classes
-  [toggleWeekMode, toggleMonthMode, toggleYearMode].forEach((element) =>
-    element?.classList.remove("active")
-  );
+  [toggleWeekMode, toggleMonthMode, toggleYearMode].forEach((element) => {
+    element?.classList.remove("active");
+  });
 
   target.classList.add("active");
 

@@ -173,7 +173,9 @@ export function loadDataFromCsv(parsedData: any[]) {
 
   // Clear existing data and load in new
   store.clearAssets();
-  Object.values(cryptoMap).forEach((crypto) => store.addAsset(crypto));
+  Object.values(cryptoMap).forEach((crypto) => {
+    store.addAsset(crypto);
+  });
 
   saveData();
   init();
