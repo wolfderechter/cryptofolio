@@ -61,6 +61,9 @@ async function populateAssetsTableAndSummary() {
   });
 
   sortedCryptocurrencies.forEach((asset) => {
+    // When we have no current holdings, skip coin
+    if (asset.totalAmount === 0) return;
+
     const cryptoValue =
       parseFloat(coinPrices[asset.id].usd) * asset.totalAmount;
     const gain = cryptoValue + asset.totalSellCost - asset.totalBuyCost;
@@ -72,8 +75,6 @@ async function populateAssetsTableAndSummary() {
 
     const tr = document.createElement("tr");
 
-    // When we have no current holdings, skip coin
-    if (asset.totalAmount === 0) return;
 
     tr.innerHTML = `
       <td class="openCryptocurrencyModal" style="cursor:pointer">${
@@ -85,7 +86,7 @@ async function populateAssetsTableAndSummary() {
     )} ${asset.symbol}</td>
       <td>$${humanReadableNumber(asset.totalCost)}</td>
       <td>$${humanReadableNumber(cryptoValue)}</td>
-      <td>${gainInPercentage.toFixed(2)}%</td>
+      <td>${asset.totalBuyCost === 0 ? 'N/A' : (gainInPercentage.toFixed(2) + '%')}</td>
       <td class="assetsTableBtns">
       <button id="assetsTableAdd" class="fa fa-plus-minus iconBtn"></button>
       <button title="Edit transactions" id="assetsTableManage" class="fa-solid fa-pen-to-square iconBtn"></button>

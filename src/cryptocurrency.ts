@@ -68,20 +68,20 @@ export class Cryptocurrency {
   }
   get totalBuyAmount(): number {
     return this.transactions.reduce((sum, current) => {
-      if (current.type === transactionType.Buy) return sum + current.amount;
+      if (current.type === transactionType.Buy && current.cost !== 0) return sum + current.amount;
       else return sum;
     }, 0);
   }
 
   get totalCost(): number {
     return this.transactions.reduce((sum, current) => {
-      if (current.type === transactionType.Buy) return sum + current.cost;
+      if (current.type === transactionType.Buy && current.cost !== 0) return sum + current.cost;
       else return sum - current.cost;
     }, 0);
   }
   get totalBuyCost(): number {
     return this.transactions.reduce((sum, current) => {
-      if (current.type === transactionType.Buy) return sum + current.cost;
+      if (current.type === transactionType.Buy && current.cost !== 0) return sum + current.cost;
       else return sum;
     }, 0);
   }
