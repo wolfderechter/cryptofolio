@@ -1,0 +1,8 @@
+services:
+  frontend:
+    image: wolfderechter/cryptofolio:latest
+    build:
+      context: .
+    restart: always
+    ports:
+      - "4450:3000"
