@@ -17,4 +17,4 @@ RUN bun run build
 
 # Expose port 3000 so that the container can be accessed from the host
 EXPOSE 3000
-ENTRYPOINT ["bun", "./dist"]
+ENTRYPOINT ["bun", "./dist/index.html"]
