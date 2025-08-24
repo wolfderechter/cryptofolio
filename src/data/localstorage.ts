@@ -1,7 +1,6 @@
 import { getColor } from "../charts/colors";
 import { Cryptocurrency } from "../cryptocurrency";
 import { mapCurrency } from "../helpers";
-import { init } from "../main";
 import { Transaction, transactionType } from "../transaction";
 import * as store from "./store";
 
@@ -65,7 +64,6 @@ export async function loadDataFromJson(input?: string) {
   // SaveData to localstorage if input was used
   if (input) {
     saveData();
-    init();
   }
 }
 
@@ -178,5 +176,4 @@ export function loadDataFromCsv(parsedData: any[]) {
   });
 
   saveData();
-  init();
 }

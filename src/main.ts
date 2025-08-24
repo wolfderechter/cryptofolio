@@ -145,11 +145,16 @@ async function populateAssetsTableAndSummary() {
 // ToDO: make the x minutes configurable? with a minimum amount of 1 minute to not overload the coingecko API
 setInterval(populateAssetsTableAndSummary, 900000);
 
-export function init() {
-  loadDataFromJson(); // Load initial data from localStorage
-
+export function refreshUI(){
   populateAssetsTableAndSummary();
   renderCharts();
+}
+
+function startApp() {
+  loadDataFromJson(); // Load initial data from localStorage
+  refreshUI();
+
+  // One time setups
   initSearchModal();
   initTransactionModal();
   initImportExportButtons();
@@ -166,4 +171,5 @@ export function init() {
   });
 }
 
-init();
+// Setup the application
+startApp();

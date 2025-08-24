@@ -1,6 +1,6 @@
 import { saveData } from "../data/localstorage";
 import * as store from "../data/store";
-import { init } from "../main";
+import { refreshUI } from "../main";
 
 export function openCryptocurrencyModal(assetId: string) {
   const cryptocurrencyModal = document.getElementById(
@@ -77,7 +77,7 @@ export function openCryptocurrencyModal(assetId: string) {
       cryptocurrencyForm.reset();
 
       saveData();
-      init();
+      refreshUI();
     } catch (error) {
       errorDiv.textContent = "Failed to save asset. Please try again.";
       errorDiv.style.display = "block";

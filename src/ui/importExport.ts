@@ -1,6 +1,7 @@
 import * as localStorage from "../data/localstorage";
 import * as store from "../data/store";
 import { getFileContent } from "../helpers";
+import { refreshUI } from "../main";
 
 export function initImportExportButtons() {
   const importDropdownBtn = document.getElementById("importDropdownBtn");
@@ -71,11 +72,13 @@ export function initImportExportButtons() {
   importDataJsonBtn.addEventListener("change", async (event: Event) => {
     const jsonContent = await getFileContent(event);
     localStorage.loadDataFromJson(jsonContent);
+    refreshUI();
   });
   importDataCsvBtn.addEventListener("change", async (event: Event) => {
     const csvContent = await getFileContent(event);
     const parsedData = localStorage.parseCsv(csvContent);
     localStorage.loadDataFromCsv(parsedData);
+    refreshUI();
   });
   downloadSampleCsv.addEventListener("click", () => {
     const csvContent =

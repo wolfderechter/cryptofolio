@@ -2,7 +2,7 @@ import { type Coin, Cryptocurrency } from "../cryptocurrency";
 import { saveData } from "../data/localstorage";
 import * as store from "../data/store";
 import { humanReadableNumber } from "../helpers";
-import { init } from "../main";
+import { refreshUI } from "../main";
 import { Transaction, transactionType } from "../transaction";
 
 export function initTransactionModal() {
@@ -165,7 +165,7 @@ export function startTransaction(coin: Coin) {
 
     // Close the transaction modal when done
     transactionModal.close();
-    init();
+    refreshUI();
   };
 }
 
@@ -238,7 +238,7 @@ function refreshManageTransactions(crypto: Cryptocurrency) {
 
         // Persist the data
         saveData();
-        init();
+        refreshUI();
       };
     }
     if (editBtn) {
@@ -323,6 +323,6 @@ function editTransaction(crypto: Cryptocurrency, transaction: Transaction) {
     }
     editTransactionModal.close();
     saveData();
-    init();
+    refreshUI();
   };
 }
