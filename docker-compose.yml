@@ -5,4 +5,4 @@ services:
       context: .
     restart: always
     ports:
-      - "4450:3000"
+      - "4450:80"
